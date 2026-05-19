@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMLA Quest — Finals Battle Station</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+<style>
+  body { font-family:'Inter',system-ui,sans-serif; background:
+    radial-gradient(circle at 20% 10%, #fce7ff 0%, transparent 40%),
+    radial-gradient(circle at 80% 90%, #dbeafe 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, #fef3c7 0%, transparent 60%),
+    #faf5ff; min-height:100vh; }
+  .font-display { font-family:'Fredoka',system-ui,sans-serif; }
+  .card { background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); border:2px solid rgba(168,85,247,0.15); border-radius:1.25rem; box-shadow:0 8px 30px rgba(168,85,247,0.1); }
+  .card-glow { box-shadow:0 0 40px rgba(168,85,247,0.25), 0 8px 30px rgba(168,85,247,0.15); }
+  .tab-btn { transition:all 0.2s; }
+  .tab-btn.active { background:linear-gradient(135deg,#a855f7,#ec4899); color:white; transform:translateY(-2px); box-shadow:0 6px 20px rgba(168,85,247,0.4); }
+  .gradient-text { background:linear-gradient(135deg,#a855f7,#ec4899,#f59e0b); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .badge-locked { filter:grayscale(1) opacity(0.3); }
+  .flash-card { perspective:1000px; }
+  .flash-inner { transition:transform 0.6s; transform-style:preserve-3d; }
+  .flash-card.flipped .flash-inner { transform:rotateY(180deg); }
+  .flash-front, .flash-back { backface-visibility:hidden; position:absolute; inset:0; }
+  .flash-back { transform:rotateY(180deg); }
+  .confetti-piece { position:fixed; width:10px; height:10px; pointer-events:none; z-index:9999; }
+  .progress-ring { transform:rotate(-90deg); }
+  .progress-ring__fill { transition:stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .status-not-started { background:#f3f4f6; color:#6b7280; }
+  .status-studying    { background:#fef3c7; color:#92400e; }
+  .status-revised     { background:#dbeafe; color:#1e40af; }
+  .status-mastered    { background:linear-gradient(135deg,#34d399,#10b981); color:white; }
+  details summary { cursor:pointer; list-style:none; }
+  details summary::-webkit-details-marker { display:none; }
+  .quiz-option { cursor:pointer; transition:all 0.15s; }
+  .quiz-option:hover { border-color:#a855f7; background:#fce7ff; transform:translateX(4px); }
+  .quiz-option.correct { background:#d1fae5; border-color:#10b981; }
+  .quiz-option.wrong   { background:#fee2e2; border-color:#ef4444; }
+  @media print { nav, .no-print { display:none !important; } body { background:white; } }
+  .xp-bar-fill { transition:width 0.6s cubic-bezier(0.4,0,0.2,1); background:linear-gradient(90deg,#a855f7,#ec4899,#f59e0b); }
+  .float { animation: float-y 3s ease-in-out infinite; }
+  @keyframes float-y { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes pop { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
+  .animate-pop { animation: pop 0.3s ease-out; }
+</style>
+</head>
+<body class="text-slate-800">
+
+<header class="sticky top-0 z-40 backdrop-blur-lg bg-white/70 border-b border-purple-200">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
+    <div class="flex items-center gap-3">
+      <div class="text-3xl float">🎓</div>
+      <div><h1 class="font-display font-bold text-2xl gradient-text leading-none">BMLA Quest</h1><p class="text-xs text-slate-500">Finals Battle Station · MTS 212 · v2</p></div>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <div class="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>⚡</span><span id="hdrXP">0 XP</span></div>
+      <div class="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>🔥</span><span id="hdrStreak">0</span></div>
+      <div class="flex items-center gap-2 bg-white border-2 border-purple-300 text-purple-700 px-3 py-1.5 rounded-full font-semibold"><span>🏆</span><span id="hdrLevel">Novice</span></div>
+      <button onclick="toggleSound()" class="text-xl hover:scale-110 transition" title="Toggle sounds" id="soundBtn">🔊</button>
+      <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-red-500" title="Reset progress">↻ reset</button>
+    </div>
+  </div>
+  <nav class="max-w-7xl mx-auto px-4 pb-3 flex flex-wrap gap-2">
+    <button class="tab-btn active px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="home">🏠 Home</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="syllabus">📚 Syllabus</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="tutorials">📖 Tutorials</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="cheatsheet">📐 Cheat Sheet</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="flashcards">🃏 Flashcards</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="quiz">❓ Quiz</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="mock">⏱️ Mock Exam</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="stats">📊 Stats</button>
+  </nav>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+<section id="tab-home" class="tab-section">
+  <div class="grid lg:grid-cols-3 gap-5 mb-5">
+    <div class="card card-glow p-6 lg:col-span-2 text-center bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white">
+      <p class="text-sm opacity-90 mb-1">Time until BMLA Final</p>
+      <p class="font-display text-6xl font-bold leading-none mb-2" id="countdownDays">—</p>
+      <p class="text-lg font-medium mb-1">May 25, 2026 · 10 AM – 1 PM</p>
+      <p class="text-xs opacity-80" id="countdownExtra"></p>
+      <p class="text-xs opacity-75 mt-2">📍 MTC-19, Tabba Hall 8, Main Campus · 📝 Solve 6 of 7 questions × 4 marks · <a href="https://www.notion.so/3649b848b4c581018892d690cc12991c" target="_blank" class="underline">your Notion plan ↗</a></p>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center gap-3 mb-3"><div class="text-4xl float">🏆</div><div><p class="text-xs text-slate-500 uppercase tracking-wide">Your rank</p><p class="font-display text-2xl font-bold" id="homeLevel">Novice</p></div></div>
+      <div class="bg-slate-100 rounded-full h-3 overflow-hidden"><div class="xp-bar-fill h-full rounded-full" id="xpBar" style="width:0%"></div></div>
+      <p class="text-xs text-slate-500 mt-2"><span id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP to <span id="nextLevel">Apprentice</span></p>
+    </div>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-5 mb-5">
+    <div class="card p-6 text-center">
+      <p class="text-sm text-slate-500 uppercase tracking-wide mb-3">Syllabus Mastery</p>
+      <div class="relative inline-block"><svg width="160" height="160" class="progress-ring"><circle cx="80" cy="80" r="70" stroke="#f3e8ff" stroke-width="14" fill="none"/><circle cx="80" cy="80" r="70" stroke="url(#ringGrad)" stroke-width="14" fill="none" class="progress-ring__fill" id="ringFill" stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round"/><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a855f7"/><stop offset="50%" stop-color="#ec4899"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs></svg><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="font-display text-4xl font-bold gradient-text" id="overallPct">0%</span><span class="text-xs text-slate-500" id="overallLabel">0 / 29 lectures</span></div></div>
+    </div>
+    <div class="card p-6 lg:col-span-2">
+      <div class="flex items-center justify-between mb-3"><h3 class="font-display font-semibold text-xl flex items-center gap-2">🎯 Today's Battle Plan</h3><span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full" id="todayDate"></span></div>
+      <div id="todayPlan" class="space-y-2"></div>
+    </div>
+  </div>
+  <div class="card p-6 mb-5">
+    <h3 class="font-display font-semibold text-xl mb-4 flex items-center gap-2">🎖️ Badges <span class="text-sm text-slate-400 font-normal">(<span id="badgeCount">0</span>/12)</span></h3>
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3" id="badgeGrid"></div>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <button onclick="switchTab('tutorials')" class="card p-5 text-left hover:card-glow transition cursor-pointer group"><div class="text-3xl mb-2 group-hover:scale-110 transition">📖</div><p class="font-display font-bold">Tutorials</p><p class="text-xs text-slate-500">Chapter 1 · 17 worked examples</p></button>
+    <button onclick="switchTab('flashcards')" class="card p-5 text-left hover:card-glow transition cursor-pointer group"><div class="text-3xl mb-2 group-hover:scale-110 transition">🃏</div><p class="font-display font-bold">Quick Review</p><p class="text-xs text-slate-500">50 flashcards</p></button>
+    <button onclick="switchTab('quiz')" class="card p-5 text-left hover:card-glow transition cursor-pointer group"><div class="text-3xl mb-2 group-hover:scale-110 transition">❓</div><p class="font-display font-bold">Quiz Me</p><p class="text-xs text-slate-500">40 MCQs by topic</p></button>
+    <button onclick="switchTab('mock')" class="card p-5 text-left hover:card-glow transition cursor-pointer group"><div class="text-3xl mb-2 group-hover:scale-110 transition">⏱️</div><p class="font-display font-bold">Mock Exam</p><p class="text-xs text-slate-500">3 hours · exam format</p></button>
+  </div>
+</section>
+
+<section id="tab-syllabus" class="tab-section hidden">
+  <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-2">📚 Full Syllabus Tracker</h2><p class="text-sm text-slate-600 mb-4">29 lectures (incl. Markov). Final is <strong>comprehensive</strong>.</p><div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="topicSummary"></div></div>
+  <div id="syllabusList" class="space-y-4"></div>
+</section>
+
+<section id="tab-tutorials" class="tab-section hidden">
+  <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-1">📖 In-Depth Tutorials</h2><p class="text-sm text-slate-600 mb-4">Theory + step-by-step worked examples. Math is typeset by MathJax — give it a moment to render. <strong class="text-purple-700">Chapter 1 (5 lectures, 17 worked examples) is built. Other chapters come in v3 — meanwhile use Cheat Sheet + Flashcards.</strong></p><div class="flex flex-wrap gap-2" id="tutTopicNav"></div></div>
+  <div id="tutorialContent"></div>
+</section>
+
+<section id="tab-cheatsheet" class="tab-section hidden">
+  <div class="card p-6 mb-5 flex flex-wrap items-center justify-between gap-3"><div><h2 class="font-display font-bold text-2xl">📐 Master Cheat Sheet</h2><p class="text-sm text-slate-600">Print this for exam day.</p></div><button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium no-print">🖨️ Print</button></div>
+  <div id="cheatsheetContent" class="space-y-5"></div>
+</section>
+
+<section id="tab-flashcards" class="tab-section hidden">
+  <div class="card p-6 mb-5">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4"><h2 class="font-display font-bold text-2xl">🃏 Flashcards</h2><div class="flex gap-2"><select id="flashTopic" class="px-3 py-2 rounded-lg border-2 border-purple-200 text-sm bg-white" onchange="resetFlashDeck()"><option value="all">All topics</option></select><button onclick="shuffleFlash()" class="bg-purple-100 hover:bg-purple-200 px-3 py-2 rounded-lg text-sm">🔀 Shuffle</button></div></div>
+    <div class="bg-slate-100 rounded-full h-2 overflow-hidden mb-2"><div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full" id="flashProgress" style="width:0%"></div></div>
+    <p class="text-xs text-slate-500"><span id="flashIdx">0</span> / <span id="flashTotal">0</span> · ⚡ <span id="flashXp">0</span> XP this session</p>
+  </div>
+  <div class="card p-8 mb-5 min-h-[320px] flash-card cursor-pointer" id="flashCard" onclick="flipFlash()">
+    <div class="flash-inner relative w-full h-full min-h-[260px]">
+      <div class="flash-front absolute inset-0 flex flex-col items-center justify-center text-center p-6"><span class="text-xs uppercase tracking-widest text-purple-500 mb-3" id="flashFrontTopic">Topic</span><p class="font-display text-2xl sm:text-3xl font-medium" id="flashFront">Click a topic to start</p><p class="text-xs text-slate-400 mt-6">tap card to flip</p></div>
+      <div class="flash-back absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl"><span class="text-xs uppercase tracking-widest text-pink-500 mb-3">Answer</span><p class="text-lg sm:text-xl" id="flashBack">—</p></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-3 gap-3" id="flashActions" style="display:none">
+    <button onclick="rateFlash('again')" class="bg-red-100 hover:bg-red-200 text-red-700 py-3 rounded-xl font-semibold">😵 Again</button>
+    <button onclick="rateFlash('hard')" class="bg-amber-100 hover:bg-amber-200 text-amber-700 py-3 rounded-xl font-semibold">🤔 Hard</button>
+    <button onclick="rateFlash('good')" class="bg-green-100 hover:bg-green-200 text-green-700 py-3 rounded-xl font-semibold">✅ Got it</button>
+  </div>
+  <div id="flashDone" class="card p-8 text-center hidden"><div class="text-6xl mb-3">🎉</div><h3 class="font-display text-2xl font-bold mb-2">Deck cleared!</h3><p class="text-slate-600 mb-4">Got it: <span id="dDoneGood" class="font-semibold text-green-600">0</span> · Hard: <span id="dDoneHard" class="font-semibold text-amber-600">0</span> · Again: <span id="dDoneAgain" class="font-semibold text-red-600">0</span></p><button onclick="resetFlashDeck()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">Start over</button></div>
+</section>
+
+<section id="tab-quiz" class="tab-section hidden">
+  <div id="quizSetup">
+    <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-2">❓ Quiz Mode</h2><p class="text-sm text-slate-600 mb-4">Each correct = +5 XP.</p>
+      <div class="grid sm:grid-cols-2 gap-4 mb-4"><label class="block"><span class="text-sm font-medium">Topic</span><select id="quizTopic" class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white"><option value="all">All topics</option></select></label><label class="block"><span class="text-sm font-medium">Questions</span><select id="quizCount" class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option></select></label></div>
+      <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition">🚀 Start</button>
+    </div>
+    <div class="card p-6"><h3 class="font-display font-semibold text-lg mb-3">📊 Accuracy by topic</h3><div id="quizAccuracy" class="space-y-2"></div></div>
+  </div>
+  <div id="quizActive" class="hidden">
+    <div class="card p-4 mb-4 flex items-center justify-between"><div><p class="text-xs text-slate-500">Q <span id="qNum">1</span>/<span id="qTotal">10</span></p><p class="text-xs text-purple-600 font-medium" id="qTopic">—</p></div><div class="text-right"><p class="text-xs text-slate-500">Score</p><p class="font-display text-xl font-bold gradient-text"><span id="qScore">0</span>/<span id="qAnswered">0</span></p></div></div>
+    <div class="card p-6 mb-4"><p class="font-display text-xl leading-relaxed mb-5" id="qText">—</p><div class="space-y-3" id="qOptions"></div><div id="qExplain" class="mt-5 p-4 rounded-xl bg-purple-50 border-2 border-purple-200 hidden"><p class="text-sm"><strong class="text-purple-700">Explanation:</strong> <span id="qExplainText"></span></p></div><button id="qNextBtn" onclick="nextQuiz()" class="hidden mt-4 w-full bg-purple-600 text-white py-3 rounded-xl font-semibold">Next →</button></div>
+  </div>
+  <div id="quizDone" class="hidden card p-8 text-center"><div class="text-6xl mb-3" id="qResultEmoji">🎉</div><h3 class="font-display text-3xl font-bold mb-2" id="qResultTitle">Nice work!</h3><p class="text-xl text-slate-600 mb-1">Score: <span class="font-bold gradient-text"><span id="qFinalScore">0</span>/<span id="qFinalTotal">0</span></span></p><p class="text-sm text-slate-500 mb-6">Accuracy: <span id="qFinalPct">0</span>% · +<span id="qFinalXp">0</span> XP</p><div class="flex gap-3 justify-center"><button onclick="resetQuiz()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">Another</button><button onclick="switchTab('home')" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-semibold">Home</button></div></div>
+</section>
+
+<section id="tab-mock" class="tab-section hidden">
+  <div id="mockSetup">
+    <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-2">⏱️ Full Mock Exam</h2><p class="text-sm text-slate-600 mb-4">Simulates real BMLA final: <strong>3 hours, solve 6 of 7 questions × 4 marks = 24 total</strong>. App uses MCQs; real exam is long-form. Builds stamina + pattern recognition.</p>
+      <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 mb-4"><p class="text-sm text-amber-900"><strong>⚠️ Before you start:</strong></p><ul class="text-sm text-amber-900 list-disc list-inside mt-1 space-y-1"><li>Close other tabs, silence phone.</li><li>Keep pen + paper handy.</li><li>Don't pause the timer.</li></ul></div>
+      <div class="grid sm:grid-cols-2 gap-3 mb-4"><label class="block"><span class="text-sm font-medium">Mode</span><select id="mockMode" class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white"><option value="full">Full 3h (15 Q)</option><option value="half">Half (90m, 8 Q)</option><option value="speed">Speed (45m, 8 Q)</option></select></label></div>
+      <button onclick="startMock()" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-semibold text-lg shadow-lg">🔥 Begin</button>
+    </div>
+    <div class="card p-6"><h3 class="font-display font-semibold text-lg mb-3">📈 Past attempts</h3><div id="mockHistory" class="space-y-2"><p class="text-sm text-slate-400">No attempts yet.</p></div></div>
+  </div>
+  <div id="mockActive" class="hidden">
+    <div class="card p-4 mb-4 flex items-center justify-between sticky top-32 z-30 bg-white/90 backdrop-blur"><div><p class="text-xs text-slate-500">Q <span id="mNum">1</span>/<span id="mTotal">15</span></p><p class="text-xs text-purple-600 font-medium" id="mTopicLabel">—</p></div><div class="text-center"><p class="text-xs text-slate-500">Time left</p><p class="font-display text-2xl font-bold tabular-nums" id="mTimer">--:--</p></div><button onclick="submitMock(false)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Submit</button></div>
+    <div class="card p-6"><p class="font-display text-lg mb-4" id="mText">—</p><div class="space-y-3" id="mOptions"></div><div class="grid grid-cols-3 gap-2 mt-5"><button onclick="prevMock()" class="bg-slate-100 py-2 rounded-lg text-sm font-medium">← Prev</button><button onclick="flagMock()" id="mFlagBtn" class="bg-amber-100 py-2 rounded-lg text-sm font-medium">🚩 Flag</button><button onclick="nextMock()" class="bg-purple-600 text-white py-2 rounded-lg text-sm font-medium">Next →</button></div></div>
+    <div class="card p-4 mt-4"><p class="text-xs text-slate-500 mb-2">Navigator</p><div class="flex flex-wrap gap-1" id="mNav"></div></div>
+  </div>
+  <div id="mockResult" class="hidden">
+    <div class="card p-8 text-center mb-5"><div class="text-6xl mb-3" id="mResultEmoji">🎓</div><h3 class="font-display text-3xl font-bold mb-2" id="mResultTitle">Mock complete!</h3><p class="text-xl text-slate-600 mb-1">Score: <span class="font-bold gradient-text"><span id="mFinalScore">0</span>/<span id="mFinalTotal">0</span></span></p><p class="text-sm text-slate-500 mb-2">Time: <span id="mTimeUsed">—</span> · +<span id="mFinalXp">0</span> XP</p><p class="text-sm" id="mPredict"></p></div>
+    <div class="card p-6 mb-5"><h3 class="font-display font-semibold text-lg mb-3">📋 Review</h3><div id="mReview" class="space-y-3"></div></div>
+    <div class="flex gap-3 justify-center"><button onclick="resetMock()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">Another</button><button onclick="switchTab('cheatsheet')" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-semibold">Cheat Sheet</button></div>
+  </div>
+</section>
+
+<section id="tab-stats" class="tab-section hidden">
+  <div class="grid lg:grid-cols-2 gap-5 mb-5"><div class="card p-6"><h3 class="font-display font-semibold text-lg mb-3">📊 Accuracy by topic</h3><canvas id="chartAccuracy" height="200"></canvas></div><div class="card p-6"><h3 class="font-display font-semibold text-lg mb-3">📈 XP (7 days)</h3><canvas id="chartXp" height="200"></canvas></div></div>
+  <div class="card p-6 mb-5"><h3 class="font-display font-semibold text-lg mb-3">🔥 Activity (30 days)</h3><div id="heatmap" class="grid gap-1" style="grid-template-columns:repeat(15,1fr)"></div></div>
+  <div class="grid sm:grid-cols-4 gap-4"><div class="card p-5 text-center"><p class="text-xs uppercase tracking-wide text-slate-500">XP</p><p class="font-display text-3xl font-bold gradient-text" id="statXp">0</p></div><div class="card p-5 text-center"><p class="text-xs uppercase tracking-wide text-slate-500">Flashcards</p><p class="font-display text-3xl font-bold gradient-text" id="statFlash">0</p></div><div class="card p-5 text-center"><p class="text-xs uppercase tracking-wide text-slate-500">Quizzes</p><p class="font-display text-3xl font-bold gradient-text" id="statQuiz">0</p></div><div class="card p-5 text-center"><p class="text-xs uppercase tracking-wide text-slate-500">Mocks</p><p class="font-display text-3xl font-bold gradient-text" id="statMock">0</p></div></div>
+</section>
+
+</main>
+
+<div id="levelUpModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4"><div class="card card-glow p-8 max-w-md text-center"><div class="text-7xl mb-3 float">🎉</div><h2 class="font-display text-3xl font-bold gradient-text mb-2">LEVEL UP!</h2><p class="text-lg mb-4">You are now <strong id="lvlName">—</strong></p><button onclick="document.getElementById('levelUpModal').classList.add('hidden');document.getElementById('levelUpModal').classList.remove('flex')" class="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold">Continue →</button></div></div>
+
+<footer class="text-center text-xs text-slate-400 py-8 px-4">Built for the May 25, 2026 final · MTS 212 BMLA · IBA Karachi<br>Sources: Lay 3rd ed · Budnick 3rd ed · your course materials<br>Progress saves to your browser. Hit ↻ reset to wipe.</footer>
+
+<!-- Data file (must be in same folder as this HTML) -->
+<script src="BMLA_Quest_data.js"></script>
+
+<script>
+const STORAGE_KEY = 'bmla_quest_v2';
+let state = loadState();
+function loadState() { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); if (s) return Object.assign(defaultState(), s); } catch(e) {} return defaultState(); }
+function defaultState() { const lectures = {}; LECTURES.forEach(l => lectures[l.n] = 'not-started'); return { xp:0, streak:0, lastActive:null, lectures, badges:[], flash:{}, quiz:{taken:0,byTopic:{}}, mock:{attempts:[]}, activity:{}, sound:true }; }
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function todayKey() { return new Date().toISOString().slice(0,10); }
+function bumpActivity(xp) {
+  const k = todayKey(); state.activity[k] = (state.activity[k]||0) + xp;
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (state.lastActive) { const last = new Date(state.lastActive); last.setHours(0,0,0,0); const diff = Math.round((today-last)/86400000); if (diff === 1) state.streak += 1; else if (diff > 1) state.streak = 1; }
+  else state.streak = 1;
+  state.lastActive = today.toISOString();
+}
+function addXP(amount) {
+  const oldLvl = currentLevel(); state.xp += amount; bumpActivity(amount);
+  const newLvl = currentLevel();
+  if (newLvl.name !== oldLvl.name) showLevelUp(newLvl.name);
+  saveState(); refreshHeader(); refreshHome();
+}
+function currentLevel() { let lvl = LEVELS[0]; for (const l of LEVELS) if (state.xp >= l.min) lvl = l; return lvl; }
+function nextLevelInfo() { const cur = currentLevel(); const idx = LEVELS.findIndex(l => l.name === cur.name); const nxt = LEVELS[idx+1] || cur; return { cur, nxt, pct: Math.min(100, ((state.xp-cur.min)/(nxt.min-cur.min))*100) }; }
+function awardBadge(id) { if (state.badges.includes(id)) return; state.badges.push(id); saveState(); const b = BADGES.find(x => x.id === id); if (b) toast(`🎖️ Badge: ${b.name}`); refreshHome(); }
+function checkBadges() {
+  if (Object.keys(state.flash).length > 0) awardBadge('first_flash');
+  if (state.quiz.taken > 0) awardBadge('first_quiz');
+  if (Object.values(state.lectures).some(s => s !== 'not-started')) awardBadge('first_topic');
+  if (state.streak >= 3) awardBadge('streak_3');
+  if (state.streak >= 5) awardBadge('streak_5');
+  TOPICS.forEach(t => { const lecs = LECTURES.filter(l => l.topic === t.id); if (lecs.every(l => state.lectures[l.n] === 'mastered')) awardBadge('topic_master'); });
+  if (LECTURES.every(l => state.lectures[l.n] === 'mastered')) awardBadge('all_mastered');
+  const eigen = state.quiz.byTopic.eigen; if (eigen && eigen.total >= 5 && eigen.correct/eigen.total >= 0.9) awardBadge('eigenking');
+  const lp = state.quiz.byTopic.lp; if (lp && lp.total >= 5 && lp.correct/lp.total >= 0.9) awardBadge('simplex_sniper');
+  if (state.mock.attempts.length > 0) awardBadge('mock_done');
+  if (state.mock.attempts.some(a => a.mode === 'full' && a.pct >= 70)) awardBadge('mock_pass');
+}
+function toast(msg) { const t = document.createElement('div'); t.className = 'fixed bottom-6 right-6 bg-purple-600 text-white px-5 py-3 rounded-xl shadow-2xl font-semibold z-50 animate-pop'; t.textContent = msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 3000); }
+function showLevelUp(name) { document.getElementById('lvlName').textContent = name; const m = document.getElementById('levelUpModal'); m.classList.remove('hidden'); m.classList.add('flex'); confetti(); beep(880,0.15); setTimeout(()=>beep(1320,0.2), 150); }
+function confetti() { const colors = ['#a855f7','#ec4899','#fbbf24','#34d399','#38bdf8']; for (let i = 0; i < 80; i++) { const p = document.createElement('div'); p.className = 'confetti-piece'; p.style.left = (Math.random()*100)+'vw'; p.style.top = '-20px'; p.style.background = colors[Math.floor(Math.random()*colors.length)]; p.style.transform = `rotate(${Math.random()*360}deg)`; p.style.transition = `top 2.2s ease-in, left 2.2s ease-out, opacity 0.5s ease-out`; document.body.appendChild(p); requestAnimationFrame(() => { p.style.top = (80+Math.random()*15)+'vh'; p.style.left = (parseFloat(p.style.left)+(Math.random()-0.5)*30)+'vw'; setTimeout(()=>p.style.opacity = '0', 1800); }); setTimeout(()=>p.remove(), 2500); } }
+let audioCtx;
+function beep(freq=440, dur=0.1) { if (!state.sound) return; try { audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='triangle'; o.frequency.value = freq; g.gain.value = 0.05; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+dur); o.stop(audioCtx.currentTime+dur); } catch(e) {} }
+function toggleSound() { state.sound = !state.sound; saveState(); document.getElementById('soundBtn').textContent = state.sound ? '🔊' : '🔇'; }
+function resetAll() { if (!confirm('Reset ALL progress?')) return; localStorage.removeItem(STORAGE_KEY); state = defaultState(); saveState(); fullRefresh(); toast('Reset'); }
+function switchTab(name) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if (name === 'stats') renderStats();
+  if (name === 'syllabus') renderSyllabus();
+  if (name === 'cheatsheet') renderCheatsheet();
+  if (name === 'tutorials') renderTutorials();
+  if (name === 'flashcards') initFlash();
+  if (name === 'quiz') refreshQuizSetup();
+  if (name === 'mock') refreshMockSetup();
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+function refreshHeader() { document.getElementById('hdrXP').textContent = state.xp+' XP'; document.getElementById('hdrStreak').textContent = state.streak; document.getElementById('hdrLevel').textContent = currentLevel().name; document.getElementById('soundBtn').textContent = state.sound ? '🔊' : '🔇'; }
+function refreshHome() {
+  const exam = new Date('2026-05-25T10:00:00'); const now = new Date(); const ms = exam - now;
+  if (ms <= 0) { document.getElementById('countdownDays').textContent = 'NOW'; document.getElementById('countdownExtra').textContent = 'You\'ve got this. 🍀'; }
+  else { const days = Math.floor(ms/86400000); const hours = Math.floor((ms%86400000)/3600000); document.getElementById('countdownDays').textContent = days; document.getElementById('countdownExtra').textContent = `${days} days, ${hours} hours · stay sharp 🧠`; }
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' });
+  const ni = nextLevelInfo();
+  document.getElementById('homeLevel').textContent = ni.cur.name;
+  document.getElementById('xpCurrent').textContent = state.xp;
+  document.getElementById('xpNeeded').textContent = ni.nxt.min;
+  document.getElementById('nextLevel').textContent = ni.nxt.name === ni.cur.name ? 'MAX' : ni.nxt.name;
+  document.getElementById('xpBar').style.width = ni.pct+'%';
+  const mastered = LECTURES.filter(l => state.lectures[l.n] === 'mastered').length;
+  const studied = LECTURES.filter(l => state.lectures[l.n] !== 'not-started').length;
+  const pct = Math.round((mastered/LECTURES.length)*100);
+  document.getElementById('overallPct').textContent = pct+'%';
+  document.getElementById('overallLabel').textContent = `${mastered}/${LECTURES.length} mastered (${studied} touched)`;
+  const circ = 2*Math.PI*70;
+  document.getElementById('ringFill').style.strokeDashoffset = circ-(pct/100)*circ;
+  renderTodayPlan(); renderBadges();
+}
+function renderTodayPlan() {
+  const days = Math.max(0, Math.floor((new Date('2026-05-25T10:00:00')-new Date())/86400000));
+  const plans = {
+    6: ['📚 <strong>Day 1 — Systems + REF/RREF</strong> (7–11 PM)', '📖 Tutorials → Chapter 1 deep dive', '🃏 30 flashcards on systems', '📂 Files: ref_rref, practice 1.4/1.5, Assignment 1'],
+    5: ['📚 <strong>Day 2 — Linear Indep + Span + Transformations</strong>', '🌅 9–1 PM: independence, span', '🌇 2–6 PM: transformations, 1-1, onto, T⁻¹', '🌙 7–9 PM: redo Assignments 1 & 2'],
+    4: ['📚 <strong>Day 3 — Invertible Matrices + Determinants</strong>', '🌅 9–1 PM: IMT, [A|I]→[I|A⁻¹]', '🌇 2–6 PM: cofactor, det properties, Cramer\'s', '🌙 7–9 PM: LA Summary review'],
+    3: ['📚 <strong>Day 4 — Eigenvalues + Diagonalization + Markov ⭐</strong>', '🌅 9–1 PM: det(A−λI)=0', '🌇 2–6 PM: A=PDP⁻¹, Markov steady state', '🌙 7–9 PM: Quiz 3 + defective drill'],
+    2: ['📚 <strong>Day 5 — LP Graphical + Simplex</strong>', '🌅 9–1 PM: formulation, corner-point theorem', '🌇 2–6 PM: simplex tableau', '🌙 7–9 PM: LP applications'],
+    1: ['📚 <strong>Day 6 — Transportation + FULL REVISION</strong>', '🌅 9–12 PM: NWCM, VAM, MODI', '🌇 12–5 PM: <strong>Timed mid-term redo</strong>', '🌙 5–8 PM: print cheat sheet, sleep early'],
+    0: ['🌅 7–9 AM: Cheat Sheet review only', '🍳 Breakfast, water, calm', '🎯 10–1 PM: <strong>FINAL — MTC-19, Tabba Hall 8</strong> · 6 of 7 × 4 marks']
+  };
+  const plan = plans[days] || ['Pick a section and chip away!'];
+  const wrap = document.getElementById('todayPlan');
+  wrap.innerHTML = plan.map((p,i) => `<div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"><div class="text-lg">${['1️⃣','2️⃣','3️⃣','4️⃣'][i] || '✨'}</div><div class="flex-1 text-sm">${p}</div></div>`).join('');
+}
+function renderBadges() { const wrap = document.getElementById('badgeGrid'); document.getElementById('badgeCount').textContent = state.badges.length; wrap.innerHTML = BADGES.map(b => { const has = state.badges.includes(b.id); return `<div class="text-center p-3 rounded-xl ${has?'bg-gradient-to-br from-amber-100 to-yellow-200':'bg-slate-50 badge-locked'}" title="${b.desc}"><div class="text-3xl mb-1">${b.icon}</div><p class="text-xs font-medium leading-tight">${b.name}</p></div>`; }).join(''); }
+function renderSyllabus() {
+  const sum = document.getElementById('topicSummary');
+  sum.innerHTML = TOPICS.map(t => { const lecs = LECTURES.filter(l => l.topic === t.id); const mastered = lecs.filter(l => state.lectures[l.n] === 'mastered').length; const pct = Math.round((mastered/lecs.length)*100); return `<div class="text-center p-3 rounded-xl border-2" style="border-color:${t.color}33;background:${t.color}11"><div class="text-2xl mb-1">${t.emoji}</div><p class="text-xs font-medium leading-tight">${t.name}</p><p class="text-xs font-bold mt-1" style="color:${t.color}">${pct}%</p></div>`; }).join('');
+  const list = document.getElementById('syllabusList');
+  list.innerHTML = TOPICS.map(t => { const lecs = LECTURES.filter(l => l.topic === t.id); const items = lecs.map(l => { const status = state.lectures[l.n] || 'not-started'; return `<div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100"><div class="flex items-center gap-3 flex-1"><span class="font-mono text-xs bg-slate-100 px-2 py-1 rounded">L${l.n.toString().padStart(2,'0')}</span><span class="text-sm">${l.title}</span></div><div class="flex gap-1">${STATUS_FLOW.map(s => `<button onclick="setLectureStatus(${l.n},'${s}')" class="text-xs px-2 py-1 rounded-lg status-${s} ${status===s?'ring-2 ring-purple-500':''}" title="${STATUS_LABEL[s]}">${s==='not-started'?'·':s[0].toUpperCase()}</button>`).join('')}</div></div>`; }).join(''); return `<details class="card" open><summary class="p-4 flex items-center gap-3 hover:bg-purple-50 rounded-t-xl"><span class="text-2xl">${t.emoji}</span><div class="flex-1"><h3 class="font-display font-semibold">${t.name}</h3><p class="text-xs text-slate-500">${t.desc}</p></div><span class="text-xs font-bold" style="color:${t.color}">${lecs.filter(l => state.lectures[l.n]==='mastered').length}/${lecs.length}</span></summary><div class="p-4 pt-0 space-y-2">${items}</div></details>`; }).join('');
+}
+function setLectureStatus(n, status) { const old = state.lectures[n]; state.lectures[n] = status; if (old === 'not-started' && status !== 'not-started') addXP(10); if (status === 'mastered' && old !== 'mastered') addXP(25); saveState(); renderSyllabus(); refreshHome(); checkBadges(); }
+function renderCheatsheet() { const wrap = document.getElementById('cheatsheetContent'); wrap.innerHTML = CHEATSHEET.map(section => { const topic = TOPICS.find(t => t.id === section.topicId); return `<div class="card p-6"><h3 class="font-display font-bold text-xl mb-4 flex items-center gap-2" style="color:${topic.color}">${topic.emoji} ${section.title}</h3><div class="space-y-4">${section.items.map(it => `<div class="border-l-4 pl-4" style="border-color:${topic.color}66"><p class="font-semibold text-sm mb-1">${it.h}</p><p class="text-sm text-slate-700 leading-relaxed">${it.b}</p></div>`).join('')}</div></div>`; }).join(''); }
+let tutCurrentTopic = 'systems';
+function renderTutorials() { const nav = document.getElementById('tutTopicNav'); nav.innerHTML = TOPICS.map(t => { const tut = TUTORIALS[t.id]; const has = tut && tut.lectures && tut.lectures.length > 0; const active = t.id === tutCurrentTopic; return `<button onclick="selectTutTopic('${t.id}')" class="px-3 py-2 rounded-xl text-sm font-medium border-2 transition ${active?'border-purple-500 bg-purple-100 text-purple-800':'border-slate-200 bg-white hover:border-purple-300'} ${has?'':'opacity-60'}" title="${has?'Open':'Coming v3'}">${t.emoji} ${t.name} ${has?'':'<span class="text-xs">(soon)</span>'}</button>`; }).join(''); renderTutContent(); }
+function selectTutTopic(id) { tutCurrentTopic = id; renderTutorials(); }
+function renderTutContent() {
+  const tut = TUTORIALS[tutCurrentTopic]; const wrap = document.getElementById('tutorialContent');
+  if (!tut) { wrap.innerHTML = ''; return; }
+  if (!tut.lectures || tut.lectures.length === 0) { wrap.innerHTML = `<div class="card p-8 text-center"><div class="text-5xl mb-3">🚧</div><h3 class="font-display text-xl font-bold mb-2">${tut.title}</h3><p class="text-slate-600">${tut.intro}</p></div>`; return; }
+  let html = `<div class="card p-6 mb-5"><h3 class="font-display font-bold text-2xl mb-2">${tut.title}</h3><p class="text-sm text-slate-600">${tut.intro}</p></div>`;
+  tut.lectures.forEach((lec, idx) => {
+    html += `<details class="card p-0 mb-4" ${idx===0?'open':''}><summary class="p-5 hover:bg-purple-50 rounded-t-2xl"><div class="flex items-center gap-3"><span class="text-2xl">📘</span><div class="flex-1"><h4 class="font-display font-semibold text-lg">${lec.title}</h4><p class="text-xs text-slate-500">${lec.examples.length} examples · ${lec.learn.length} goals</p></div><span class="text-xs text-purple-500">▼</span></div></summary><div class="p-6 pt-0"><div class="mb-5 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200"><p class="text-xs uppercase tracking-wide text-amber-700 font-bold mb-2">🎯 Goals</p><ul class="text-sm space-y-1">${lec.learn.map(l => `<li>• ${l}</li>`).join('')}</ul></div><div class="mb-5"><p class="text-xs uppercase tracking-wide text-purple-700 font-bold mb-3">📚 Theory</p><div class="space-y-3">${lec.theory.map(t => `<div class="border-l-4 border-purple-300 pl-4 py-1"><p class="font-semibold text-sm mb-1">${t.h}</p><div class="text-sm text-slate-700 leading-relaxed">${t.b}</div></div>`).join('')}</div></div><div><p class="text-xs uppercase tracking-wide text-pink-700 font-bold mb-3">✏️ Worked Examples</p><div class="space-y-4">${lec.examples.map((ex, i) => `<div class="border-2 border-pink-100 rounded-xl overflow-hidden"><div class="bg-gradient-to-r from-pink-50 to-purple-50 p-4"><p class="font-semibold text-sm mb-1 text-pink-700">Example ${i+1}</p><div class="text-sm">${ex.q}</div></div><details class="bg-white"><summary class="p-3 text-sm font-medium text-purple-600 hover:bg-purple-50 cursor-pointer">▶ Show solution</summary><div class="p-4 pt-2"><ol class="space-y-2 text-sm list-decimal list-inside marker:text-purple-500 marker:font-bold">${ex.steps.map(s => `<li class="pl-1">${s}</li>`).join('')}</ol><div class="mt-3 p-3 rounded-lg bg-green-50 border-l-4 border-green-500"><p class="text-xs uppercase tracking-wide text-green-700 font-bold mb-1">✅ Answer</p><div class="text-sm">${ex.answer}</div></div></div></details></div>`).join('')}</div></div></div></details>`;
+  });
+  wrap.innerHTML = html;
+  if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([wrap]).catch(()=>{});
+}
+let flashDeck = [], flashPos = 0, flashStats = {good:0,hard:0,again:0}, flashSessionXp = 0;
+function initFlash() { const sel = document.getElementById('flashTopic'); if (sel.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; sel.appendChild(o); }); resetFlashDeck(); }
+function resetFlashDeck() { const topic = document.getElementById('flashTopic').value; flashDeck = FLASHCARDS.filter(c => topic === 'all' || c.t === topic); shuffleArr(flashDeck); flashPos = 0; flashStats = {good:0,hard:0,again:0}; flashSessionXp = 0; document.getElementById('flashDone').classList.add('hidden'); document.getElementById('flashCard').style.display = ''; document.getElementById('flashActions').style.display = 'none'; showFlash(); }
+function shuffleFlash() { shuffleArr(flashDeck); flashPos = 0; document.getElementById('flashCard').classList.remove('flipped'); showFlash(); }
+function showFlash() { if (flashPos >= flashDeck.length) return finishFlash(); const c = flashDeck[flashPos]; const topic = TOPICS.find(t => t.id === c.t); document.getElementById('flashFrontTopic').textContent = topic ? topic.emoji+' '+topic.name : c.t; document.getElementById('flashFront').textContent = c.q; document.getElementById('flashBack').textContent = c.a; document.getElementById('flashCard').classList.remove('flipped'); document.getElementById('flashActions').style.display = 'none'; document.getElementById('flashIdx').textContent = flashPos+1; document.getElementById('flashTotal').textContent = flashDeck.length; document.getElementById('flashProgress').style.width = ((flashPos+1)/flashDeck.length*100)+'%'; document.getElementById('flashXp').textContent = flashSessionXp; }
+function flipFlash() { document.getElementById('flashCard').classList.toggle('flipped'); if (document.getElementById('flashCard').classList.contains('flipped')) document.getElementById('flashActions').style.display = 'grid'; }
+function rateFlash(rating) { const c = flashDeck[flashPos]; state.flash[c.q] = rating; flashStats[rating]++; const xp = rating === 'good' ? 3 : rating === 'hard' ? 2 : 1; flashSessionXp += xp; addXP(xp); if (rating === 'good') beep(660,0.08); saveState(); checkBadges(); flashPos++; showFlash(); }
+function finishFlash() { document.getElementById('flashCard').style.display = 'none'; document.getElementById('flashActions').style.display = 'none'; document.getElementById('flashDone').classList.remove('hidden'); document.getElementById('dDoneGood').textContent = flashStats.good; document.getElementById('dDoneHard').textContent = flashStats.hard; document.getElementById('dDoneAgain').textContent = flashStats.again; if (flashStats.good >= 10) confetti(); }
+let quizSet = [], quizPos = 0, quizScore = 0, quizAnswered = 0, quizXp = 0;
+function refreshQuizSetup() { document.getElementById('quizSetup').classList.remove('hidden'); document.getElementById('quizActive').classList.add('hidden'); document.getElementById('quizDone').classList.add('hidden'); const sel = document.getElementById('quizTopic'); if (sel.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; sel.appendChild(o); }); const wrap = document.getElementById('quizAccuracy'); wrap.innerHTML = TOPICS.map(t => { const s = state.quiz.byTopic[t.id]; const pct = s && s.total ? Math.round(s.correct/s.total*100) : 0; const txt = s && s.total ? `${s.correct}/${s.total} · ${pct}%` : 'No data'; return `<div><div class="flex justify-between text-xs mb-1"><span>${t.emoji} ${t.name}</span><span class="text-slate-500">${txt}</span></div><div class="bg-slate-100 rounded-full h-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%;background:${t.color}"></div></div></div>`; }).join(''); }
+function startQuiz() { const topic = document.getElementById('quizTopic').value; const count = parseInt(document.getElementById('quizCount').value, 10); let pool = QUIZ.filter(q => topic === 'all' || q.t === topic); shuffleArr(pool); quizSet = pool.slice(0, Math.min(count, pool.length)); quizPos = 0; quizScore = 0; quizAnswered = 0; quizXp = 0; document.getElementById('quizSetup').classList.add('hidden'); document.getElementById('quizActive').classList.remove('hidden'); document.getElementById('qTotal').textContent = quizSet.length; showQuiz(); }
+function showQuiz() { const q = quizSet[quizPos]; const topic = TOPICS.find(t => t.id === q.t); document.getElementById('qNum').textContent = quizPos+1; document.getElementById('qTopic').textContent = topic ? `${topic.emoji} ${topic.name}` : q.t; document.getElementById('qScore').textContent = quizScore; document.getElementById('qAnswered').textContent = quizAnswered; document.getElementById('qText').textContent = q.q; const opts = document.getElementById('qOptions'); opts.innerHTML = q.o.map((opt, i) => `<div class="quiz-option p-4 rounded-xl border-2 border-slate-200 bg-white" onclick="answerQuiz(${i})"><span class="font-mono text-purple-500 mr-2">${String.fromCharCode(65+i)}.</span>${opt}</div>`).join(''); document.getElementById('qExplain').classList.add('hidden'); document.getElementById('qNextBtn').classList.add('hidden'); }
+function answerQuiz(i) { const q = quizSet[quizPos]; if (!document.getElementById('qNextBtn').classList.contains('hidden')) return; const opts = document.querySelectorAll('#qOptions .quiz-option'); opts.forEach((o,idx) => { o.style.pointerEvents = 'none'; if (idx === q.c) o.classList.add('correct'); if (idx === i && i !== q.c) o.classList.add('wrong'); }); quizAnswered++; const correct = i === q.c; state.quiz.byTopic[q.t] = state.quiz.byTopic[q.t] || {correct:0,total:0}; state.quiz.byTopic[q.t].total++; if (correct) { state.quiz.byTopic[q.t].correct++; quizScore++; quizXp += 5; addXP(5); beep(880,0.1); } else beep(220,0.15); document.getElementById('qScore').textContent = quizScore; document.getElementById('qAnswered').textContent = quizAnswered; document.getElementById('qExplainText').textContent = q.e; document.getElementById('qExplain').classList.remove('hidden'); document.getElementById('qNextBtn').classList.remove('hidden'); saveState(); }
+function nextQuiz() { quizPos++; if (quizPos >= quizSet.length) return finishQuiz(); showQuiz(); }
+function finishQuiz() { state.quiz.taken++; saveState(); document.getElementById('quizActive').classList.add('hidden'); document.getElementById('quizDone').classList.remove('hidden'); document.getElementById('qFinalScore').textContent = quizScore; document.getElementById('qFinalTotal').textContent = quizSet.length; const pct = Math.round(quizScore/quizSet.length*100); document.getElementById('qFinalPct').textContent = pct; document.getElementById('qFinalXp').textContent = quizXp; const emoji = pct === 100 ? '💯' : pct >= 80 ? '🎉' : pct >= 60 ? '👍' : pct >= 40 ? '💪' : '📚'; const title = pct === 100 ? 'Perfect!' : pct >= 80 ? 'Excellent!' : pct >= 60 ? 'Good!' : pct >= 40 ? 'Keep going!' : 'Time to review'; document.getElementById('qResultEmoji').textContent = emoji; document.getElementById('qResultTitle').textContent = title; if (pct === 100 && quizSet.length >= 5) { awardBadge('quiz_perfect'); confetti(); } checkBadges(); }
+function resetQuiz() { refreshQuizSetup(); }
+let mockSet = [], mockAns = [], mockPos = 0, mockFlags = new Set(), mockTimer = null, mockEnd = 0;
+function refreshMockSetup() { document.getElementById('mockSetup').classList.remove('hidden'); document.getElementById('mockActive').classList.add('hidden'); document.getElementById('mockResult').classList.add('hidden'); const wrap = document.getElementById('mockHistory'); if (state.mock.attempts.length === 0) wrap.innerHTML = '<p class="text-sm text-slate-400">No attempts yet.</p>'; else wrap.innerHTML = state.mock.attempts.slice().reverse().map(a => `<div class="flex justify-between items-center p-3 rounded-lg bg-slate-50"><div><p class="text-sm font-medium">${a.mode==='full'?'Full 3h':a.mode==='half'?'Half (90m)':'Speed (45m)'}</p><p class="text-xs text-slate-500">${new Date(a.when).toLocaleString()} · ${a.timeStr}</p></div><div class="text-right"><p class="font-display font-bold gradient-text">${a.score}/${a.total}</p><p class="text-xs text-slate-500">${a.pct}%</p></div></div>`).join(''); }
+function startMock() { const mode = document.getElementById('mockMode').value; let total, mins; if (mode === 'full') { total = 15; mins = 180; } else if (mode === 'half') { total = 8; mins = 90; } else { total = 8; mins = 45; } let pool = MOCK.slice(); shuffleArr(pool); mockSet = pool.slice(0, Math.min(total, pool.length)); if (mockSet.length < total) { const extra = QUIZ.slice(); shuffleArr(extra); for (const q of extra) { if (mockSet.length >= total) break; if (!mockSet.includes(q)) mockSet.push(q); } } mockAns = new Array(mockSet.length).fill(null); mockFlags = new Set(); mockPos = 0; mockEnd = Date.now()+mins*60000; document.getElementById('mockSetup').classList.add('hidden'); document.getElementById('mockActive').classList.remove('hidden'); document.getElementById('mTotal').textContent = mockSet.length; showMock(); mockTimer = setInterval(updateMockTimer, 1000); updateMockTimer(); }
+function updateMockTimer() { const ms = mockEnd - Date.now(); if (ms <= 0) { submitMock(true); return; } const mins = Math.floor(ms/60000), secs = Math.floor((ms%60000)/1000); document.getElementById('mTimer').textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; if (ms < 5*60000) document.getElementById('mTimer').classList.add('text-red-500','animate-pulse'); }
+function showMock() { const q = mockSet[mockPos]; const topic = TOPICS.find(t => t.id === q.t); document.getElementById('mNum').textContent = mockPos+1; document.getElementById('mTopicLabel').textContent = topic ? `${topic.emoji} ${topic.name}` : q.t; document.getElementById('mText').textContent = q.q; const opts = document.getElementById('mOptions'); opts.innerHTML = q.o.map((opt, i) => `<div class="quiz-option p-3 rounded-xl border-2 ${mockAns[mockPos]===i?'border-purple-500 bg-purple-50':'border-slate-200 bg-white'}" onclick="pickMock(${i})"><span class="font-mono text-purple-500 mr-2">${String.fromCharCode(65+i)}.</span>${opt}</div>`).join(''); document.getElementById('mFlagBtn').textContent = mockFlags.has(mockPos) ? '🚩 Unflag' : '🚩 Flag'; renderMockNav(); }
+function renderMockNav() { const wrap = document.getElementById('mNav'); wrap.innerHTML = mockSet.map((_,i) => { let cls = 'w-9 h-9 rounded-lg text-xs font-bold flex items-center justify-center cursor-pointer '; if (i === mockPos) cls += 'bg-purple-600 text-white'; else if (mockAns[i] !== null) cls += 'bg-green-100 text-green-700'; else cls += 'bg-slate-100 text-slate-500'; const flag = mockFlags.has(i) ? '🚩' : (i+1); return `<div class="${cls}" onclick="jumpMock(${i})">${flag}</div>`; }).join(''); }
+function pickMock(i) { mockAns[mockPos] = i; showMock(); }
+function nextMock() { if (mockPos < mockSet.length-1) { mockPos++; showMock(); } else submitMock(false); }
+function prevMock() { if (mockPos > 0) { mockPos--; showMock(); } }
+function flagMock() { if (mockFlags.has(mockPos)) mockFlags.delete(mockPos); else mockFlags.add(mockPos); showMock(); }
+function jumpMock(i) { mockPos = i; showMock(); }
+function submitMock(timeout) { if (!timeout && !confirm('Submit?')) return; clearInterval(mockTimer); const mode = document.getElementById('mockMode').value; let mins; if (mode === 'full') mins = 180; else if (mode === 'half') mins = 90; else mins = 45; const elapsedMs = (mins*60000)-Math.max(0, mockEnd-Date.now()); const usedMin = Math.floor(elapsedMs/60000), usedSec = Math.floor((elapsedMs%60000)/1000); let score = 0; mockSet.forEach((q,i) => { if (mockAns[i] === q.c) score++; }); const pct = Math.round(score/mockSet.length*100); state.mock.attempts.push({ when:Date.now(), mode, score, total:mockSet.length, pct, timeStr:`${usedMin}m ${usedSec}s` }); let xp = 100; if (mode === 'full' && pct === 100) xp = 200; else if (mode === 'full' && pct >= 70) xp = 150; addXP(xp); saveState(); checkBadges(); document.getElementById('mockActive').classList.add('hidden'); document.getElementById('mockResult').classList.remove('hidden'); document.getElementById('mFinalScore').textContent = score; document.getElementById('mFinalTotal').textContent = mockSet.length; document.getElementById('mTimeUsed').textContent = `${usedMin}m ${usedSec}s`; document.getElementById('mFinalXp').textContent = xp; const emoji = pct === 100 ? '💯' : pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '😬'; const title = pct === 100 ? 'Perfect!' : pct >= 80 ? 'Outstanding!' : pct >= 60 ? 'Solid!' : pct >= 40 ? 'Keep grinding!' : 'Review time'; document.getElementById('mResultEmoji').textContent = emoji; document.getElementById('mResultTitle').textContent = title; document.getElementById('mPredict').innerHTML = pct >= 70 ? '🎯 At this pace you\'re likely to <strong class="text-green-700">ace</strong> the real exam.' : pct >= 50 ? '⚠️ <strong class="text-amber-700">Passing territory</strong>, gaps remain.' : '🚨 <strong class="text-red-700">Drill weak topics</strong>, then retry.'; const rev = document.getElementById('mReview'); rev.innerHTML = mockSet.map((q,i) => { const correct = mockAns[i] === q.c; const userPick = mockAns[i] === null ? '<em>not answered</em>' : `${String.fromCharCode(65+mockAns[i])}. ${q.o[mockAns[i]]}`; return `<div class="border-l-4 ${correct?'border-green-500 bg-green-50':'border-red-500 bg-red-50'} pl-4 py-2 rounded-r"><p class="text-sm font-medium mb-1">Q${i+1}. ${q.q}</p><p class="text-xs">Your answer: ${userPick} ${correct?'✅':'❌'}</p><p class="text-xs">Correct: <strong>${String.fromCharCode(65+q.c)}. ${q.o[q.c]}</strong></p><p class="text-xs text-slate-600 mt-1">${q.e}</p></div>`; }).join(''); if (pct >= 80) confetti(); }
+function resetMock() { refreshMockSetup(); }
+let chartA = null, chartX = null;
+function renderStats() { document.getElementById('statXp').textContent = state.xp; document.getElementById('statFlash').textContent = Object.keys(state.flash).length; document.getElementById('statQuiz').textContent = state.quiz.taken; document.getElementById('statMock').textContent = state.mock.attempts.length; const labels = TOPICS.map(t => t.name); const data = TOPICS.map(t => { const s = state.quiz.byTopic[t.id]; return s && s.total ? Math.round(s.correct/s.total*100) : 0; }); const colors = TOPICS.map(t => t.color); if (chartA) chartA.destroy(); chartA = new Chart(document.getElementById('chartAccuracy'), { type:'bar', data:{ labels, datasets:[{ label:'Accuracy %', data, backgroundColor:colors, borderRadius:8 }] }, options:{ plugins:{legend:{display:false}}, scales:{ y:{ min:0, max:100, ticks:{callback:v=>v+'%'} } } } }); const days = []; const xpData = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); const k = d.toISOString().slice(0,10); days.push(d.toLocaleDateString('en-US',{weekday:'short'})); xpData.push(state.activity[k]||0); } if (chartX) chartX.destroy(); chartX = new Chart(document.getElementById('chartXp'), { type:'line', data:{ labels:days, datasets:[{ label:'XP', data:xpData, borderColor:'#a855f7', backgroundColor:'#a855f733', fill:true, tension:0.35, borderWidth:3, pointRadius:5, pointBackgroundColor:'#ec4899' }] }, options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} } }); const hm = document.getElementById('heatmap'); hm.innerHTML = ''; for (let i = 29; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); const k = d.toISOString().slice(0,10); const xp = state.activity[k]||0; let bg = '#f3e8ff'; if (xp > 0) bg = '#e9d5ff'; if (xp >= 20) bg = '#c084fc'; if (xp >= 50) bg = '#a855f7'; if (xp >= 100) bg = '#7e22ce'; const div = document.createElement('div'); div.className = 'aspect-square rounded'; div.style.background = bg; div.title = `${k}: ${xp} XP`; hm.appendChild(div); } }
+function shuffleArr(a) { for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); checkBadges(); }
+window.addEventListener('DOMContentLoaded', () => { fullRefresh(); setInterval(refreshHome, 60000); });
+</script>
+</body>
+</html>
