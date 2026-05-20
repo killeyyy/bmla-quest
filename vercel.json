@@ -1,0 +1,5 @@
+{
+    "redirects": [
+          { "source": "/", "destination": "/BMLA_Quest.html", "permanent": false }
+    ]
+}
