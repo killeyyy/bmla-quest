@@ -168,6 +168,125 @@ const PAST_PAPERS = [
       'The row reduction gives $\\det(A)=31$.'
     ],
     answer:'$A^{-1}=\\frac1{31}\\begin{bmatrix}-12&-2&19&-7\\\\-7&4&-7&14\\\\48&8&-45&28\\\\6&1&6&-12\\end{bmatrix}$. Also $\\det(A^T)=31$ and $(A^T)^{-1}=\\frac1{31}\\begin{bmatrix}-12&-7&48&6\\\\-2&4&8&1\\\\19&-7&-45&6\\\\-7&14&28&-12\\end{bmatrix}$.'
+  },
+  {
+    id:'final-2024-q1', paper:'BMLA Final Spring 2024', qn:1, marks:10, topic:'matrix',
+    title:'Invertibility with few calculations',
+    prompt:'Determine if $A=\\begin{bmatrix}-1&-3&0&1\\\\3&5&8&-3\\\\-2&-6&3&2\\\\0&-1&2&1\\end{bmatrix}$ is invertible. Use as few calculations as possible and justify your answer.',
+    steps:[
+      'A square matrix is invertible exactly when it has a pivot in every row and every column.',
+      'Row-reducing $A$ gives pivots in columns 1, 2, 3, and 4.',
+      'Equivalently, the determinant is nonzero: $\\det(A)=12$.',
+      'Since the determinant is not zero, the columns are linearly independent and $A$ is invertible.'
+    ],
+    answer:'$A$ is invertible because $\\det(A)=12\\ne0$ and the row reduction has four pivots.'
+  },
+  {
+    id:'final-2024-q2', paper:'BMLA Final Spring 2024', qn:2, marks:5, topic:'det',
+    title:'Linear independence by determinant',
+    prompt:'Use determinants to decide if $v_1=\\begin{bmatrix}7\\\\-4\\\\-6\\end{bmatrix}$, $v_2=\\begin{bmatrix}-8\\\\5\\\\7\\end{bmatrix}$, and $v_3=\\begin{bmatrix}7\\\\0\\\\-5\\end{bmatrix}$ are linearly independent.',
+    steps:[
+      'Place the vectors as columns of a matrix: $B=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$.',
+      'For three vectors in $\\mathbb R^3$, the set is linearly independent exactly when $\\det(B)\\ne0$.',
+      'Compute the determinant: $\\det(B)=-1$.',
+      'Because the determinant is nonzero, the only solution of $c_1v_1+c_2v_2+c_3v_3=0$ is the trivial solution.'
+    ],
+    answer:'The vectors are linearly independent because $\\det(B)=-1\\ne0$.'
+  },
+  {
+    id:'final-2024-q3', paper:'BMLA Final Spring 2024', qn:3, marks:15, topic:'eigen',
+    title:'Diagonalization',
+    prompt:'Diagonalize $A=\\begin{bmatrix}2&2&-1\\\\1&3&-1\\\\-1&-2&2\\end{bmatrix}$, if possible.',
+    steps:[
+      'Find the characteristic equation from $\\det(A-\\lambda I)=0$.',
+      '$\\det(A-\\lambda I)=-(\\lambda-1)^2(\\lambda-5)$, so the eigenvalues are $\\lambda=1$ with algebraic multiplicity 2 and $\\lambda=5$.',
+      'For $\\lambda=1$, solving $(A-I)x=0$ gives $x_1+2x_2-x_3=0$, so two independent eigenvectors are $(-2,1,0)^T$ and $(1,0,1)^T$.',
+      'For $\\lambda=5$, solving $(A-5I)x=0$ gives $x_1+x_3=0$ and $x_2+x_3=0$, so one eigenvector is $(-1,-1,1)^T$.',
+      'There are three independent eigenvectors, so $A$ is diagonalizable.'
+    ],
+    answer:'One valid diagonalization is $A=PDP^{-1}$ with $P=\\begin{bmatrix}-2&1&-1\\\\1&0&-1\\\\0&1&1\\end{bmatrix}$ and $D=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\0&0&5\\end{bmatrix}$.'
+  },
+  {
+    id:'final-2024-q4', paper:'BMLA Final Spring 2024', qn:4, marks:10, topic:'det',
+    title:"Cramer's rule",
+    prompt:"Use Cramer's rule to solve the system $2x_1+x_2=7$, $-3x_1+x_3=-8$, $x_2+2x_3=-3$.",
+    steps:[
+      'Write the coefficient matrix and right-hand side: $A=\\begin{bmatrix}2&1&0\\\\-3&0&1\\\\0&1&2\\end{bmatrix}$ and $b=\\begin{bmatrix}7\\\\-8\\\\-3\\end{bmatrix}$.',
+      'Compute $D=\\det(A)=4$. Since $D\\ne0$, the system has a unique solution.',
+      'Replace column 1 by $b$ to get $D_1=6$, so $x_1=D_1/D=6/4=3/2$.',
+      'Replace column 2 by $b$ to get $D_2=16$, so $x_2=D_2/D=16/4=4$.',
+      'Replace column 3 by $b$ to get $D_3=-14$, so $x_3=D_3/D=-14/4=-7/2$.'
+    ],
+    answer:'$(x_1,x_2,x_3)=\\left(\\frac32,4,-\\frac72\\right)$.'
+  },
+  {
+    id:'final-2024-q5', paper:'BMLA Final Spring 2024', qn:5, marks:5, topic:'eigen',
+    title:'Eigenspace dimension with a parameter',
+    prompt:'It can be shown that the algebraic multiplicity of an eigenvalue $\\lambda$ is always greater than or equal to the dimension of its eigenspace. Find $h$ in $A=\\begin{bmatrix}4&2&3&3\\\\0&2&h&3\\\\0&0&4&14\\\\0&0&0&2\\end{bmatrix}$ such that the eigenspace for $\\lambda=4$ is two-dimensional.',
+    steps:[
+      'Compute $A-4I=\\begin{bmatrix}0&2&3&3\\\\0&-2&h&3\\\\0&0&0&14\\\\0&0&0&-2\\end{bmatrix}$.',
+      'The last two rows force $x_4=0$. The variable $x_1$ is free because the first column is zero.',
+      'For the eigenspace to be two-dimensional, $x_2$ and $x_3$ must have one free direction, so the two equations in $x_2,x_3$ must be dependent.',
+      'With $x_4=0$, the equations are $2x_2+3x_3=0$ and $-2x_2+hx_3=0$.',
+      'The second row must be $-1$ times the first row, so $h=-3$.'
+    ],
+    answer:'$h=-3$. Then the eigenspace for $\\lambda=4$ has two free variables and dimension 2.'
+  },
+  {
+    id:'final-2024-q6', paper:'BMLA Final Spring 2024', qn:6, marks:20, topic:'lp',
+    title:'Linear programming by simplex and graph',
+    prompt:'Solve the linear programming problem: minimize $z=4x_1-3x_2$ subject to $2x_1-4x_2\\ge20$, $4x_1+3x_2\\le12$, and $x_1,x_2\\ge0$. (a) Use the Simplex method. (b) Verify graphically. (c) Explain your answer.',
+    steps:[
+      'First check feasibility before optimizing. The first constraint gives $x_1-2x_2\\ge10$, so $x_1\\ge10+2x_2$.',
+      'Because $x_2\\ge0$, this implies $x_1\\ge10$.',
+      'Then $4x_1+3x_2\\ge4(10)+3(0)=40$.',
+      'But the second constraint requires $4x_1+3x_2\\le12$, which is impossible.',
+      'In a simplex setup, Phase I would fail because no feasible starting solution can satisfy both constraints.'
+    ],
+    answer:'The LP is infeasible. There is no point satisfying both constraints, so no minimum value exists.'
+  },
+  {
+    id:'final-2024-q7', paper:'BMLA Final Spring 2024', qn:7, marks:5, topic:'transassign',
+    title:'Transportation model formulation',
+    prompt:'A chemical company manufactures liquid oxygen at three plants and must supply four depots. Shipping costs per 1,000 gallons are: Plant 1 to depots 1-4: 50, 40, 35, 20 with supply 1000; Plant 2: 30, 45, 40, 60 with supply 1400; Plant 3: 60, 25, 50, 30 with supply 1800. Demands are Depot 1: 800, Depot 2: 750, Depot 3: 650, Depot 4: 900. If $x_{ij}$ is the number of gallons in thousands shipped from plant $i$ to depot $j$, formulate the LP model for the minimum-cost allocation schedule.',
+    steps:[
+      'Let $x_{ij}\\ge0$ be the thousand-gallon shipment from plant $i$ to depot $j$.',
+      'The objective is total shipping cost across all plant-depot routes.',
+      'Plant capacity constraints are upper bounds because capacities must not be violated.',
+      'Depot demand constraints are equalities because all depot demands must be satisfied.',
+      'Total supply is 4200 and total demand is 3100, so unused plant capacity is allowed by the capacity inequalities.'
+    ],
+    answer:'Minimize $Z=50x_{11}+40x_{12}+35x_{13}+20x_{14}+30x_{21}+45x_{22}+40x_{23}+60x_{24}+60x_{31}+25x_{32}+50x_{33}+30x_{34}$ subject to $x_{11}+x_{12}+x_{13}+x_{14}\\le1000$, $x_{21}+x_{22}+x_{23}+x_{24}\\le1400$, $x_{31}+x_{32}+x_{33}+x_{34}\\le1800$, $x_{11}+x_{21}+x_{31}=800$, $x_{12}+x_{22}+x_{32}=750$, $x_{13}+x_{23}+x_{33}=650$, $x_{14}+x_{24}+x_{34}=900$, and all $x_{ij}\\ge0$.'
+  },
+  {
+    id:'final-2024-q8', paper:'BMLA Final Spring 2024', qn:8, marks:10, topic:'transassign',
+    title:'Assignment model minimum days',
+    prompt:'Assign five programming tasks to five programmers to minimize total days. The estimated days matrix is $\\begin{bmatrix}20&15&18&20&25\\\\18&20&12&14&15\\\\21&23&25&27&25\\\\17&18&21&23&20\\\\18&18&16&19&20\\end{bmatrix}$, where rows are programmers 1-5 and columns are tasks 1-5.',
+    steps:[
+      'This is a balanced assignment problem: one programmer must be assigned to one task and each task must be assigned once.',
+      'Apply the Hungarian method by row-reducing and column-reducing the cost matrix, then cover zeros with the minimum number of lines.',
+      'After adjustments, a complete set of independent zeros corresponds to assignments $(1,2)$, $(2,4)$, $(3,1)$, $(4,5)$, and $(5,3)$.',
+      'Compute the total cost from the original table: $15+14+21+20+16=86$.',
+      'No lower assignment total is available after the Hungarian reduction, so this is optimal.'
+    ],
+    answer:'Minimum total time is $86$ days. Assign Programmer 1 -> Task 2, Programmer 2 -> Task 4, Programmer 3 -> Task 1, Programmer 4 -> Task 5, and Programmer 5 -> Task 3.'
+  },
+  {
+    id:'final-2024-q9', paper:'BMLA Final Spring 2024', qn:9, marks:20, topic:'transassign',
+    title:'Northwest corner and first stepping-stone move',
+    prompt:'For the transportation problem with costs $\\begin{bmatrix}19&30&50&10\\\\70&30&40&60\\\\40&8&70&20\\end{bmatrix}$, supplies $(7,9,18)$, and demands $(5,8,7,14)$: (a) use the Northwest corner method to determine an initial solution. (b) Use the Stepping stone algorithm to determine the first departing variable and first entering cell.',
+    steps:[
+      'Northwest corner starts at $O_1D_1$: allocate $\\min(7,5)=5$, leaving $O_1=2$ and satisfying $D_1$.',
+      'Move to $O_1D_2$: allocate $2$, exhausting $O_1$ and leaving $D_2=6$.',
+      'Move to $O_2D_2$: allocate $6$, leaving $O_2=3$ and satisfying $D_2$.',
+      'Move to $O_2D_3$: allocate $3$, exhausting $O_2$ and leaving $D_3=4$.',
+      'Move to $O_3D_3$: allocate $4$, satisfying $D_3$, then allocate the remaining $14$ to $O_3D_4$.',
+      'Initial cost is $5(19)+2(30)+6(30)+3(40)+4(70)+14(20)=1015$.',
+      'Using potentials from the basic cells gives opportunity costs: $\\Delta_{13}=10$, $\\Delta_{14}=20$, $\\Delta_{21}=51$, $\\Delta_{24}=70$, $\\Delta_{31}=-9$, and $\\Delta_{32}=-52$.',
+      'The most negative value is $\\Delta_{32}=-52$, so $O_3D_2$ is the first entering cell.',
+      'The stepping-stone loop is $O_3D_2(+)$, $O_3D_3(-)$, $O_2D_3(+)$, $O_2D_2(-)$. The minimum minus allocation is $\\min(4,6)=4$, so $O_3D_3$ departs.'
+    ],
+    answer:'Northwest initial allocation: $x_{11}=5$, $x_{12}=2$, $x_{22}=6$, $x_{23}=3$, $x_{33}=4$, $x_{34}=14$ with cost $1015$. First entering cell: $O_3D_2$. First departing variable: $x_{33}$.'
   }
 ];
 

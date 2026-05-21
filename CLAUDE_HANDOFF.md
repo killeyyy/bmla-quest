@@ -36,12 +36,19 @@ Until the exam is over, prioritize BMLA study utility over engineering perfectio
 - Final Syllabus + Book Index in the Syllabus tab.
 - `FINAL_INDEX` data maps official final scope to Lay/Budnick sections, pages, lectures, priorities, class files, and progress.
 - `Past Papers` tab with typed Spring 2026 midterm questions and concise solution steps.
+- Added `BMLA Final Spring 2024` to `Past Papers`: 9 exam questions from `C:\Users\Hassan Shah\Desktop\BMLA\BMLA_2024_Final_Paper_booklet1 (1).pdf`, with solved steps and final answers.
 - Matrix calculator at `/widgets/matrix.html` with:
   - RREF
   - determinant
   - inverse when invertible
   - real eigenvalues
 - PWA support for app-like mobile use on Vercel.
+
+## Pending Paper Import Phases
+
+1. Phase 2: import `Assignment_4.pdf` and `Assignment_3.pdf` from `C:\Users\Hassan Shah\Desktop\BMLA\Assignments\`.
+2. Phase 3: import `Assisgnment_1.pdf` and `Assisgnment_2.pdf` from the same folder.
+3. Keep each imported item as Past Paper-style collapsible cards with full question, solution steps, and final answer.
 
 ## Verification Commands
 
