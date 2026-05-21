@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#a855f7">
+<title>BMLA Quest - Matrix Calculator</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  body { font-family:'Inter',system-ui,sans-serif; background:
+    radial-gradient(circle at 20% 10%, #fce7ff 0%, transparent 38%),
+    radial-gradient(circle at 80% 90%, #dbeafe 0%, transparent 40%),
+    radial-gradient(circle at 50% 55%, #fef3c7 0%, transparent 55%),
+    #faf5ff; min-height:100vh; }
+  .font-display { font-family:'Fredoka',system-ui,sans-serif; }
+  .card { background:rgba(255,255,255,0.88); backdrop-filter:blur(12px); border:2px solid rgba(168,85,247,0.16); border-radius:1.25rem; box-shadow:0 12px 34px rgba(88,28,135,0.11); }
+  .gradient-text { background:linear-gradient(135deg,#a855f7,#ec4899,#f59e0b); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .app-link { background:linear-gradient(135deg,#111827,#1e3a8a); color:white; box-shadow:0 10px 30px rgba(30,58,138,0.24); }
+  .matrix-input { width:100%; min-width:0; text-align:center; font-weight:700; border:2px solid #e9d5ff; border-radius:0.8rem; padding:0.8rem 0.4rem; background:white; }
+  .matrix-input:focus { outline:none; border-color:#a855f7; box-shadow:0 0 0 4px rgba(168,85,247,0.16); }
+  .step { border-left:4px solid #a855f7; background:rgba(250,245,255,0.8); }
+  @media (max-width:640px) {
+    main { padding-left:0.75rem !important; padding-right:0.75rem !important; }
+    .card { border-radius:1rem; }
+    .mobile-stack { flex-direction:column; align-items:stretch !important; }
+    .mobile-stack > * { width:100%; }
+    .matrix-input { padding:0.7rem 0.2rem; font-size:0.95rem; }
+  }
+</style>
+</head>
+<body class="text-slate-800">
+<header class="sticky top-0 z-40 backdrop-blur-lg bg-white/75 border-b border-purple-200">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-display text-2xl font-bold gradient-text">Matrix Calculator</h1>
+      <p class="text-xs text-slate-500">RREF · determinant · inverse · real eigenvalues</p>
+    </div>
+    <a href="../BMLA_Quest.html" class="app-link px-4 py-2 rounded-xl text-sm font-semibold text-center">Back to BMLA Quest</a>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+  <section class="card p-5 mb-5">
+    <div class="flex flex-wrap items-start justify-between gap-4 mobile-stack">
+      <div>
+        <h2 class="font-display text-xl font-bold mb-1">Exam-mode matrix workbench</h2>
+        <p class="text-sm text-slate-600">Use integers, decimals, or fractions like <strong>3/4</strong>. Empty cells count as 0.</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="size-btn px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold" data-size="2">2x2</button>
+        <button class="size-btn px-4 py-2 rounded-xl bg-white border-2 border-purple-200 text-sm font-semibold" data-size="3">3x3</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid lg:grid-cols-[minmax(0,420px)_1fr] gap-5">
+    <div class="card p-5 h-fit">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <h3 class="font-display font-bold text-lg">Input matrix</h3>
+        <button onclick="clearMatrix()" class="text-xs text-slate-400 hover:text-red-500">clear</button>
+      </div>
+      <div id="matrixGrid" class="grid gap-3 mb-4"></div>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button onclick="loadSample('inverse')" class="bg-purple-50 hover:bg-purple-100 text-purple-800 px-3 py-2 rounded-lg text-sm font-medium">Invertible sample</button>
+        <button onclick="loadSample('singular')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-2 rounded-lg text-sm font-medium">Singular sample</button>
+        <button onclick="loadSample('eigen')" class="bg-pink-50 hover:bg-pink-100 text-pink-800 px-3 py-2 rounded-lg text-sm font-medium">Eigen sample</button>
+        <button onclick="loadSample('triangular')" class="bg-blue-50 hover:bg-blue-100 text-blue-800 px-3 py-2 rounded-lg text-sm font-medium">3x3 sample</button>
+      </div>
+      <button onclick="calculate()" class="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-xl font-semibold shadow-lg">Calculate</button>
+      <p id="errorBox" class="hidden mt-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3"></p>
+    </div>
+
+    <div id="results" class="space-y-4"></div>
+  </section>
+</main>
+
+<script>
+class Frac {
+  constructor(n, d=1n) {
+    n = BigInt(n); d = BigInt(d);
+    if (d === 0n) throw new Error('division by zero');
+    if (d < 0n) { n = -n; d = -d; }
+    const g = Frac.gcd(n < 0n ? -n : n, d);
+    this.n = n / g; this.d = d / g;
+  }
+  static gcd(a,b) { while (b) { const t = a % b; a = b; b = t; } return a || 1n; }
+  static zero() { return new Frac(0n); }
+  static one() { return new Frac(1n); }
+  static parse(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return Frac.zero();
+    if (/^-?\d+\/-?\d+$/.test(s)) { const [n,d] = s.split('/'); return new Frac(BigInt(n), BigInt(d)); }
+    if (/^-?\d+(\.\d+)?$/.test(s)) {
+      if (!s.includes('.')) return new Frac(BigInt(s));
+      const neg = s.startsWith('-');
+      const clean = neg ? s.slice(1) : s;
+      const [whole, dec] = clean.split('.');
+      const d = 10n ** BigInt(dec.length);
+      const n = BigInt(whole || '0') * d + BigInt(dec);
+      return new Frac(neg ? -n : n, d);
+    }
+    throw new Error(`Invalid entry: "${s}". Use integers, decimals, or fractions.`);
+  }
+  add(x){ return new Frac(this.n*x.d + x.n*this.d, this.d*x.d); }
+  sub(x){ return new Frac(this.n*x.d - x.n*this.d, this.d*x.d); }
+  mul(x){ return new Frac(this.n*x.n, this.d*x.d); }
+  div(x){ if (x.n === 0n) throw new Error('division by zero'); return new Frac(this.n*x.d, this.d*x.n); }
+  neg(){ return new Frac(-this.n, this.d); }
+  isZero(){ return this.n === 0n; }
+  toNumber(){ return Number(this.n) / Number(this.d); }
+  toString(){ return this.d === 1n ? String(this.n) : `${this.n}/${this.d}`; }
+  tex(){ return this.d === 1n ? String(this.n) : `\\frac{${this.n}}{${this.d}}`; }
+}
+
+let size = 2;
+const samples = {
+  inverse: [[2,1],[3,4]],
+  singular: [[1,2],[2,4]],
+  eigen: [[4,1],[2,3]],
+  triangular: [[3,0,0],[1,2,0],[4,5,6]]
+};
+
+function setSize(n) {
+  size = n;
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    const active = Number(btn.dataset.size) === size;
+    btn.className = active ? 'size-btn px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold' : 'size-btn px-4 py-2 rounded-xl bg-white border-2 border-purple-200 text-sm font-semibold';
+  });
+  renderGrid();
+  document.getElementById('results').innerHTML = '';
+}
+function renderGrid() {
+  const grid = document.getElementById('matrixGrid');
+  grid.style.gridTemplateColumns = `repeat(${size}, minmax(0,1fr))`;
+  grid.innerHTML = '';
+  for (let r=0; r<size; r++) for (let c=0; c<size; c++) {
+    const input = document.createElement('input');
+    input.className = 'matrix-input';
+    input.inputMode = 'decimal';
+    input.placeholder = '0';
+    input.id = `m-${r}-${c}`;
+    input.setAttribute('aria-label', `row ${r+1} column ${c+1}`);
+    grid.appendChild(input);
+  }
+}
+function clearMatrix() { document.querySelectorAll('.matrix-input').forEach(i => i.value=''); document.getElementById('results').innerHTML=''; showError(''); }
+function loadSample(name) {
+  const sample = samples[name];
+  setSize(sample.length);
+  for (let r=0; r<size; r++) for (let c=0; c<size; c++) document.getElementById(`m-${r}-${c}`).value = sample[r][c];
+  calculate();
+}
+function readMatrix() {
+  const A = [];
+  for (let r=0; r<size; r++) {
+    const row = [];
+    for (let c=0; c<size; c++) row.push(Frac.parse(document.getElementById(`m-${r}-${c}`).value));
+    A.push(row);
+  }
+  return A;
+}
+function clone(A) { return A.map(row => row.map(x => new Frac(x.n, x.d))); }
+function matrixTex(A) {
+  return `\\begin{bmatrix}${A.map(row => row.map(x => x.tex()).join('&')).join('\\\\')}\\end{bmatrix}`;
+}
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  if (!msg) { box.classList.add('hidden'); box.textContent=''; return; }
+  box.textContent = msg; box.classList.remove('hidden');
+}
+function rref(A) {
+  const M = clone(A), steps = [];
+  let row = 0;
+  for (let col=0; col<M[0].length && row<M.length; col++) {
+    let pivot = -1;
+    for (let r=row; r<M.length; r++) if (!M[r][col].isZero()) { pivot = r; break; }
+    if (pivot === -1) continue;
+    if (pivot !== row) { [M[row],M[pivot]] = [M[pivot],M[row]]; steps.push(`Swap $R_${row+1}$ and $R_${pivot+1}$.`); }
+    const pv = M[row][col];
+    if (!(pv.n === 1n && pv.d === 1n)) {
+      M[row] = M[row].map(x => x.div(pv));
+      steps.push(`Scale $R_${row+1}$ by $${pv.tex()}^{-1}$ to create a leading 1.`);
+    }
+    for (let r=0; r<M.length; r++) if (r !== row && !M[r][col].isZero()) {
+      const factor = M[r][col];
+      M[r] = M[r].map((x,j) => x.sub(factor.mul(M[row][j])));
+      steps.push(`Use $R_${r+1}\\leftarrow R_${r+1}-(${factor.tex()})R_${row+1}$.`);
+    }
+    row++;
+  }
+  return { matrix:M, steps };
+}
+function determinant(A) {
+  const M = clone(A), steps = [];
+  let sign = Frac.one();
+  for (let col=0; col<size; col++) {
+    let pivot = -1;
+    for (let r=col; r<size; r++) if (!M[r][col].isZero()) { pivot = r; break; }
+    if (pivot === -1) return { det:Frac.zero(), steps:[...steps, `Column ${col+1} has no pivot, so determinant is 0.`], echelon:M };
+    if (pivot !== col) { [M[col],M[pivot]] = [M[pivot],M[col]]; sign = sign.neg(); steps.push(`Swap $R_${col+1}$ and $R_${pivot+1}$, so determinant changes sign.`); }
+    for (let r=col+1; r<size; r++) if (!M[r][col].isZero()) {
+      const factor = M[r][col].div(M[col][col]);
+      M[r] = M[r].map((x,j) => x.sub(factor.mul(M[col][j])));
+      steps.push(`Use $R_${r+1}\\leftarrow R_${r+1}-(${factor.tex()})R_${col+1}$; row replacement does not change determinant.`);
+    }
+  }
+  let det = sign;
+  for (let i=0; i<size; i++) det = det.mul(M[i][i]);
+  steps.push(`Multiply the echelon diagonal and row-swap sign: $\\det(A)=${det.tex()}$.`);
+  return { det, steps, echelon:M };
+}
+function inverse(A) {
+  const Aug = A.map((row,r) => row.concat([...Array(size)].map((_,c) => new Frac(r===c ? 1n : 0n))));
+  const rr = rref(Aug);
+  const left = rr.matrix.map(row => row.slice(0,size));
+  const ok = left.every((row,r) => row.every((x,c) => r===c ? x.n===1n && x.d===1n : x.isZero()));
+  return { ok, matrix: ok ? rr.matrix.map(row => row.slice(size)) : null, steps: rr.steps };
+}
+function eigen(A, detVal) {
+  const nums = A.map(row => row.map(x => x.toNumber()));
+  if (size === 2) {
+    const tr = A[0][0].add(A[1][1]);
+    const disc = tr.mul(tr).sub(detVal.mul(new Frac(4n)));
+    const d = disc.toNumber();
+    const roots = d < -1e-10 ? [] : [(tr.toNumber()+Math.sqrt(Math.max(0,d)))/2, (tr.toNumber()-Math.sqrt(Math.max(0,d)))/2];
+    return { poly:`\\lambda^2-${tr.tex()}\\lambda+${detVal.tex()}`, roots, note:d < -1e-10 ? 'No real eigenvalues.' : 'Real eigenvalues shown below.' };
+  }
+  const tr = A[0][0].add(A[1][1]).add(A[2][2]);
+  const c2 = A[0][0].mul(A[1][1]).add(A[0][0].mul(A[2][2])).add(A[1][1].mul(A[2][2]))
+    .sub(A[0][1].mul(A[1][0])).sub(A[0][2].mul(A[2][0])).sub(A[1][2].mul(A[2][1]));
+  const b = -tr.toNumber(), c = c2.toNumber(), d = -detVal.toNumber();
+  const roots = cubicRealRoots(b,c,d);
+  return { poly:`\\lambda^3-${tr.tex()}\\lambda^2+${c2.tex()}\\lambda-${detVal.tex()}`, roots, note:'3x3 roots are numeric real roots. Complex roots are not shown.' };
+}
+function cubicRealRoots(b,c,d) {
+  const p = c - b*b/3;
+  const q = 2*b*b*b/27 - b*c/3 + d;
+  const disc = (q*q)/4 + (p*p*p)/27;
+  const shift = -b/3;
+  const cbrt = x => x < 0 ? -Math.pow(-x, 1/3) : Math.pow(x, 1/3);
+  if (disc > 1e-10) {
+    return [cbrt(-q/2 + Math.sqrt(disc)) + cbrt(-q/2 - Math.sqrt(disc)) + shift];
+  }
+  if (Math.abs(disc) <= 1e-10) {
+    const u = cbrt(-q/2);
+    return [...new Set([2*u + shift, -u + shift].map(x => Number(x.toFixed(10))))];
+  }
+  const radius = 2 * Math.sqrt(-p/3);
+  const angle = Math.acos((3*q/(2*p)) * Math.sqrt(-3/p));
+  return [0,1,2].map(k => radius * Math.cos((angle - 2*Math.PI*k)/3) + shift).sort((a,b)=>a-b);
+}
+function section(title, body) {
+  return `<div class="card p-5"><h3 class="font-display font-bold text-xl mb-3">${title}</h3>${body}</div>`;
+}
+function formatSteps(steps) {
+  return `<ol class="space-y-2 text-sm list-decimal list-inside marker:text-purple-500 marker:font-bold">${steps.map(s => `<li class="step rounded-r-lg p-3">${s}</li>`).join('')}</ol>`;
+}
+function calculate() {
+  try {
+    showError('');
+    const A = readMatrix();
+    const rr = rref(A);
+    const det = determinant(A);
+    const inv = inverse(A);
+    const eig = eigen(A, det.det);
+    const parts = [];
+    parts.push(section('Input', `<div class="text-lg overflow-x-auto">$$A=${matrixTex(A)}$$</div>`));
+    parts.push(section('Reduced row echelon form', `<div class="overflow-x-auto">$$${matrixTex(rr.matrix)}$$</div>${formatSteps(rr.steps.length ? rr.steps : ['Matrix is already in reduced row echelon form.'])}`));
+    parts.push(section('Determinant', `<div class="overflow-x-auto">$$${matrixTex(det.echelon)}$$</div><p class="text-sm mb-3">Result: $\\det(A)=${det.det.tex()}$</p>${formatSteps(det.steps)}`));
+    parts.push(section('Inverse', inv.ok ? `<div class="overflow-x-auto">$$A^{-1}=${matrixTex(inv.matrix)}$$</div><p class="text-sm text-slate-600">The matrix is invertible because $\\det(A)\\ne0$.</p>` : `<p class="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">No inverse. The matrix is singular because $\\det(A)=0$.</p>`));
+    parts.push(section('Eigenvalues (real only)', `<p class="text-sm mb-2">Characteristic polynomial: $${eig.poly}$</p><p class="text-sm text-slate-600 mb-3">${eig.note}</p><div class="flex flex-wrap gap-2">${eig.roots.length ? eig.roots.map(x => `<span class="px-3 py-2 rounded-lg bg-purple-100 text-purple-800 text-sm font-semibold">λ ≈ ${Number(x.toFixed(6))}</span>`).join('') : '<span class="px-3 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm">No real roots</span>'}</div>`));
+    document.getElementById('results').innerHTML = parts.join('');
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([document.getElementById('results')]).catch(()=>{});
+  } catch (err) {
+    showError(err.message || 'Could not calculate this matrix.');
+  }
+}
+document.querySelectorAll('.size-btn').forEach(btn => btn.addEventListener('click', () => setSize(Number(btn.dataset.size))));
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js').catch(()=>{});
+renderGrid();
+loadSample('eigen');
+</script>
+</body>
+</html>

@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#a855f7">
 <title>BMLA Quest — Finals Battle Station</title>
+<link rel="manifest" href="manifest.webmanifest">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,6 +42,12 @@ window.MathJax = {
   .status-studying    { background:#fef3c7; color:#92400e; }
   .status-revised     { background:#dbeafe; color:#1e40af; }
   .status-mastered    { background:linear-gradient(135deg,#34d399,#10b981); color:white; }
+  .priority-high { background:#fee2e2; color:#991b1b; }
+  .priority-medium { background:#fef3c7; color:#92400e; }
+  .priority-low { background:#e0f2fe; color:#075985; }
+  .app-link { background:linear-gradient(135deg,#111827,#1e3a8a); color:white; box-shadow:0 10px 30px rgba(30,58,138,0.24); }
+  .syllabus-row { transition:transform 0.15s, box-shadow 0.15s; }
+  .syllabus-row:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(168,85,247,0.12); }
   details summary { cursor:pointer; list-style:none; }
   details summary::-webkit-details-marker { display:none; }
   .quiz-option { cursor:pointer; transition:all 0.15s; }
@@ -47,6 +55,16 @@ window.MathJax = {
   .quiz-option.correct { background:#d1fae5; border-color:#10b981; }
   .quiz-option.wrong   { background:#fee2e2; border-color:#ef4444; }
   @media print { nav, .no-print { display:none !important; } body { background:white; } }
+  @media (max-width: 640px) {
+    header { position:sticky; }
+    header nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:0.75rem; scrollbar-width:none; }
+    header nav::-webkit-scrollbar { display:none; }
+    .tab-btn { flex:0 0 auto; padding:0.58rem 0.78rem; font-size:0.78rem; }
+    main { padding-left:0.75rem !important; padding-right:0.75rem !important; }
+    .card { border-radius:1rem; }
+    .mobile-stack { flex-direction:column; align-items:stretch !important; }
+    .mobile-stack > * { width:100%; }
+  }
   .xp-bar-fill { transition:width 0.6s cubic-bezier(0.4,0,0.2,1); background:linear-gradient(90deg,#a855f7,#ec4899,#f59e0b); }
   .float { animation: float-y 3s ease-in-out infinite; }
   @keyframes float-y { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
@@ -78,6 +96,7 @@ window.MathJax = {
     <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="flashcards">🃏 Flashcards</button>
     <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="quiz">❓ Quiz</button>
     <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="mock">⏱️ Mock Exam</button>
+    <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="pastpapers">📝 Past Papers</button>
     <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="stats">📊 Stats</button>
   </nav>
 </header>
@@ -122,12 +141,36 @@ window.MathJax = {
 </section>
 
 <section id="tab-syllabus" class="tab-section hidden">
-  <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-2">📚 Full Syllabus Tracker</h2><p class="text-sm text-slate-600 mb-4">29 lectures (incl. Markov). Final is <strong>comprehensive</strong>.</p><div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="topicSummary"></div></div>
+  <div class="card p-6 mb-5">
+    <div class="flex flex-wrap items-start justify-between gap-4 mb-4 mobile-stack">
+      <div>
+        <h2 class="font-display font-bold text-2xl mb-1">📚 Final Syllabus + Book Index</h2>
+        <p class="text-sm text-slate-600">Official IBA final scope mapped to Lay/Budnick sections, class files, and your progress.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 no-print">
+        <select id="indexTopicFilter" class="px-3 py-2 rounded-lg border-2 border-purple-200 text-sm bg-white" onchange="renderSyllabus()">
+          <option value="all">All topics</option>
+        </select>
+        <button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Print final syllabus</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="topicSummary"></div>
+    <div id="syllabusSnapshot" class="grid sm:grid-cols-3 gap-3"></div>
+  </div>
   <div id="syllabusList" class="space-y-4"></div>
 </section>
 
 <section id="tab-tutorials" class="tab-section hidden">
-  <div class="card p-6 mb-5"><h2 class="font-display font-bold text-2xl mb-1">📖 In-Depth Tutorials</h2><p class="text-sm text-slate-600 mb-4">Theory + step-by-step worked examples. Math is typeset by MathJax — give it a moment to render. <strong class="text-purple-700">Chapter 1 (5 lectures, 17 worked examples) is built. Other chapters come in v3 — meanwhile use Cheat Sheet + Flashcards.</strong></p><div class="flex flex-wrap gap-2" id="tutTopicNav"></div></div>
+  <div class="card p-6 mb-5">
+    <div class="flex flex-wrap items-start justify-between gap-3 mb-4 mobile-stack">
+      <div>
+        <h2 class="font-display font-bold text-2xl mb-1">📖 In-Depth Tutorials</h2>
+        <p class="text-sm text-slate-600">Theory + step-by-step worked examples across all final topic clusters. MathJax may take a moment.</p>
+      </div>
+      <a href="widgets/matrix.html" target="_blank" class="app-link px-4 py-2 rounded-xl text-sm font-semibold text-center">Open Matrix Calculator ↗</a>
+    </div>
+    <div class="flex flex-wrap gap-2" id="tutTopicNav"></div>
+  </div>
   <div id="tutorialContent"></div>
 </section>
 
@@ -190,6 +233,19 @@ window.MathJax = {
     <div class="card p-6 mb-5"><h3 class="font-display font-semibold text-lg mb-3">📋 Review</h3><div id="mReview" class="space-y-3"></div></div>
     <div class="flex gap-3 justify-center"><button onclick="resetMock()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">Another</button><button onclick="switchTab('cheatsheet')" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-semibold">Cheat Sheet</button></div>
   </div>
+</section>
+
+<section id="tab-pastpapers" class="tab-section hidden">
+  <div class="card p-6 mb-5">
+    <div class="flex flex-wrap items-start justify-between gap-3 mobile-stack">
+      <div>
+        <h2 class="font-display font-bold text-2xl mb-1">📝 Past Papers</h2>
+        <p class="text-sm text-slate-600">Typed from the scanned Spring 2026 midterm solution. Use this for active recall, not passive reading.</p>
+      </div>
+      <button onclick="expandPastPapers()" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-2 rounded-lg text-sm font-medium no-print">Open all solutions</button>
+    </div>
+  </div>
+  <div id="pastPaperList" class="space-y-4"></div>
 </section>
 
 <section id="tab-stats" class="tab-section hidden">
@@ -262,6 +318,7 @@ function switchTab(name) {
   if (name === 'flashcards') initFlash();
   if (name === 'quiz') refreshQuizSetup();
   if (name === 'mock') refreshMockSetup();
+  if (name === 'pastpapers') renderPastPapers();
 }
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 function refreshHeader() { document.getElementById('hdrXP').textContent = state.xp+' XP'; document.getElementById('hdrStreak').textContent = state.streak; document.getElementById('hdrLevel').textContent = currentLevel().name; document.getElementById('soundBtn').textContent = state.sound ? '🔊' : '🔇'; }
@@ -301,11 +358,70 @@ function renderTodayPlan() {
   wrap.innerHTML = plan.map((p,i) => `<div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"><div class="text-lg">${['1️⃣','2️⃣','3️⃣','4️⃣'][i] || '✨'}</div><div class="flex-1 text-sm">${p}</div></div>`).join('');
 }
 function renderBadges() { const wrap = document.getElementById('badgeGrid'); document.getElementById('badgeCount').textContent = state.badges.length; wrap.innerHTML = BADGES.map(b => { const has = state.badges.includes(b.id); return `<div class="text-center p-3 rounded-xl ${has?'bg-gradient-to-br from-amber-100 to-yellow-200':'bg-slate-50 badge-locked'}" title="${b.desc}"><div class="text-3xl mb-1">${b.icon}</div><p class="text-xs font-medium leading-tight">${b.name}</p></div>`; }).join(''); }
+function statusButtons(lectureNo) {
+  const status = state.lectures[lectureNo] || 'not-started';
+  return STATUS_FLOW.map(s => `<button onclick="setLectureStatus(${lectureNo},'${s}')" class="text-xs px-2 py-1 rounded-lg status-${s} ${status===s?'ring-2 ring-purple-500':''}" title="${STATUS_LABEL[s]}">${s==='not-started'?'·':s[0].toUpperCase()}</button>`).join('');
+}
+function priorityClass(priority) { return priority === 'High' ? 'priority-high' : priority === 'Medium' ? 'priority-medium' : 'priority-low'; }
 function renderSyllabus() {
   const sum = document.getElementById('topicSummary');
-  sum.innerHTML = TOPICS.map(t => { const lecs = LECTURES.filter(l => l.topic === t.id); const mastered = lecs.filter(l => state.lectures[l.n] === 'mastered').length; const pct = Math.round((mastered/lecs.length)*100); const tier = masteryTier(t.id); const stamp = tier.tier === 'mastered' ? '<div class="absolute -top-2 -right-2 text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded-full rotate-12 font-bold shadow">Rumlah Amer ✅</div>' : ''; return `<div class="relative text-center p-3 rounded-xl border-2" style="border-color:${t.color}33;background:${t.color}11">${stamp}<div class="text-2xl mb-1">${t.emoji}</div><p class="text-xs font-medium leading-tight">${t.name}</p><p class="text-xs font-bold mt-1" style="color:${t.color}">${pct}%</p><div class="text-[10px] mt-1 px-2 py-0.5 rounded inline-block" style="background:${tier.bg};color:${tier.textColor}">${tier.label}</div></div>`; }).join('');
+  const filter = document.getElementById('indexTopicFilter');
+  if (filter && filter.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; filter.appendChild(o); });
+  const rows = typeof FINAL_INDEX !== 'undefined' ? FINAL_INDEX : LECTURES.map(l => ({ book:'Course', chapter:'Course outline', chapterTitle:'BMLA Final Scope', section:`L${l.n}`, title:l.title, page:'-', lecture:l.n, topic:l.topic, priority:'Medium', file:'Course materials' }));
+  const selectedTopic = filter ? filter.value : 'all';
+  const visibleRows = rows.filter(r => selectedTopic === 'all' || r.topic === selectedTopic);
+  sum.innerHTML = TOPICS.map(t => {
+    const topicRows = rows.filter(r => r.topic === t.id);
+    const mastered = topicRows.filter(r => state.lectures[r.lecture] === 'mastered').length;
+    const touched = topicRows.filter(r => state.lectures[r.lecture] && state.lectures[r.lecture] !== 'not-started').length;
+    const pct = topicRows.length ? Math.round((mastered/topicRows.length)*100) : 0;
+    const tier = masteryTier(t.id);
+    const stamp = tier.tier === 'mastered' ? '<div class="absolute -top-2 -right-2 text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded-full rotate-12 font-bold shadow">Rumlah Amer ✅</div>' : '';
+    return `<button onclick="document.getElementById('indexTopicFilter').value='${t.id}';renderSyllabus()" class="relative text-center p-3 rounded-xl border-2 text-left" style="border-color:${t.color}33;background:${t.color}11">${stamp}<div class="text-2xl mb-1">${t.emoji}</div><p class="text-xs font-medium leading-tight">${t.name}</p><p class="text-xs font-bold mt-1" style="color:${t.color}">${pct}% mastered</p><p class="text-[10px] text-slate-500">${touched}/${topicRows.length} touched</p></button>`;
+  }).join('');
+  const masteredRows = visibleRows.filter(r => state.lectures[r.lecture] === 'mastered').length;
+  const touchedRows = visibleRows.filter(r => state.lectures[r.lecture] && state.lectures[r.lecture] !== 'not-started').length;
+  const highLeft = visibleRows.filter(r => r.priority === 'High' && state.lectures[r.lecture] !== 'mastered').length;
+  const pct = visibleRows.length ? Math.round(masteredRows/visibleRows.length*100) : 0;
+  const snap = document.getElementById('syllabusSnapshot');
+  if (snap) snap.innerHTML = [
+    ['Index mastery', `${pct}%`, `${masteredRows}/${visibleRows.length} rows mastered`],
+    ['Touched', `${touchedRows}`, 'rows started or revised'],
+    ['High priority left', `${highLeft}`, 'master these first']
+  ].map(([h,b,s]) => `<div class="rounded-xl bg-white/80 border border-purple-100 p-4"><p class="text-xs uppercase tracking-wide text-slate-500">${h}</p><p class="font-display text-3xl font-bold gradient-text">${b}</p><p class="text-xs text-slate-500">${s}</p></div>`).join('');
   const list = document.getElementById('syllabusList');
-  list.innerHTML = TOPICS.map(t => { const lecs = LECTURES.filter(l => l.topic === t.id); const items = lecs.map(l => { const status = state.lectures[l.n] || 'not-started'; return `<div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100"><div class="flex items-center gap-3 flex-1"><span class="font-mono text-xs bg-slate-100 px-2 py-1 rounded">L${l.n.toString().padStart(2,'0')}</span><span class="text-sm">${l.title}</span></div><div class="flex gap-1">${STATUS_FLOW.map(s => `<button onclick="setLectureStatus(${l.n},'${s}')" class="text-xs px-2 py-1 rounded-lg status-${s} ${status===s?'ring-2 ring-purple-500':''}" title="${STATUS_LABEL[s]}">${s==='not-started'?'·':s[0].toUpperCase()}</button>`).join('')}</div></div>`; }).join(''); return `<details class="card" open><summary class="p-4 flex items-center gap-3 hover:bg-purple-50 rounded-t-xl"><span class="text-2xl">${t.emoji}</span><div class="flex-1"><h3 class="font-display font-semibold">${t.name}</h3><p class="text-xs text-slate-500">${t.desc}</p></div><span class="text-xs font-bold" style="color:${t.color}">${lecs.filter(l => state.lectures[l.n]==='mastered').length}/${lecs.length}</span></summary><div class="p-4 pt-0 space-y-2">${items}</div></details>`; }).join('');
+  const groups = {};
+  visibleRows.forEach(r => {
+    const key = `${r.book}|${r.chapter}|${r.chapterTitle}`;
+    groups[key] = groups[key] || [];
+    groups[key].push(r);
+  });
+  list.innerHTML = Object.entries(groups).map(([key, groupRows], idx) => {
+    const [book, chapter, chapterTitle] = key.split('|');
+    const done = groupRows.filter(r => state.lectures[r.lecture] === 'mastered').length;
+    const items = groupRows.map(r => {
+      const topic = TOPICS.find(t => t.id === r.topic);
+      const status = STATUS_LABEL[state.lectures[r.lecture] || 'not-started'];
+      return `<div class="syllabus-row rounded-xl bg-white border border-slate-100 p-3">
+        <div class="flex flex-wrap items-start justify-between gap-3 mobile-stack">
+          <div class="flex-1 min-w-[220px]">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span class="font-mono text-xs bg-slate-100 px-2 py-1 rounded">${r.section}</span>
+              <span class="text-[11px] px-2 py-1 rounded-full ${priorityClass(r.priority)}">${r.priority}</span>
+              <span class="text-[11px] px-2 py-1 rounded-full" style="background:${topic.color}18;color:${topic.color}">${topic.emoji} ${topic.name}</span>
+            </div>
+            <p class="font-semibold text-sm">${r.title}</p>
+            <p class="text-xs text-slate-500 mt-1">Book page ${r.page} · Lecture ${String(r.lecture).padStart(2,'0')} · ${r.file}</p>
+          </div>
+          <div class="flex items-center justify-between gap-2 min-w-[170px]">
+            <span class="text-xs text-slate-500">${status}</span>
+            <div class="flex gap-1">${statusButtons(r.lecture)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<details class="card" ${idx < 2 ? 'open' : ''}><summary class="p-4 flex items-center gap-3 hover:bg-purple-50 rounded-t-xl"><span class="text-xl">📘</span><div class="flex-1"><p class="text-xs text-slate-500">${book} · ${chapter}</p><h3 class="font-display font-semibold">${chapterTitle}</h3></div><span class="text-xs font-bold text-purple-600">${done}/${groupRows.length}</span></summary><div class="p-4 pt-0 space-y-2">${items}</div></details>`;
+  }).join('');
 }
 function setLectureStatus(n, status) { const old = state.lectures[n]; state.lectures[n] = status; if (old === 'not-started' && status !== 'not-started') addXP(10); if (status === 'mastered' && old !== 'mastered') addXP(25); saveState(); renderSyllabus(); refreshHome(); checkBadges(); }
 function renderCheatsheet() { const wrap = document.getElementById('cheatsheetContent'); wrap.innerHTML = CHEATSHEET.map(section => { const topic = TOPICS.find(t => t.id === section.topicId); return `<div class="card p-6"><h3 class="font-display font-bold text-xl mb-4 flex items-center gap-2" style="color:${topic.color}">${topic.emoji} ${section.title}</h3><div class="space-y-4">${section.items.map(it => `<div class="border-l-4 pl-4" style="border-color:${topic.color}66"><p class="font-semibold text-sm mb-1">${it.h}</p><p class="text-sm text-slate-700 leading-relaxed">${it.b}</p></div>`).join('')}</div></div>`; }).join(''); }
@@ -322,6 +438,44 @@ function renderTutContent() {
   });
   wrap.innerHTML = html;
   if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([wrap]).catch(()=>{});
+}
+function renderPastPapers() {
+  const wrap = document.getElementById('pastPaperList');
+  if (!wrap || typeof PAST_PAPERS === 'undefined') return;
+  wrap.innerHTML = PAST_PAPERS.map((p, idx) => {
+    const topic = TOPICS.find(t => t.id === p.topic) || TOPICS[0];
+    return `<details class="card p-0" ${idx===0?'open':''}>
+      <summary class="p-5 hover:bg-purple-50 rounded-t-2xl">
+        <div class="flex flex-wrap items-start gap-3 mobile-stack">
+          <span class="text-2xl">📝</span>
+          <div class="flex-1">
+            <p class="text-xs text-slate-500">${p.paper} · Question ${p.qn} · ${p.marks} marks</p>
+            <h3 class="font-display font-semibold text-lg">${p.title}</h3>
+            <p class="text-xs mt-1" style="color:${topic.color}">${topic.emoji} ${topic.name}</p>
+          </div>
+          <span class="text-xs text-purple-500">▼</span>
+        </div>
+      </summary>
+      <div class="p-6 pt-0">
+        <div class="bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-100 rounded-xl p-4 mb-4">
+          <p class="text-xs uppercase tracking-wide text-pink-700 font-bold mb-2">Question</p>
+          <div class="text-sm leading-relaxed">${p.prompt}</div>
+        </div>
+        <div class="mb-4">
+          <p class="text-xs uppercase tracking-wide text-purple-700 font-bold mb-3">Solution steps</p>
+          <ol class="space-y-2 text-sm list-decimal list-inside marker:text-purple-500 marker:font-bold">${p.steps.map(s => `<li class="pl-1">${s}</li>`).join('')}</ol>
+        </div>
+        <div class="p-3 rounded-lg bg-green-50 border-l-4 border-green-500">
+          <p class="text-xs uppercase tracking-wide text-green-700 font-bold mb-1">Answer</p>
+          <div class="text-sm">${p.answer}</div>
+        </div>
+      </div>
+    </details>`;
+  }).join('');
+  if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([wrap]).catch(()=>{});
+}
+function expandPastPapers() {
+  document.querySelectorAll('#pastPaperList details').forEach(d => d.open = true);
 }
 let flashDeck = [], flashPos = 0, flashStats = {good:0,hard:0,again:0}, flashSessionXp = 0;
 function initFlash() { const sel = document.getElementById('flashTopic'); if (sel.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; sel.appendChild(o); }); resetFlashDeck(); }
@@ -390,8 +544,9 @@ function askAI(btn) {
   });
 }
 
-function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); checkBadges(); }
-window.addEventListener('DOMContentLoaded', () => { fullRefresh(); setInterval(refreshHome, 60000); });
+function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); renderPastPapers(); checkBadges(); }
+function registerPwa() { if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+window.addEventListener('DOMContentLoaded', () => { fullRefresh(); registerPwa(); setInterval(refreshHome, 60000); });
 </script>
 </body>
 </html>

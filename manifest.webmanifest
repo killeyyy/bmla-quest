@@ -1,0 +1,18 @@
+{
+  "name": "BMLA Quest",
+  "short_name": "BMLA Quest",
+  "description": "Finals battle station for MTS 212 Business Math and Linear Algebra.",
+  "start_url": "/BMLA_Quest.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf5ff",
+  "theme_color": "#a855f7",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -42,6 +42,135 @@ const LECTURES = [
   { n:28, topic:'transassign', title:'Solution Methods for Assignment' }
 ];
 
+const FINAL_INDEX = [
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.1', title:'Systems of Linear Equations', page:'2', lecture:1, topic:'systems', priority:'High', file:'LA_Summary_chap1, Lec1Modified' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.2', title:'Row Reduction and Echelon Forms', page:'14', lecture:2, topic:'systems', priority:'High', file:'ref_rref_elimination_method' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.3', title:'Vector Equations', page:'28', lecture:3, topic:'systems', priority:'Medium', file:'Linear_combination_Span' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.4', title:'The Matrix Equation Ax = b', page:'40', lecture:4, topic:'systems', priority:'Medium', file:'practice_problems_1.4' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.5', title:'Solution Sets of Linear Systems', page:'50', lecture:5, topic:'systems', priority:'Medium', file:'practice_problems_1.5, Solution_set_and_Linear_Dependence' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.6', title:'Applications of Linear Systems', page:'57', lecture:5, topic:'systems', priority:'Medium', file:'Assignment 1, class applications' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.7', title:'Linear Independence', page:'65', lecture:6, topic:'indep', priority:'Medium', file:'practice_problems_1.7' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.8', title:'Introduction to Linear Transformations', page:'73', lecture:7, topic:'indep', priority:'Medium', file:'Linear_Transformations' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.9', title:'The Matrix of a Linear Transformation', page:'82', lecture:8, topic:'indep', priority:'Medium', file:'practice_problems_1.9' },
+  { book:'Lay', chapter:'Chapter 1', chapterTitle:'Linear Equations in Linear Algebra', section:'1.10', title:'Linear Models in Business, Science, and Engineering', page:'92', lecture:8, topic:'indep', priority:'Low', file:'course outline applications' },
+  { book:'Lay', chapter:'Chapter 2', chapterTitle:'Matrix Algebra', section:'2.1', title:'Matrix Operations', page:'107', lecture:9, topic:'matrix', priority:'Medium', file:'chap2_practice_problem' },
+  { book:'Lay', chapter:'Chapter 2', chapterTitle:'Matrix Algebra', section:'2.2', title:'The Inverse of a Matrix', page:'118', lecture:10, topic:'matrix', priority:'High', file:'Invertible_Matrices_Characterization' },
+  { book:'Lay', chapter:'Chapter 2', chapterTitle:'Matrix Algebra', section:'2.3', title:'Characterizations of Invertible Matrices', page:'128', lecture:11, topic:'matrix', priority:'High', file:'Invertible_Matrices_Characterization' },
+  { book:'Lay', chapter:'Chapter 3', chapterTitle:'Determinants', section:'3.1', title:'Introduction to Determinants', page:'186', lecture:12, topic:'det', priority:'Medium', file:'Determinants, chap3_practice_problem' },
+  { book:'Lay', chapter:'Chapter 3', chapterTitle:'Determinants', section:'3.2', title:'Properties of Determinants', page:'192', lecture:13, topic:'det', priority:'High', file:'Determinants' },
+  { book:'Lay', chapter:'Chapter 3', chapterTitle:'Determinants', section:'3.3', title:"Cramer's Rule, Volume, and Linear Transformations", page:'201', lecture:13, topic:'det', priority:'Medium', file:'Determinants' },
+  { book:'Lay', chapter:'Chapter 5', chapterTitle:'Eigenvalues and Eigenvectors', section:'5.1', title:'Eigenvectors and Eigenvalues', page:'302', lecture:14, topic:'eigen', priority:'High', file:'Chap5_Lectures_notes' },
+  { book:'Lay', chapter:'Chapter 5', chapterTitle:'Eigenvalues and Eigenvectors', section:'5.2', title:'The Characteristic Equation', page:'310', lecture:15, topic:'eigen', priority:'High', file:'Chap5_Lectures_notes' },
+  { book:'Lay', chapter:'Chapter 5', chapterTitle:'Eigenvalues and Eigenvectors', section:'5.3', title:'Diagonalization', page:'319', lecture:16, topic:'eigen', priority:'High', file:'Ch5_Diagonalization' },
+  { book:'Class', chapter:'Eigen/Markov Add-on', chapterTitle:'Markov Chains and Steady State', section:'Markov', title:'Steady State via Eigenvalue 1', page:'Course notes', lecture:29, topic:'eigen', priority:'High', file:'Chap5_Lectures_notes, Normalized Nerd Markov' },
+  { book:'Budnick', chapter:'Chapter 10', chapterTitle:'Linear Programming: An Introduction', section:'10.1', title:'Linear Programming', page:'422', lecture:17, topic:'lp', priority:'High', file:'LP_graphical_method, Lec1Modified' },
+  { book:'Budnick', chapter:'Chapter 10', chapterTitle:'Linear Programming: An Introduction', section:'10.2', title:'Graphical Solutions', page:'424', lecture:18, topic:'lp', priority:'High', file:'LP_graphical_method, Linear_Programming_Graphical_Method' },
+  { book:'Budnick', chapter:'Chapter 10', chapterTitle:'Linear Programming: An Introduction', section:'10.3', title:'Applications of Linear Programming', page:'441', lecture:19, topic:'lp', priority:'Medium', file:'Applications' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.1', title:'Simplex Preliminaries', page:'464', lecture:20, topic:'lp', priority:'High', file:'Simplex_Method_1, Simplex_Class_Notes' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.2', title:'The Simplex Method', page:'477', lecture:21, topic:'lp', priority:'High', file:'Simplex_Method_2, simplex_solution' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.3', title:'Special Phenomena', page:'496', lecture:21, topic:'lp', priority:'Medium', file:'Simplex_Method_2, class notes' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.4', title:'Computer Solution Methods', page:'502', lecture:22, topic:'lp', priority:'Low', file:'Course outline lecture 22' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.5', title:'The Dual Problem', page:'510', lecture:23, topic:'lp', priority:'Medium', file:'Linear_and_Nonlinear_Programming_Luenberger' },
+  { book:'Budnick', chapter:'Chapter 11', chapterTitle:'The Simplex and Computer Solution Methods', section:'11.5+', title:'The Dual Problem Continued', page:'510', lecture:24, topic:'lp', priority:'Medium', file:'Linear_and_Nonlinear_Programming_Luenberger' },
+  { book:'Budnick', chapter:'Chapter 12', chapterTitle:'Transportation and Assignment Models', section:'12.1', title:'The Transportation Model', page:'524', lecture:25, topic:'transassign', priority:'High', file:'Transportation_Problem' },
+  { book:'Budnick', chapter:'Chapter 12', chapterTitle:'Transportation and Assignment Models', section:'12.2', title:'Solutions to Transportation Models', page:'528', lecture:26, topic:'transassign', priority:'High', file:'Transportation_Problem_Class_Notes' },
+  { book:'Budnick', chapter:'Chapter 12', chapterTitle:'Transportation and Assignment Models', section:'12.3', title:'The Assignment Model and Methods of Solution', page:'543', lecture:27, topic:'transassign', priority:'High', file:'course notes, Hungarian method videos' },
+  { book:'Budnick', chapter:'Chapter 12', chapterTitle:'Transportation and Assignment Models', section:'12.3+', title:'The Hungarian Method', page:'546', lecture:28, topic:'transassign', priority:'High', file:'course notes, Joshua Emmanuel Hungarian' }
+];
+
+const PAST_PAPERS = [
+  {
+    id:'midterm-2026-q1', paper:'BMLA Midterm Spring 2026', qn:1, marks:4, topic:'systems',
+    title:'Consistency with arbitrary parameters',
+    prompt:'Given $2x_1-4x_2-2x_3=b_1$, $-5x_1+x_2+x_3=b_2$, and $7x_1-5x_2-3x_3=b_3$: (a) determine whether the system is consistent for all arbitrary $b_1,b_2,b_3$; if not, state the condition. (b) Replace the third equation by $x_1+x_2+x_3=b_3$ and decide whether the new system is consistent for all arbitrary values.',
+    steps:[
+      'Use the augmented matrix and row-reduce the coefficient part.',
+      'For part (a), the coefficient matrix has only two pivots, so one condition on $b$ remains.',
+      'The final zero row gives the consistency condition $-b_1+b_2+b_3=0$.',
+      'For part (b), the modified coefficient matrix has a pivot in every row.',
+      'A pivot in every row means every right-hand side is allowed.'
+    ],
+    answer:'Part (a): not consistent for all $b$; it is consistent only when $b_1=b_2+b_3$. Part (b): consistent for all arbitrary $b_1,b_2,b_3$.'
+  },
+  {
+    id:'midterm-2026-q2', paper:'BMLA Midterm Spring 2026', qn:2, marks:4, topic:'systems',
+    title:'Span and linear combination in R3',
+    prompt:'Let $v_1=(1,0,-2)^T$, $v_2=(-3,1,8)^T$, and $y=(h,-5,-3)^T$. (a) Find $h$ so that $y$ lies in $Span\\{v_1,v_2\\}$. (b) If $h=0$, decide whether $y$ can be expressed as a linear combination of $v_1,v_2$ and whether $\\{v_1,v_2,y\\}$ spans $\\mathbb R^3$.',
+    steps:[
+      'Set $y=c_1v_1+c_2v_2$.',
+      'From the second coordinate, $c_2=-5$.',
+      'From the third coordinate, $-2c_1+8(-5)=-3$, so $c_1=-37/2$.',
+      'Then the first coordinate gives $h=c_1-3c_2=-37/2+15=-7/2$.',
+      'If $h=0$, the vector is not in the span of $v_1,v_2$; adding it to two independent vectors gives three independent vectors in $\\mathbb R^3$.'
+    ],
+    answer:'$h=-7/2$. For $h=0$, $y$ is not a linear combination of $v_1,v_2$, and $\\{v_1,v_2,y\\}$ spans $\\mathbb R^3$.'
+  },
+  {
+    id:'midterm-2026-q3', paper:'BMLA Midterm Spring 2026', qn:3, marks:4, topic:'indep',
+    title:'Linear transformations and standard matrices',
+    prompt:'(a) Determine whether $T:\\mathbb R^3\\to\\mathbb R^2$, $T(x_1,x_2,x_3)=(x_1-|x_2|,2x_2+x_3)$ is linear. (b) For $T:\\mathbb R^2\\to\\mathbb R^3$, $T(x_1,x_2)=(x_1-2x_2,-x_1+3x_2,3x_1-2x_2)$, find $(x_1,x_2)$ such that $T(x_1,x_2)=(-1,4,9)$. (c) Find the standard matrix of the horizontal shear mapping $e_2$ to $e_2+3e_1$ while leaving $e_1$ unchanged.',
+    steps:[
+      'Part (a): absolute value usually breaks linearity. Test additivity with $u=(0,1,0)$ and $v=(0,-1,0)$.',
+      '$T(u)+T(v)=(-1,2)+(-1,-2)=(-2,0)$ but $T(u+v)=T(0,0,0)=(0,0)$.',
+      'Part (b): solve $x_1-2x_2=-1$, $-x_1+3x_2=4$, $3x_1-2x_2=9$.',
+      'The first two equations give $x_2=3$ and $x_1=5$, which satisfies the third equation.',
+      'Part (c): the standard matrix is $[T(e_1)\\;T(e_2)]$.'
+    ],
+    answer:'(a) Not linear. (b) $(x_1,x_2)=(5,3)$. (c) $A=\\begin{bmatrix}1&3\\\\0&1\\end{bmatrix}$.'
+  },
+  {
+    id:'midterm-2026-q4', paper:'BMLA Midterm Spring 2026', qn:4, marks:4, topic:'matrix',
+    title:'Elementary matrices',
+    prompt:'(a) Given $A=\\begin{bmatrix}3&4&1\\\\2&-7&-1\\\\8&1&5\\end{bmatrix}$, $B=\\begin{bmatrix}8&1&5\\\\2&-7&-1\\\\3&4&1\\end{bmatrix}$, and $C=\\begin{bmatrix}3&4&1\\\\2&-7&-1\\\\2&-7&3\\end{bmatrix}$, find elementary matrices $E_1,E_2$ such that $E_1A=B$ and $E_2A=C$. (b) For $A=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\a&b&c\\end{bmatrix}$ nonsingular, state all conditions on $a,b,c$ for which $A$ is elementary.',
+    steps:[
+      'Left multiplication by an elementary matrix performs the same row operation on $A$.',
+      '$B$ is obtained by swapping rows 1 and 3 of $A$.',
+      '$C$ is obtained by $R_3\\leftarrow R_3-2R_1$.',
+      'For part (b), the matrix must be obtainable from $I_3$ by one elementary row operation and also be nonsingular.',
+      'That allows one row replacement in row 3, or one scaling of row 3 by a nonzero scalar.'
+    ],
+    answer:'$E_1=\\begin{bmatrix}0&0&1\\\\0&1&0\\\\1&0&0\\end{bmatrix}$ and $E_2=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\-2&0&1\\end{bmatrix}$. For part (b): either $c=1$ with at most one of $a,b$ nonzero, or $a=b=0$ with $c\\ne0$ and $c\\ne1$.'
+  },
+  {
+    id:'midterm-2026-q5', paper:'BMLA Midterm Spring 2026', qn:5, marks:4, topic:'matrix',
+    title:'Invertibility and inverse transformation',
+    prompt:'(a) Prove or disprove that $A=\\begin{bmatrix}1&6&4\\\\2&4&-1\\\\-1&2&5\\end{bmatrix}$ is invertible. Using this result, decide whether the homogeneous system $Ax=0$ has nontrivial solutions. (b) Let $T(x_1,x_2)=(6x_1-8x_2,-5x_1+7x_2)$. Show that $T$ is invertible and find $T^{-1}$.',
+    steps:[
+      'For part (a), row-reduce $A$.',
+      'The echelon form has only two pivot rows, so $A$ is singular and not invertible.',
+      'A singular matrix means $Ax=0$ has nontrivial solutions.',
+      'Solving the reduced system gives a direction vector $(22,-9,8)^T$.',
+      'For part (b), the standard matrix is $\\begin{bmatrix}6&-8\\\\-5&7\\end{bmatrix}$ with determinant $42-40=2\\ne0$.'
+    ],
+    answer:'$A$ is not invertible, and $Ax=0$ has nontrivial solutions $x=t(22,-9,8)^T$. Also $T^{-1}(y_1,y_2)=(\\frac72y_1+4y_2,\\frac52y_1+3y_2)$.'
+  },
+  {
+    id:'midterm-2026-q6', paper:'BMLA Midterm Spring 2026', qn:6, marks:4, topic:'det',
+    title:'Determinants and triangular inverse',
+    prompt:'(a) Convert $A=\\begin{bmatrix}1&0&5&1\\\\5&6&0&7\\\\4&0&1&0\\\\-1&2&2&1\\end{bmatrix}$ into echelon form using row interchange and row replacement only. Find $\\det(A)$ without cofactor expansion and state determinant properties used. (b) For $B=\\begin{bmatrix}a&b&c\\\\0&e&f\\\\0&0&g\\end{bmatrix}$, find $B^{-1}$ when nonsingular and state when $B$ is singular.',
+    steps:[
+      'Use row replacements to create zeros below pivots. Row replacement does not change the determinant.',
+      'One row interchange is used, so the determinant changes sign once.',
+      'After echelon form, multiply diagonal entries and adjust for the row swap.',
+      'For part (b), an upper triangular matrix is nonsingular exactly when every diagonal entry is nonzero.',
+      'Row-reduce $[B|I]$ or use back substitution to obtain the inverse.'
+    ],
+    answer:'$\\det(A)=216$. For $B$, singular when $aeg=0$. If $aeg\\ne0$, $B^{-1}=\\begin{bmatrix}1/a&-b/(ae)&(bf-ce)/(aeg)\\\\0&1/e&-f/(eg)\\\\0&0&1/g\\end{bmatrix}$.'
+  },
+  {
+    id:'midterm-2026-q7', paper:'BMLA Midterm Spring 2026', qn:7, marks:4, topic:'matrix',
+    title:'Inverse, transpose determinant, and transpose inverse',
+    prompt:'(a) Find the inverse of $A=\\begin{bmatrix}2&-1&1&0\\\\0&6&0&7\\\\4&0&1&0\\\\3&0&1&-2\\end{bmatrix}$. (b) Find $\\det(A^T)$ and $(A^T)^{-1}$.',
+    steps:[
+      'Row-reduce $[A|I]$ until the left side becomes $I$.',
+      'The right side is $A^{-1}$.',
+      'Use the identities $\\det(A^T)=\\det(A)$ and $(A^T)^{-1}=(A^{-1})^T$.',
+      'The row reduction gives $\\det(A)=31$.'
+    ],
+    answer:'$A^{-1}=\\frac1{31}\\begin{bmatrix}-12&-2&19&-7\\\\-7&4&-7&14\\\\48&8&-45&28\\\\6&1&6&-12\\end{bmatrix}$. Also $\\det(A^T)=31$ and $(A^T)^{-1}=\\frac1{31}\\begin{bmatrix}-12&-7&48&6\\\\-2&4&8&1\\\\19&-7&-45&6\\\\-7&14&28&-12\\end{bmatrix}$.'
+  }
+];
+
 const CHEATSHEET = [
   { topicId:'systems', title:'Linear Systems · REF / RREF', items:[
     { h:'REF — 3 conditions', b:'(1) Nonzero rows above all-zero. (2) Leading entry strictly right of one above. (3) All entries below a leading entry = 0.' },
