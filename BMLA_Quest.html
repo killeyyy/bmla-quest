@@ -84,6 +84,7 @@ window.MathJax = {
       <div class="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>⚡</span><span id="hdrXP">0 XP</span></div>
       <div class="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>🔥</span><span id="hdrStreak">0</span></div>
       <div class="flex items-center gap-2 bg-white border-2 border-purple-300 text-purple-700 px-3 py-1.5 rounded-full font-semibold"><span>🏆</span><span id="hdrLevel">Novice</span></div>
+      <button onclick="switchTab('pastpapers')" class="bg-gradient-to-r from-slate-900 to-blue-900 text-white px-3 py-1.5 rounded-full font-semibold shadow hover:scale-105 transition">📝 Past Papers</button>
       <button onclick="toggleSound()" class="text-xl hover:scale-110 transition" title="Toggle sounds" id="soundBtn">🔊</button>
       <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-red-500" title="Reset progress">↻ reset</button>
     </div>
@@ -308,9 +309,11 @@ function beep(freq=440, dur=0.1) { if (!state.sound) return; try { audioCtx = au
 function toggleSound() { state.sound = !state.sound; saveState(); document.getElementById('soundBtn').textContent = state.sound ? '🔊' : '🔇'; }
 function resetAll() { if (!confirm('Reset ALL progress?')) return; localStorage.removeItem(STORAGE_KEY); state = defaultState(); saveState(); fullRefresh(); toast('Reset'); }
 function switchTab(name) {
+  if (!document.getElementById('tab-'+name)) name = 'home';
   document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
   document.getElementById('tab-'+name).classList.remove('hidden');
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  if (history.replaceState) history.replaceState(null, '', '#'+name);
   window.scrollTo({top:0, behavior:'smooth'});
   if (name === 'stats') renderStats();
   if (name === 'syllabus') renderSyllabus();
@@ -322,6 +325,11 @@ function switchTab(name) {
   if (name === 'pastpapers') renderPastPapers();
 }
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+function initialTabFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = (params.get('tab') || window.location.hash.replace('#','')).toLowerCase();
+  return document.getElementById('tab-'+requested) ? requested : 'home';
+}
 function refreshHeader() { document.getElementById('hdrXP').textContent = state.xp+' XP'; document.getElementById('hdrStreak').textContent = state.streak; document.getElementById('hdrLevel').textContent = currentLevel().name; document.getElementById('soundBtn').textContent = state.sound ? '🔊' : '🔇'; }
 function refreshHome() {
   const exam = new Date('2026-05-25T10:00:00'); const now = new Date(); const ms = exam - now;
@@ -547,7 +555,7 @@ function askAI(btn) {
 
 function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); renderPastPapers(); checkBadges(); }
 function registerPwa() { if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-window.addEventListener('DOMContentLoaded', () => { fullRefresh(); registerPwa(); setInterval(refreshHome, 60000); });
+window.addEventListener('DOMContentLoaded', () => { fullRefresh(); switchTab(initialTabFromUrl()); registerPwa(); setInterval(refreshHome, 60000); });
 </script>
 </body>
 </html>
