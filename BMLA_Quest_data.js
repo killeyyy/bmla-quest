@@ -182,11 +182,28 @@ const PAST_PAPERS = [
     ],
     steps:[
       'Use the fastest invertibility test: for a square matrix, $A$ is invertible exactly when $\\det(A)\\ne0$.',
-      'Start with $A=\\begin{bmatrix}-1&-3&0&1\\\\3&5&8&-3\\\\-2&-6&3&2\\\\0&-1&2&1\\end{bmatrix}$. Use row replacement first: $R_2\\leftarrow R_2+3R_1$ gives $[0,-4,8,0]$, and $R_3\\leftarrow R_3-2R_1$ gives $[0,0,3,0]$. Row replacement does not change the determinant.',
-      'Now the rows are $[-1,-3,0,1]$, $[0,-4,8,0]$, $[0,0,3,0]$, $[0,-1,2,1]$. Swap $R_2$ and $R_4$ so the smaller row is easier to use. One row swap changes the sign of the determinant.',
-      'Use $R_4\\leftarrow R_4-4R_2$ after the swap. This gives an upper triangular matrix with diagonal entries $-1,-1,3,-4$.',
+      'Use row replacement to create zeros below the first entry $-1$. The full arithmetic is shown in the Slow row-operation work box below.',
+      'After the first two row replacements, the rows are $[-1,-3,0,1]$, $[0,-4,8,0]$, $[0,0,3,0]$, $[0,-1,2,1]$.',
+      'Swap $R_2$ and $R_4$ so the smaller row $[0,-1,2,1]$ is easier to use. One row swap changes the sign of the determinant.',
+      'Use one more row replacement, $R_4\\leftarrow R_4-4R_2$, to get an upper triangular matrix with diagonal entries $-1,-1,3,-4$.',
       'The triangular determinant is $(-1)(-1)(3)(-4)=-12$. Because one row swap happened, the original determinant is $12$.',
       'Since $\\det(A)=12\\ne0$, the matrix is invertible.'
+    ],
+    guidedWork:[
+      { h:'What row replacement means',
+        b:'A row replacement has the form $R_i\\leftarrow R_i+kR_j$. It means: make a <strong>new row</strong> by taking the old row $R_i$ and adding $k$ times another row $R_j$. You do the calculation column by column. The other row, $R_j$, does not change.' },
+      { h:'Why we choose $R_2\\leftarrow R_2+3R_1$',
+        b:'The first number in row 1 is $-1$. The first number in row 2 is $3$. We want to turn that $3$ into $0$. Since $3+3(-1)=0$, we add $3R_1$ to $R_2$.' },
+      { h:'Full arithmetic for $R_2\\leftarrow R_2+3R_1$',
+        b:'Old $R_2=[3,5,8,-3]$<br>$3R_1=3[-1,-3,0,1]=[-3,-9,0,3]$<br>New $R_2=[3+(-3),\\;5+(-9),\\;8+0,\\;-3+3]$<br>New $R_2=[0,-4,8,0]$' },
+      { h:'Why we choose $R_3\\leftarrow R_3-2R_1$',
+        b:'The first number in row 3 is $-2$. We want it to become $0$. Since $-2-2(-1)=0$, we subtract $2R_1$ from $R_3$.' },
+      { h:'Full arithmetic for $R_3\\leftarrow R_3-2R_1$',
+        b:'Old $R_3=[-2,-6,3,2]$<br>$2R_1=2[-1,-3,0,1]=[-2,-6,0,2]$<br>New $R_3=[-2-(-2),\\;-6-(-6),\\;3-0,\\;2-2]$<br>New $R_3=[0,0,3,0]$' },
+      { h:'Why row replacement does not change determinant',
+        b:'Adding a multiple of one row to another row only changes the shape of the matrix, not the determinant value. In determinant questions, row replacement is safe. Row swap is different: every row swap changes the determinant sign.' },
+      { h:'Next rows after these operations',
+        b:'After these two row replacements, the matrix becomes $\\begin{bmatrix}-1&-3&0&1\\\\0&-4&8&0\\\\0&0&3&0\\\\0&-1&2&1\\end{bmatrix}$. Then we swap $R_2$ and $R_4$ only to make the arithmetic easier.' }
     ],
     answer:'$A$ is invertible because $\\det(A)=12\\ne0$.',
     variations:{
@@ -194,8 +211,8 @@ const PAST_PAPERS = [
       beginner:[
         'Goal: decide whether this matrix has an inverse. The easiest test is determinant: nonzero means invertible, zero means not invertible.',
         'We simplify the matrix using row operations. Think of this like cleaning the matrix until the answer is easier to see.',
-        'First eliminate the 3 below the top-left $-1$: do $R_2\\leftarrow R_2+3R_1$. This changes row 2 to $[0,-4,8,0]$.',
-        'Then eliminate the $-2$ below the top-left $-1$: do $R_3\\leftarrow R_3-2R_1$. This changes row 3 to $[0,0,3,0]$.',
+        'First eliminate the 3 below the top-left $-1$. We use $R_2\\leftarrow R_2+3R_1$ because $3+3(-1)=0$. Column by column, $[3,5,8,-3]+[-3,-9,0,3]=[0,-4,8,0]$.',
+        'Then eliminate the $-2$ below the top-left $-1$. We use $R_3\\leftarrow R_3-2R_1$ because $-2-2(-1)=0$. Column by column, $[-2,-6,3,2]-[-2,-6,0,2]=[0,0,3,0]$.',
         'Now swap row 2 and row 4 because row 4 has $-1$, which is easier than $-4$. Remember: one row swap flips the determinant sign.',
         'After the swap, use $R_4\\leftarrow R_4-4R_2$. This makes the matrix upper triangular.',
         'For an upper triangular matrix, determinant = product of diagonal entries: $(-1)(-1)(3)(-4)=-12$.',
