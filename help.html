@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 Not Found</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --panel: #1a2330;
+  --panel-2: #243142;
+  --accent: #7dd3fc;
+  --accent-2: #fbbf24;
+  --good: #4ade80;
+  --warn: #fb923c;
+  --bad: #f87171;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --border: #2d3a4d;
+}
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.55; }
+.container { max-width: 980px; margin: 0 auto; padding: 28px 22px 60px; }
+header { background: linear-gradient(135deg, #1e3a5f 0%, #6d28d9 100%); border-radius: 16px; padding: 28px; margin-bottom: 22px; border: 1px solid var(--border); }
+header h1 { margin: 0 0 6px; font-size: 28px; }
+header p { margin: 0; color: #cbd5e1; font-size: 14px; }
+.version { display: inline-block; background: var(--accent-2); color: #1a1a1a; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; margin-top: 12px; }
+.card { background: var(--panel); border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; border: 1px solid var(--border); }
+.card h2 { margin: 0 0 14px; font-size: 20px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.card h3 { margin: 18px 0 8px; font-size: 15px; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.6px; }
+.big-link { display: block; background: linear-gradient(135deg, rgba(125,211,252,0.15), rgba(74,222,128,0.1)); padding: 16px 20px; border-radius: 10px; margin: 10px 0; border: 1px solid var(--accent); text-decoration: none; color: var(--text); transition: transform .15s, box-shadow .15s; }
+.big-link:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(125,211,252,0.2); }
+.big-link .label { font-weight: 700; font-size: 16px; color: var(--accent); }
+.big-link .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.big-link .url { font-family: 'Courier New', monospace; font-size: 13px; color: var(--good); margin-top: 6px; word-break: break-all; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+th { background: var(--panel-2); color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+code, kbd { background: var(--panel-2); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; color: var(--accent-2); border: 1px solid var(--border); }
+kbd { color: var(--good); }
+.warn { background: rgba(251,146,60,0.1); border-left: 3px solid var(--warn); padding: 12px 16px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+.tip { background: rgba(74,222,128,0.08); border-left: 3px solid var(--good); padding: 12px 16px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+.pill { display: inline-block; background: var(--panel-2); padding: 2px 10px; border-radius: 12px; font-size: 12px; color: var(--accent); border: 1px solid var(--border); }
+hr { border: none; border-top: 1px dashed var(--border); margin: 18px 0; }
+footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
+/* ============== LOCK GATE ============== */
+#x-locked-facade { position: fixed; inset: 0; background: #fff; color: #222; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+#x-locked-facade h1 { font-size: 34px; margin: 0 0 14px; font-weight: 600; letter-spacing: -0.5px; }
+#x-locked-facade p { color: #666; margin: 0; font-size: 14px; max-width: 520px; line-height: 1.5; }
+html[data-x-locked="1"] body > *:not(#x-locked-facade) { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Lock gate (shares unlock state with x.html via same localStorage key) -->
+<div id="x-locked-facade">
+  <h1>404 &mdash; Not Found</h1>
+  <p>The requested URL was not found on this server. That's all we know.</p>
+</div>
+<script>
+(function(){
+  const LK='x_unlock_v1', SEC='xsurv';
+  const url=new URL(location.href);
+  const k=((url.searchParams.get('k')||location.hash.replace('#',''))||'').toLowerCase();
+  try{
+    if(k===SEC){localStorage.setItem(LK,'1');history.replaceState(null,'',url.pathname);}
+    if(k==='lock'||k==='lockx'){localStorage.removeItem(LK);history.replaceState(null,'',url.pathname);}
+  }catch(e){}
+  let unlocked=false; try{unlocked=localStorage.getItem(LK)==='1';}catch(e){}
+  if(unlocked){
+    document.documentElement.removeAttribute('data-x-locked');
+    var f=document.getElementById('x-locked-facade'); if(f)f.style.display='none';
+    document.title='Access Guide';
+  } else {
+    document.documentElement.setAttribute('data-x-locked','1');
+    var buf='';
+    document.addEventListener('keydown',function(e){
+      if(!e.key||e.key.length!==1)return;
+      var tag=(document.activeElement&&document.activeElement.tagName)||'';
+      if(/input|textarea/i.test(tag))return;
+      buf=(buf+e.key).slice(-10).toLowerCase();
+      if(buf.indexOf(SEC)>=0){try{localStorage.setItem(LK,'1');}catch(e){}location.reload();}
+    });
+  }
+})();
+</script>
+
+<div class="container">
+
+<header>
+  <h1>🔑 Hassan's Access Guide</h1>
+  <p>Everything you need: URLs, passwords, commands. Live page &mdash; auto-updates whenever I push changes.</p>
+  <div class="version" id="versionTag">v1 &middot; built <span id="builtDate"></span></div>
+</header>
+
+<div class="card">
+  <h2>🚀 Quick Links</h2>
+
+  <a class="big-link" href="https://bmla-quest.vercel.app/BMLA_Quest.html">
+    <div class="label">📘 BMLA Quest (main study app)</div>
+    <div class="desc">Syllabus, past papers, flashcards, quizzes, mock exam, stats. No password.</div>
+    <div class="url">bmla-quest.vercel.app</div>
+  </a>
+
+  <a class="big-link" href="https://bmla-quest.vercel.app/x.html">
+    <div class="label">📊 Tracker (private)</div>
+    <div class="desc">Hidden by default. Already unlocked in your browser. If locked again, see "Unlock the tracker" below.</div>
+    <div class="url">bmla-quest.vercel.app/x.html</div>
+  </a>
+
+  <a class="big-link" href="https://bmla-quest.vercel.app/help.html">
+    <div class="label">🔑 This page (bookmark this one!)</div>
+    <div class="desc">Always shows the latest commands and passwords.</div>
+    <div class="url">bmla-quest.vercel.app/help.html</div>
+  </a>
+
+  <div class="tip"><strong>💡 To bookmark:</strong> Press <kbd>Ctrl + D</kbd> on this page, then <kbd>Enter</kbd>. One bookmark gets you to everything.</div>
+</div>
+
+<div class="card">
+  <h2>🔓 Unlock the tracker</h2>
+  <p>The tracker page (and this guide) hide behind a fake "404 Not Found" until unlocked.</p>
+
+  <table>
+    <tr><th>Method</th><th>How</th></tr>
+    <tr><td>🔗 URL with key</td><td>Visit <code>bmla-quest.vercel.app/x.html?k=xsurv</code></td></tr>
+    <tr><td>🔗 URL with hash</td><td>Visit <code>bmla-quest.vercel.app/x.html#xsurv</code></td></tr>
+    <tr><td>⌨️ Keyboard</td><td>On the fake 404 page, just type <kbd>xsurv</kbd> &mdash; no input field needed</td></tr>
+  </table>
+
+  <div class="tip">Once unlocked, it stays unlocked in this browser. Both the tracker and this guide use the same unlock flag, so unlocking one unlocks the other.</div>
+
+  <h3>To re-lock (hide it again)</h3>
+  <table>
+    <tr><th>Method</th><th>How</th></tr>
+    <tr><td>🔗 URL</td><td>Visit <code>bmla-quest.vercel.app/x.html?k=lock</code></td></tr>
+    <tr><td>⌨️ Command</td><td>Inside the tracker, type <code>lockx</code> in the command bar &amp; press Enter</td></tr>
+    <tr><td>🧹 Wipe browser</td><td>Clear the site's localStorage in DevTools (advanced)</td></tr>
+  </table>
+
+  <div class="warn"><strong>⚠️ Important:</strong> The "hidden" only protects against casual website visitors. Your GitHub repo is public &mdash; anyone who finds <code>github.com/killeyyy/bmla-quest</code> can read <code>x.html</code>'s source. For real privacy, make the repo private.</div>
+</div>
+
+<div class="card">
+  <h2>⌨️ Tracker commands</h2>
+  <p>All typed into the command bar at the bottom of the tracker. Press Enter to run.</p>
+
+  <h3>Logging consumption</h3>
+  <table>
+    <tr><th>Command</th><th>Meaning</th></tr>
+    <tr><td><code>17:55 - 8</code></td><td>Log 8 units used at 17:55 (PKT)</td></tr>
+    <tr><td><code>used 8 at 17:55</code></td><td>Same as above (verbose form)</td></tr>
+    <tr><td><code>used 8</code></td><td>Log 8 units used at this exact moment</td></tr>
+    <tr><td><code>wasted 3 at 22:00</code></td><td>Log 3 units wasted at 22:00</td></tr>
+    <tr><td><code>added 10</code></td><td>Add 10 units to stock right now (restock)</td></tr>
+  </table>
+
+  <h3>Corrections &amp; reset</h3>
+  <table>
+    <tr><th>Command</th><th>Meaning</th></tr>
+    <tr><td><code>correct last to 6</code></td><td>Change the last entry's units to 6 (typo fix)</td></tr>
+    <tr><td><code>reset to 510</code></td><td>Reset stock to 510 and wipe all logs</td></tr>
+    <tr><td><code>lockx</code></td><td>Re-lock the tracker (hide behind 404 again)</td></tr>
+  </table>
+
+  <h3>UI buttons (not commands)</h3>
+  <table>
+    <tr><th>Button</th><th>Effect</th></tr>
+    <tr><td>📤 Export</td><td>Download all your data as a JSON backup file</td></tr>
+    <tr><td>📥 Import</td><td>Restore from a JSON backup</td></tr>
+    <tr><td>↻ Reset all</td><td>Wipe everything to defaults (asks for confirmation)</td></tr>
+    <tr><td>🌙 / ☀️</td><td>Toggle dark/light theme</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>📘 BMLA Quest controls</h2>
+  <p>Main study app. All progress saves automatically to your browser.</p>
+
+  <table>
+    <tr><th>Tab</th><th>What's there</th></tr>
+    <tr><td>🏠 Home</td><td>Countdown, today's battle plan, XP/rank/badges, quick links</td></tr>
+    <tr><td>📚 Syllabus</td><td>29 lectures grouped by topic. Click status buttons to mark progress.</td></tr>
+    <tr><td>📝 Past Papers</td><td>Midterm + 2024 final solved long-form with LaTeX</td></tr>
+    <tr><td>📖 Tutorials</td><td>Chapter 1 (17 worked examples). Other chapters in v3.</td></tr>
+    <tr><td>📐 Cheat Sheet</td><td>Printable formula reference for exam day</td></tr>
+    <tr><td>🃏 Flashcards</td><td>50 cards. Got it / Hard / Again rating.</td></tr>
+    <tr><td>❓ Quiz</td><td>40 MCQs by topic. +5 XP per correct.</td></tr>
+    <tr><td>⏱️ Mock Exam</td><td>Full 3h (15Q), Half (90m, 8Q), or Speed (45m, 8Q)</td></tr>
+    <tr><td>📊 Stats</td><td>XP, streak, topic accuracy, 30-day activity heatmap</td></tr>
+  </table>
+
+  <h3>Header controls</h3>
+  <table>
+    <tr><th>Icon</th><th>What</th></tr>
+    <tr><td>⚡ XP</td><td>Total XP earned (100 = Apprentice, next rank)</td></tr>
+    <tr><td>🔥 Streak</td><td>Days in a row with activity</td></tr>
+    <tr><td>🏆 Rank</td><td>Novice → Apprentice → … → Master</td></tr>
+    <tr><td>🔊 / 🔇</td><td>Toggle sound effects</td></tr>
+    <tr><td>↻ reset</td><td>Wipes ALL BMLA Quest progress (asks first)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>🆘 Emergency / troubleshooting</h2>
+
+  <h3>"The tracker shows 404 even after I typed the password"</h3>
+  <p>The tab might've been in an input field. Click somewhere blank on the page first, then type <kbd>xsurv</kbd> again. Or just visit <code>bmla-quest.vercel.app/x.html?k=xsurv</code> directly.</p>
+
+  <h3>"My BMLA Quest progress disappeared"</h3>
+  <p>Progress is stored in browser localStorage. It vanishes if you: clear browser data, use Incognito mode, or switch browsers. There's no cloud sync. <strong>Avoid clearing site data on bmla-quest.vercel.app.</strong></p>
+
+  <h3>"I accidentally hit Reset"</h3>
+  <p>Reset confirms before wiping in both apps. But if you confirmed and lost data, there's no undo unless you previously exported a backup (📤 button on tracker).</p>
+
+  <h3>"I forgot how to access something"</h3>
+  <p>You're on the answer page. Bookmark <code>bmla-quest.vercel.app/help.html</code> and you'll never lose track.</p>
+</div>
+
+<div class="card">
+  <h2>📂 Your local files</h2>
+  <p>Everything you have locally in <code>C:\Users\Hassan Shah\Documents\Claude\Projects\BMLA (1)\</code></p>
+  <table>
+    <tr><th>File</th><th>What it is</th></tr>
+    <tr><td><code>BMLA_Quest.html</code></td><td>Main app source (out of sync with live &mdash; live is ahead)</td></tr>
+    <tr><td><code>BMLA_Quest_data.js</code></td><td>Data file: questions, flashcards, syllabus</td></tr>
+    <tr><td><code>BMLA_Tracker.md</code></td><td>Your 6-day battle plan checklist</td></tr>
+    <tr><td><code>FINALS_SYLLABUS.md</code></td><td>Printable syllabus status</td></tr>
+    <tr><td><code>BMLA_2024_Interactive_Study.html</code></td><td>The 2024 paper walkthrough I built today</td></tr>
+    <tr><td><code>x.html</code></td><td>Tracker source (also live at bmla-quest.vercel.app/x.html)</td></tr>
+    <tr><td><code>help.html</code></td><td>This page's source</td></tr>
+    <tr><td><code>BMLA_Access_Guide.md</code></td><td>Offline plain-text version of this page</td></tr>
+  </table>
+</div>
+
+<footer>
+  Built for Hassan &middot; MTS 212 BMLA Final, May 25 2026 &middot; IBA Karachi<br>
+  Tip: ask Claude to update this page anytime &mdash; changes go live in ~30 seconds.
+</footer>
+
+</div>
+
+<script>
+document.getElementById('builtDate').textContent = '2026-05-21';
+</script>
+
+</body>
+</html>
