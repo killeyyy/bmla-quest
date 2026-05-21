@@ -173,13 +173,37 @@ const PAST_PAPERS = [
     id:'final-2024-q1', paper:'BMLA Final Spring 2024', qn:1, marks:10, topic:'matrix',
     title:'Invertibility with few calculations',
     prompt:'Determine if $A=\\begin{bmatrix}-1&-3&0&1\\\\3&5&8&-3\\\\-2&-6&3&2\\\\0&-1&2&1\\end{bmatrix}$ is invertible. Use as few calculations as possible and justify your answer.',
-    steps:[
-      'A square matrix is invertible exactly when it has a pivot in every row and every column.',
-      'Row-reducing $A$ gives pivots in columns 1, 2, 3, and 4.',
-      'Equivalently, the determinant is nonzero: $\\det(A)=12$.',
-      'Since the determinant is not zero, the columns are linearly independent and $A$ is invertible.'
+    concepts:[
+      { term:'Invertible', meaning:'A square matrix is invertible if it has an inverse $A^{-1}$. In exam language: $A$ is invertible iff $\\det(A)\\ne0$, iff it has a pivot in every row/column, iff row-reduces to $I$.' },
+      { term:'Pivot', meaning:'A pivot is the first nonzero leading entry used to eliminate numbers below it. For a 4x4 matrix, four pivots means the matrix is full-rank and invertible.' },
+      { term:'Row reduction', meaning:'A process of using row operations to simplify a matrix. Row replacement does not change determinant. Row swap changes determinant sign. Row scaling multiplies determinant.' },
+      { term:'Determinant', meaning:'A number attached to a square matrix. For this question, the key condition is simple: if determinant is nonzero, the matrix is invertible; if determinant is zero, it is not invertible.' },
+      { term:'Triangular matrix', meaning:'A matrix with all zeros below the main diagonal. Its determinant is just the product of the diagonal entries.' }
     ],
-    answer:'$A$ is invertible because $\\det(A)=12\\ne0$ and the row reduction has four pivots.'
+    steps:[
+      'Use the fastest invertibility test: for a square matrix, $A$ is invertible exactly when $\\det(A)\\ne0$.',
+      'Start with $A=\\begin{bmatrix}-1&-3&0&1\\\\3&5&8&-3\\\\-2&-6&3&2\\\\0&-1&2&1\\end{bmatrix}$. Use row replacement first: $R_2\\leftarrow R_2+3R_1$ gives $[0,-4,8,0]$, and $R_3\\leftarrow R_3-2R_1$ gives $[0,0,3,0]$. Row replacement does not change the determinant.',
+      'Now the rows are $[-1,-3,0,1]$, $[0,-4,8,0]$, $[0,0,3,0]$, $[0,-1,2,1]$. Swap $R_2$ and $R_4$ so the smaller row is easier to use. One row swap changes the sign of the determinant.',
+      'Use $R_4\\leftarrow R_4-4R_2$ after the swap. This gives an upper triangular matrix with diagonal entries $-1,-1,3,-4$.',
+      'The triangular determinant is $(-1)(-1)(3)(-4)=-12$. Because one row swap happened, the original determinant is $12$.',
+      'Since $\\det(A)=12\\ne0$, the matrix is invertible.'
+    ],
+    answer:'$A$ is invertible because $\\det(A)=12\\ne0$.',
+    variations:{
+      compact:'A square matrix is invertible if its determinant is not zero. Row-reducing with determinant-safe row replacements and one row swap gives a triangular matrix with diagonal product $-12$. The one row swap flips the sign, so $\\det(A)=12\\ne0$. Therefore $A$ is invertible.',
+      beginner:[
+        'Goal: decide whether this matrix has an inverse. The easiest test is determinant: nonzero means invertible, zero means not invertible.',
+        'We simplify the matrix using row operations. Think of this like cleaning the matrix until the answer is easier to see.',
+        'First eliminate the 3 below the top-left $-1$: do $R_2\\leftarrow R_2+3R_1$. This changes row 2 to $[0,-4,8,0]$.',
+        'Then eliminate the $-2$ below the top-left $-1$: do $R_3\\leftarrow R_3-2R_1$. This changes row 3 to $[0,0,3,0]$.',
+        'Now swap row 2 and row 4 because row 4 has $-1$, which is easier than $-4$. Remember: one row swap flips the determinant sign.',
+        'After the swap, use $R_4\\leftarrow R_4-4R_2$. This makes the matrix upper triangular.',
+        'For an upper triangular matrix, determinant = product of diagonal entries: $(-1)(-1)(3)(-4)=-12$.',
+        'Because we used one row swap, the original determinant is the opposite sign: $12$.',
+        'Final decision: $12$ is not zero, so the matrix is invertible.'
+      ],
+      exam:'Using determinant-preserving row replacements: $R_2\\leftarrow R_2+3R_1$, $R_3\\leftarrow R_3-2R_1$. Then swap $R_2$ and $R_4$, and use $R_4\\leftarrow R_4-4R_2$. The resulting upper triangular matrix has diagonal entries $-1,-1,3,-4$, so its determinant is $-12$. Accounting for one row interchange, $\\det(A)=12\\ne0$. Hence $A$ is invertible.'
+    }
   },
   {
     id:'final-2024-q2', paper:'BMLA Final Spring 2024', qn:2, marks:5, topic:'det',
