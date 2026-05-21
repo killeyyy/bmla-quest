@@ -290,7 +290,38 @@ const PAST_PAPERS = [
       'For $\\lambda=5$, solving $(A-5I)x=0$ gives $x_1+x_3=0$ and $x_2+x_3=0$, so one eigenvector is $(-1,-1,1)^T$.',
       'There are three independent eigenvectors, so $A$ is diagonalizable.'
     ],
-    answer:'One valid diagonalization is $A=PDP^{-1}$ with $P=\\begin{bmatrix}-2&1&-1\\\\1&0&-1\\\\0&1&1\\end{bmatrix}$ and $D=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\0&0&5\\end{bmatrix}$.'
+    concepts:[
+      { term:'Diagonalize', meaning:'Write $A$ as $PDP^{-1}$, where $D$ is diagonal and $P$ is made from eigenvectors.' },
+      { term:'Eigenvalue', meaning:'A number $\\lambda$ where $Av=\\lambda v$ for some nonzero vector $v$.' },
+      { term:'Eigenvector', meaning:'A nonzero vector whose direction is not changed by $A$; it is only stretched or flipped.' },
+      { term:'Algebraic multiplicity', meaning:'How many times an eigenvalue repeats as a root of the characteristic equation.' }
+    ],
+    guidedWork:[
+      { h:'What diagonalization is trying to do', b:'We want $A=PDP^{-1}$. The diagonal matrix $D$ stores eigenvalues. The matrix $P$ stores matching eigenvectors as columns.' },
+      { h:'Find eigenvalues first', b:'Solve $\\det(A-\\lambda I)=0$. For this matrix, the characteristic expression is $-(\\lambda-1)^2(\\lambda-5)=0$.' },
+      { h:'Read the roots', b:'The roots are $\\lambda=1$ and $\\lambda=5$. Since $(\\lambda-1)^2$ has power 2, $\\lambda=1$ repeats twice.' },
+      { h:'Find eigenvectors for $\\lambda=1$', b:'Solving $(A-I)x=0$ gives one equation: $x_1+2x_2-x_3=0$. Two free choices give eigenvectors $(-2,1,0)^T$ and $(1,0,1)^T$.' },
+      { h:'Find eigenvector for $\\lambda=5$', b:'Solving $(A-5I)x=0$ gives $x_1+x_3=0$ and $x_2+x_3=0$. Choose $x_3=1$, so $x_1=-1$, $x_2=-1$, giving $(-1,-1,1)^T$.' },
+      { h:'Check diagonalizable', b:'A 3x3 matrix needs 3 independent eigenvectors. We found 3, so diagonalization is possible.' }
+    ],
+    answer:'One valid diagonalization is $A=PDP^{-1}$ with $P=\\begin{bmatrix}-2&1&-1\\\\1&0&-1\\\\0&1&1\\end{bmatrix}$ and $D=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\0&0&5\\end{bmatrix}$.',
+    variations:{
+      compact:'Eigenvalues are $1,1,5$. A basis for $\\lambda=1$ is $\\{(-2,1,0)^T,(1,0,1)^T\\}$ and an eigenvector for $\\lambda=5$ is $(-1,-1,1)^T$. Hence $A=PDP^{-1}$ with those eigenvectors in $P$ and $D=diag(1,1,5)$.',
+      beginner:[
+        'Diagonalizing means rebuilding $A$ from eigenvectors and eigenvalues.',
+        'First solve $\\det(A-\\lambda I)=0$ to find eigenvalues.',
+        'The equation is $-(\\lambda-1)^2(\\lambda-5)=0$, so $\\lambda=1,1,5$.',
+        'For $\\lambda=1$, solve $(A-I)x=0$ and get two eigenvectors: $(-2,1,0)^T$ and $(1,0,1)^T$.',
+        'For $\\lambda=5$, solve $(A-5I)x=0$ and get $(-1,-1,1)^T$.',
+        'Put eigenvectors into $P$ in the same order as eigenvalues in $D$.'
+      ],
+      exam:'The characteristic equation is $\\det(A-\\lambda I)=-(\\lambda-1)^2(\\lambda-5)=0$, so eigenvalues are $1,1,5$. For $\\lambda=1$, a basis is $\\{(-2,1,0)^T,(1,0,1)^T\\}$. For $\\lambda=5$, an eigenvector is $(-1,-1,1)^T$. Thus $A=PDP^{-1}$ with $P=\\begin{bmatrix}-2&1&-1\\\\1&0&-1\\\\0&1&1\\end{bmatrix}$ and $D=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\0&0&5\\end{bmatrix}$.'
+    },
+    checks:[
+      { q:'What goes inside $D$?', a:'Eigenvalues, placed on the diagonal.' },
+      { q:'What goes inside $P$?', a:'Matching eigenvectors as columns.' },
+      { q:'How many independent eigenvectors does a 3x3 matrix need to diagonalize?', a:'Three.' }
+    ]
   },
   {
     id:'final-2024-q4', paper:'BMLA Final Spring 2024', qn:4, marks:10, topic:'det',
@@ -303,7 +334,30 @@ const PAST_PAPERS = [
       'Replace column 2 by $b$ to get $D_2=16$, so $x_2=D_2/D=16/4=4$.',
       'Replace column 3 by $b$ to get $D_3=-14$, so $x_3=D_3/D=-14/4=-7/2$.'
     ],
-    answer:'$(x_1,x_2,x_3)=\\left(\\frac32,4,-\\frac72\\right)$.'
+    answer:'$(x_1,x_2,x_3)=\\left(\\frac32,4,-\\frac72\\right)$.',
+    concepts:[
+      { term:"Cramer's Rule", def:'A determinant shortcut for solving $Ax=b$: $x_i=D_i/D$, where $D=\\det(A)$ and $D_i$ replaces column $i$ by $b$.' },
+      { term:'Coefficient matrix', def:'The matrix made from the numbers multiplying $x_1,x_2,x_3$. The answer column is kept separately as $b$.' },
+      { term:'Determinant test', def:'If $D=\\det(A)\\ne0$, the system has exactly one solution, so Cramer\'s Rule is allowed.' },
+      { term:'Replace a column', def:'For $D_1$, put the answer column $b$ in column 1. For $D_2$, put $b$ in column 2, and so on.' }
+    ],
+    guidedWork:[
+      { h:'1. Convert equations into matrix form', b:'The system is $Ax=b$. From $2x_1+x_2+0x_3=7$, $-3x_1+0x_2+x_3=-8$, and $0x_1+x_2+2x_3=-3$, use $A=\\begin{bmatrix}2&1&0\\\\-3&0&1\\\\0&1&2\\end{bmatrix}$ and $b=\\begin{bmatrix}7\\\\-8\\\\-3\\end{bmatrix}$.' },
+      { h:'2. Find the main determinant', b:'Compute $D=\\det(A)=4$. Since $4\\ne0$, a unique solution exists and Cramer\'s Rule can be used.' },
+      { h:'3. Find $x_1$', b:'Replace column 1 of $A$ with $b$: $A_1=\\begin{bmatrix}7&1&0\\\\-8&0&1\\\\-3&1&2\\end{bmatrix}$. Its determinant is $D_1=6$, so $x_1=D_1/D=6/4=3/2$.' },
+      { h:'4. Find $x_2$', b:'Replace column 2 with $b$: $A_2=\\begin{bmatrix}2&7&0\\\\-3&-8&1\\\\0&-3&2\\end{bmatrix}$. Its determinant is $D_2=16$, so $x_2=16/4=4$.' },
+      { h:'5. Find $x_3$', b:'Replace column 3 with $b$: $A_3=\\begin{bmatrix}2&1&7\\\\-3&0&-8\\\\0&1&-3\\end{bmatrix}$. Its determinant is $D_3=-14$, so $x_3=-14/4=-7/2$.' }
+    ],
+    variations:{
+      compact:'$D=4$, $D_1=6$, $D_2=16$, $D_3=-14$. Therefore $x_1=3/2$, $x_2=4$, $x_3=-7/2$.',
+      beginner:'Cramer\'s Rule solves one variable at a time. First confirm $\\det(A)$ is not zero. Then replace one column at a time with the answer column $b$. Divide each new determinant by the original determinant $D=4$.',
+      exam:'Using Cramer\'s Rule, $D=\\det(A)=4\\ne0$. Also $D_1=6$, $D_2=16$, and $D_3=-14$. Hence $(x_1,x_2,x_3)=\\left(\\frac{D_1}{D},\\frac{D_2}{D},\\frac{D_3}{D}\\right)=\\left(\\frac32,4,-\\frac72\\right)$.'
+    },
+    checks:[
+      { q:'When is Cramer\'s Rule allowed?', a:'When the main determinant $D=\\det(A)$ is nonzero.' },
+      { q:'What does $D_2$ mean?', a:'The determinant after replacing column 2 of $A$ with the answer column $b$.' },
+      { q:'Why is the final answer unique here?', a:'Because $D=4\\ne0$.' }
+    ]
   },
   {
     id:'final-2024-q5', paper:'BMLA Final Spring 2024', qn:5, marks:5, topic:'eigen',
@@ -316,7 +370,30 @@ const PAST_PAPERS = [
       'With $x_4=0$, the equations are $2x_2+3x_3=0$ and $-2x_2+hx_3=0$.',
       'The second row must be $-1$ times the first row, so $h=-3$.'
     ],
-    answer:'$h=-3$. Then the eigenspace for $\\lambda=4$ has two free variables and dimension 2.'
+    answer:'$h=-3$. Then the eigenspace for $\\lambda=4$ has two free variables and dimension 2.',
+    concepts:[
+      { term:'Eigenspace', def:'All vectors $x$ that solve $(A-\\lambda I)x=0$. It is a solution set, not just one vector.' },
+      { term:'Dimension', def:'For this question, dimension means the number of free variables in the eigenspace after row reduction.' },
+      { term:'Free variable', def:'A variable that is not forced by a pivot equation. Each free variable adds one independent direction.' },
+      { term:'Dependent equations', def:'Two equations are dependent if one is just a multiple of the other, so they count like one real restriction.' }
+    ],
+    guidedWork:[
+      { h:'1. Start from the eigenspace equation', b:'For $\\lambda=4$, solve $(A-4I)x=0$. Subtract 4 from each diagonal entry of $A$.' },
+      { h:'2. Write the matrix', b:'$A-4I=\\begin{bmatrix}0&2&3&3\\\\0&-2&h&3\\\\0&0&0&14\\\\0&0&0&-2\\end{bmatrix}$. The first column is all zero, so $x_1$ is automatically free.' },
+      { h:'3. Use the last rows first', b:'Rows 3 and 4 both force $x_4=0$ because $14x_4=0$ and $-2x_4=0$.' },
+      { h:'4. Count how many free variables are needed', b:'The question wants dimension 2. We already have $x_1$ free, so we need exactly one more free variable from $x_2,x_3$.' },
+      { h:'5. Force the two middle equations to become one equation', b:'With $x_4=0$, rows 1 and 2 become $2x_2+3x_3=0$ and $-2x_2+h x_3=0$. To leave one free direction, row 2 must be $-1$ times row 1: $-2x_2-3x_3=0$. Therefore $h=-3$.' }
+    ],
+    variations:{
+      compact:'$A-4I$ gives $x_4=0$ and $x_1$ free. To make the eigenspace two-dimensional, the equations $2x_2+3x_3=0$ and $-2x_2+h x_3=0$ must be dependent, so $h=-3$.',
+      beginner:'Dimension means free-variable count. One free variable is already $x_1$. The last rows kill $x_4$. So we need $x_2,x_3$ to have one free variable, meaning the two equations involving them must be the same line. That happens when the second is $-1$ times the first, giving $h=-3$.',
+      exam:'For $\\lambda=4$, $A-4I=\\begin{bmatrix}0&2&3&3\\\\0&-2&h&3\\\\0&0&0&14\\\\0&0&0&-2\\end{bmatrix}$. Rows 3 and 4 imply $x_4=0$, and $x_1$ is free. For the eigenspace to have dimension 2, the remaining equations $2x_2+3x_3=0$ and $-2x_2+h x_3=0$ must be dependent. Thus $(-2,h)=-1(2,3)$, so $h=-3$.'
+    },
+    checks:[
+      { q:'What equation defines the eigenspace for $\\lambda=4$?', a:'$(A-4I)x=0$.' },
+      { q:'Why is $x_1$ free?', a:'Because the first column of $A-4I$ is all zeros.' },
+      { q:'What value of $h$ makes row 2 the negative of row 1?', a:'$h=-3$.' }
+    ]
   },
   {
     id:'final-2024-q6', paper:'BMLA Final Spring 2024', qn:6, marks:20, topic:'lp',
@@ -329,7 +406,31 @@ const PAST_PAPERS = [
       'But the second constraint requires $4x_1+3x_2\\le12$, which is impossible.',
       'In a simplex setup, Phase I would fail because no feasible starting solution can satisfy both constraints.'
     ],
-    answer:'The LP is infeasible. There is no point satisfying both constraints, so no minimum value exists.'
+    answer:'The LP is infeasible. There is no point satisfying both constraints, so no minimum value exists.',
+    concepts:[
+      { term:'Feasible region', def:'The set of points that satisfy every constraint at the same time.' },
+      { term:'Infeasible', def:'No point satisfies all constraints together, so the optimization problem has no answer.' },
+      { term:'Graphical check', def:'Draw each inequality as a half-plane. If the shaded regions do not overlap, the LP is infeasible.' },
+      { term:'Simplex Phase I', def:'A simplex setup step used to find a starting feasible solution. If Phase I fails, the original LP is infeasible.' }
+    ],
+    guidedWork:[
+      { h:'1. Do not optimize before checking feasibility', b:'The objective $z=4x_1-3x_2$ matters only after we know at least one point satisfies the constraints.' },
+      { h:'2. Simplify the first constraint', b:'$2x_1-4x_2\\ge20$. Divide by 2: $x_1-2x_2\\ge10$. So $x_1\\ge10+2x_2$.' },
+      { h:'3. Use nonnegativity', b:'Since $x_2\\ge0$, the right side $10+2x_2$ is at least $10$. Therefore every feasible point must have $x_1\\ge10$.' },
+      { h:'4. Test that against the second constraint', b:'If $x_1\\ge10$ and $x_2\\ge0$, then $4x_1+3x_2\\ge4(10)+3(0)=40$.' },
+      { h:'5. Find the contradiction', b:'The second constraint says $4x_1+3x_2\\le12$, but the first constraint plus nonnegativity forces $4x_1+3x_2\\ge40$. A number cannot be both at least 40 and at most 12.' },
+      { h:'6. Connect to simplex and graph', b:'Graphically, the half-planes do not overlap. In simplex, Phase I would fail because no feasible starting point exists.' }
+    ],
+    variations:{
+      compact:'The constraints contradict each other. From $2x_1-4x_2\\ge20$, $x_1\\ge10+2x_2\\ge10$. Then $4x_1+3x_2\\ge40$, but the second constraint requires $\\le12$. So the LP is infeasible.',
+      beginner:'First ask: is there any point we can even use? The first inequality pushes $x_1$ to at least 10. But then the left side of the second inequality is already at least 40, even when $x_2=0$. Since the second inequality only allows up to 12, no point can satisfy both.',
+      exam:'From $2x_1-4x_2\\ge20$, $x_1\\ge10+2x_2$. With $x_2\\ge0$, $x_1\\ge10$, hence $4x_1+3x_2\\ge40$. This contradicts $4x_1+3x_2\\le12$. Therefore the feasible region is empty. The LP is infeasible and no minimum value exists.'
+    },
+    checks:[
+      { q:'What should you check before optimizing an LP?', a:'Whether the feasible region exists.' },
+      { q:'What does the first constraint force about $x_1$?', a:'It forces $x_1\\ge10+2x_2$, so at least $10$.' },
+      { q:'Why is there no minimum value?', a:'Because there are no feasible points to optimize over.' }
+    ]
   },
   {
     id:'final-2024-q7', paper:'BMLA Final Spring 2024', qn:7, marks:5, topic:'transassign',
@@ -342,7 +443,30 @@ const PAST_PAPERS = [
       'Depot demand constraints are equalities because all depot demands must be satisfied.',
       'Total supply is 4200 and total demand is 3100, so unused plant capacity is allowed by the capacity inequalities.'
     ],
-    answer:'Minimize $Z=50x_{11}+40x_{12}+35x_{13}+20x_{14}+30x_{21}+45x_{22}+40x_{23}+60x_{24}+60x_{31}+25x_{32}+50x_{33}+30x_{34}$ subject to $x_{11}+x_{12}+x_{13}+x_{14}\\le1000$, $x_{21}+x_{22}+x_{23}+x_{24}\\le1400$, $x_{31}+x_{32}+x_{33}+x_{34}\\le1800$, $x_{11}+x_{21}+x_{31}=800$, $x_{12}+x_{22}+x_{32}=750$, $x_{13}+x_{23}+x_{33}=650$, $x_{14}+x_{24}+x_{34}=900$, and all $x_{ij}\\ge0$.'
+    answer:'Minimize $Z=50x_{11}+40x_{12}+35x_{13}+20x_{14}+30x_{21}+45x_{22}+40x_{23}+60x_{24}+60x_{31}+25x_{32}+50x_{33}+30x_{34}$ subject to $x_{11}+x_{12}+x_{13}+x_{14}\\le1000$, $x_{21}+x_{22}+x_{23}+x_{24}\\le1400$, $x_{31}+x_{32}+x_{33}+x_{34}\\le1800$, $x_{11}+x_{21}+x_{31}=800$, $x_{12}+x_{22}+x_{32}=750$, $x_{13}+x_{23}+x_{33}=650$, $x_{14}+x_{24}+x_{34}=900$, and all $x_{ij}\\ge0$.',
+    concepts:[
+      { term:'Decision variable', def:'A symbol for the unknown quantity. Here $x_{ij}$ means shipment from plant $i$ to depot $j$ in thousands of gallons.' },
+      { term:'Objective function', def:'The total cost expression that we want to minimize.' },
+      { term:'Supply constraint', def:'A plant cannot ship more than its capacity, so plant constraints use $\\le$.' },
+      { term:'Demand constraint', def:'Each depot must receive exactly its required amount, so depot constraints use $=$.' }
+    ],
+    guidedWork:[
+      { h:'1. Define what the unknowns mean', b:'Let $x_{ij}\\ge0$ be the number of thousands of gallons sent from plant $i$ to depot $j$. Example: $x_{23}$ means Plant 2 to Depot 3.' },
+      { h:'2. Build the cost expression', b:'Each route cost is multiplied by its shipment. For Plant 1, the cost part is $50x_{11}+40x_{12}+35x_{13}+20x_{14}$. Do the same for Plants 2 and 3.' },
+      { h:'3. Write plant capacity limits', b:'Plant 1 can ship at most 1000, so $x_{11}+x_{12}+x_{13}+x_{14}\\le1000$. Similarly Plant 2 has $\\le1400$ and Plant 3 has $\\le1800$.' },
+      { h:'4. Write depot demand requirements', b:'Depot 1 receives shipments from all plants, so $x_{11}+x_{21}+x_{31}=800$. Repeat this column-by-column for depots 2, 3, and 4.' },
+      { h:'5. Notice why supply uses $\\le$', b:'Total supply is $1000+1400+1800=4200$, but total demand is $800+750+650+900=3100$. Since supply is more than demand, some capacity may remain unused.' }
+    ],
+    variations:{
+      compact:'Define $x_{ij}\\ge0$ as shipment from plant $i$ to depot $j$. Minimize total route cost, use one $\\le$ constraint for each plant capacity, and one $=$ constraint for each depot demand.',
+      beginner:'This is not asking you to solve the shipping schedule. It only asks you to write the model. Read rows as plants and columns as depots. Multiply every cost by its matching $x_{ij}$, then add capacity limits by rows and demand requirements by columns.',
+      exam:'Let $x_{ij}\\ge0$ denote thousand gallons shipped from plant $i$ to depot $j$. Minimize the stated total cost subject to plant capacity constraints $\\sum_j x_{ij}\\le s_i$ and depot demand constraints $\\sum_i x_{ij}=d_j$. Since total supply exceeds total demand, capacity constraints are inequalities.'
+    },
+    checks:[
+      { q:'What does $x_{32}$ mean?', a:'Shipment from Plant 3 to Depot 2, in thousands of gallons.' },
+      { q:'Why are plant constraints $\\le$?', a:'Plants cannot exceed capacity, and total supply is more than total demand.' },
+      { q:'Why are depot constraints $=$?', a:'Each depot must receive exactly its required demand.' }
+    ]
   },
   {
     id:'final-2024-q8', paper:'BMLA Final Spring 2024', qn:8, marks:10, topic:'transassign',
@@ -355,7 +479,30 @@ const PAST_PAPERS = [
       'Compute the total cost from the original table: $15+14+21+20+16=86$.',
       'No lower assignment total is available after the Hungarian reduction, so this is optimal.'
     ],
-    answer:'Minimum total time is $86$ days. Assign Programmer 1 -> Task 2, Programmer 2 -> Task 4, Programmer 3 -> Task 1, Programmer 4 -> Task 5, and Programmer 5 -> Task 3.'
+    answer:'Minimum total time is $86$ days. Assign Programmer 1 -> Task 2, Programmer 2 -> Task 4, Programmer 3 -> Task 1, Programmer 4 -> Task 5, and Programmer 5 -> Task 3.',
+    concepts:[
+      { term:'Assignment problem', def:'A special optimization problem where each worker gets exactly one job and each job gets exactly one worker.' },
+      { term:'Hungarian method', def:'A table method for finding the minimum assignment by creating and selecting independent zeros.' },
+      { term:'Independent zeros', def:'Zeros chosen so that no two are in the same row or column. Each chosen zero becomes one assignment.' },
+      { term:'Original cost table', def:'After finding the assignment using reductions, total cost must be calculated from the original matrix, not the reduced one.' }
+    ],
+    guidedWork:[
+      { h:'1. Identify rows and columns', b:'Rows are programmers and columns are tasks. Entry $(i,j)$ is the number of days programmer $i$ needs for task $j$.' },
+      { h:'2. Understand the rule', b:'Each programmer can do one task and each task must be done once. So the final answer must contain 5 assignments with no repeated row or column.' },
+      { h:'3. Use Hungarian method purposefully', b:'The row and column reductions create zeros that reveal good low-cost choices. Then choose independent zeros, meaning one zero per row and one per column.' },
+      { h:'4. Read the selected assignments', b:'A complete independent-zero selection gives $(1,2)$, $(2,4)$, $(3,1)$, $(4,5)$, and $(5,3)$.' },
+      { h:'5. Add original days', b:'Use the original matrix: $P_1T_2=15$, $P_2T_4=14$, $P_3T_1=21$, $P_4T_5=20$, $P_5T_3=16$. Total $15+14+21+20+16=86$.' }
+    ],
+    variations:{
+      compact:'Optimal assignment: $1\\to2$, $2\\to4$, $3\\to1$, $4\\to5$, $5\\to3$. Total days from the original matrix: $15+14+21+20+16=86$.',
+      beginner:'Think of this as matching people to jobs. You cannot repeat a person or a task. The Hungarian method helps choose the cheapest legal matching. After the matching is found, always add the original table entries, not the reduced-table zeros.',
+      exam:'Applying the Hungarian method gives the independent assignment set $(1,2),(2,4),(3,1),(4,5),(5,3)$. The corresponding original costs are $15,14,21,20,16$, so the minimum total time is $86$ days.'
+    },
+    checks:[
+      { q:'Can two programmers be assigned to the same task?', a:'No. Each task is assigned exactly once.' },
+      { q:'What makes zeros independent?', a:'No two selected zeros share the same row or column.' },
+      { q:'Which table do you use to compute the final total?', a:'The original cost table.' }
+    ]
   },
   {
     id:'final-2024-q9', paper:'BMLA Final Spring 2024', qn:9, marks:20, topic:'transassign',
@@ -372,7 +519,31 @@ const PAST_PAPERS = [
       'The most negative value is $\\Delta_{32}=-52$, so $O_3D_2$ is the first entering cell.',
       'The stepping-stone loop is $O_3D_2(+)$, $O_3D_3(-)$, $O_2D_3(+)$, $O_2D_2(-)$. The minimum minus allocation is $\\min(4,6)=4$, so $O_3D_3$ departs.'
     ],
-    answer:'Northwest initial allocation: $x_{11}=5$, $x_{12}=2$, $x_{22}=6$, $x_{23}=3$, $x_{33}=4$, $x_{34}=14$ with cost $1015$. First entering cell: $O_3D_2$. First departing variable: $x_{33}$.'
+    answer:'Northwest initial allocation: $x_{11}=5$, $x_{12}=2$, $x_{22}=6$, $x_{23}=3$, $x_{33}=4$, $x_{34}=14$ with cost $1015$. First entering cell: $O_3D_2$. First departing variable: $x_{33}$.',
+    concepts:[
+      { term:'Northwest corner', def:'A fast way to get an initial transportation solution by starting in the top-left cell and moving right/down as supplies and demands finish.' },
+      { term:'Basic cell', def:'A cell with a positive allocation in the current transportation table.' },
+      { term:'Opportunity cost', def:'The cost change from opening an unused route. A negative opportunity cost means total cost can improve.' },
+      { term:'Entering cell', def:'The unused cell chosen to enter the solution, usually the most negative opportunity cost.' },
+      { term:'Departing variable', def:'The current allocation that becomes zero after adjusting along the stepping-stone loop.' }
+    ],
+    guidedWork:[
+      { h:'1. Make the Northwest allocations', b:'Start at $O_1D_1$: allocate $\\min(7,5)=5$. Demand 1 is done, and Origin 1 has 2 left. Move right to $O_1D_2$ and allocate 2.' },
+      { h:'2. Continue row/column movement', b:'At $O_2D_2$, allocate $\\min(9,6)=6$. Then at $O_2D_3$, allocate 3. Then at $O_3D_3$, allocate 4, and finally put the remaining 14 in $O_3D_4$.' },
+      { h:'3. Calculate the initial cost', b:'Multiply each allocation by its route cost: $5(19)+2(30)+6(30)+3(40)+4(70)+14(20)=1015$.' },
+      { h:'4. Pick the entering cell', b:'Opportunity costs for unused cells include $\\Delta_{31}=-9$ and $\\Delta_{32}=-52$. The most negative value gives the biggest first improvement, so $O_3D_2$ enters.' },
+      { h:'5. Find the departing variable', b:'Make the loop $O_3D_2(+)$, $O_3D_3(-)$, $O_2D_3(+)$, $O_2D_2(-)$. The minus cells currently have 4 and 6. The smaller one is 4 at $O_3D_3$, so $x_{33}$ departs.' }
+    ],
+    variations:{
+      compact:'Northwest allocation: $x_{11}=5$, $x_{12}=2$, $x_{22}=6$, $x_{23}=3$, $x_{33}=4$, $x_{34}=14$. Cost $=1015$. Most negative opportunity cost is $\\Delta_{32}=-52$, so $O_3D_2$ enters and $x_{33}$ departs.',
+      beginner:'Northwest corner just fills from top-left using the smaller of remaining supply and demand. Stepping-stone then asks: which empty route should we try? Choose the most negative opportunity cost. The loop alternates plus and minus signs; the smallest minus allocation leaves.',
+      exam:'Using Northwest corner gives allocations $x_{11}=5,x_{12}=2,x_{22}=6,x_{23}=3,x_{33}=4,x_{34}=14$ and initial cost $1015$. Opportunity costs show $\\Delta_{32}=-52$ is most negative, so $O_3D_2$ is the entering cell. The loop $O_3D_2(+),O_3D_3(-),O_2D_3(+),O_2D_2(-)$ has minimum minus allocation $4$, so $x_{33}$ is the departing variable.'
+    },
+    checks:[
+      { q:'Where does Northwest corner start?', a:'At the top-left cell, $O_1D_1$.' },
+      { q:'What does a negative opportunity cost mean?', a:'Opening that route can reduce total cost.' },
+      { q:'Why does $x_{33}$ depart?', a:'It is the smallest allocation among the minus cells in the loop.' }
+    ]
   }
 ];
 
