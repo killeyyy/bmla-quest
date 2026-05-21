@@ -220,19 +220,64 @@ const PAST_PAPERS = [
         'Final decision: $12$ is not zero, so the matrix is invertible.'
       ],
       exam:'Using determinant-preserving row replacements: $R_2\\leftarrow R_2+3R_1$, $R_3\\leftarrow R_3-2R_1$. Then swap $R_2$ and $R_4$, and use $R_4\\leftarrow R_4-4R_2$. The resulting upper triangular matrix has diagonal entries $-1,-1,3,-4$, so its determinant is $-12$. Accounting for one row interchange, $\\det(A)=12\\ne0$. Hence $A$ is invertible.'
-    }
+    },
+    checks:[
+      { q:'Why did we use $R_2\\leftarrow R_2+3R_1$?', a:'Because the first entry of $R_2$ is $3$, and $3+3(-1)=0$ creates a zero below the first pivot.' },
+      { q:'Which row operation changes determinant sign?', a:'A row swap changes determinant sign.' },
+      { q:'What does $\\det(A)=12\\ne0$ prove?', a:'It proves $A$ is invertible.' }
+    ]
   },
   {
     id:'final-2024-q2', paper:'BMLA Final Spring 2024', qn:2, marks:5, topic:'det',
     title:'Linear independence by determinant',
     prompt:'Use determinants to decide if $v_1=\\begin{bmatrix}7\\\\-4\\\\-6\\end{bmatrix}$, $v_2=\\begin{bmatrix}-8\\\\5\\\\7\\end{bmatrix}$, and $v_3=\\begin{bmatrix}7\\\\0\\\\-5\\end{bmatrix}$ are linearly independent.',
+    concepts:[
+      { term:'Linearly independent', meaning:'A set of vectors is linearly independent if no vector in the set can be built from the others. Algebraically, $c_1v_1+c_2v_2+c_3v_3=0$ only has the boring solution $c_1=c_2=c_3=0$.' },
+      { term:'Columns', meaning:'For this determinant test, put the vectors side by side as columns of one square matrix. The determinant then tells whether those columns are independent.' },
+      { term:'Determinant test', meaning:'For three vectors in $\\mathbb R^3$, make a 3x3 matrix. If its determinant is nonzero, the vectors are independent. If determinant is zero, they are dependent.' },
+      { term:'3x3 determinant', meaning:'For $\\begin{bmatrix}a&b&c\\\\d&e&f\\\\g&h&i\\end{bmatrix}$, determinant is $a(ei-fh)-b(di-fg)+c(dh-eg)$.' }
+    ],
     steps:[
       'Place the vectors as columns of a matrix: $B=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$.',
       'For three vectors in $\\mathbb R^3$, the set is linearly independent exactly when $\\det(B)\\ne0$.',
       'Compute the determinant: $\\det(B)=-1$.',
       'Because the determinant is nonzero, the only solution of $c_1v_1+c_2v_2+c_3v_3=0$ is the trivial solution.'
     ],
-    answer:'The vectors are linearly independent because $\\det(B)=-1\\ne0$.'
+    guidedWork:[
+      { h:'What the question is really asking',
+        b:'It asks whether any vector here is secretly a combination of the others. If none of them can be built from the others, the vectors are linearly independent.' },
+      { h:'Why we place vectors as columns',
+        b:'The determinant test checks columns of a square matrix. So we build $B=[v_1\\ v_2\\ v_3]=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$.' },
+      { h:'Use the 3x3 determinant formula',
+        b:'For $\\begin{bmatrix}a&b&c\\\\d&e&f\\\\g&h&i\\end{bmatrix}$, use $a(ei-fh)-b(di-fg)+c(dh-eg)$. Here $a=7$, $b=-8$, $c=7$, $d=-4$, $e=5$, $f=0$, $g=-6$, $h=7$, $i=-5$.' },
+      { h:'Substitute carefully',
+        b:'$\\det(B)=7(5(-5)-0(7))-(-8)((-4)(-5)-0(-6))+7((-4)(7)-5(-6))$.' },
+      { h:'Simplify each small bracket',
+        b:'First bracket: $5(-5)-0(7)=-25$. Second bracket: $(-4)(-5)-0(-6)=20$. Third bracket: $(-4)(7)-5(-6)=-28+30=2$.' },
+      { h:'Finish the arithmetic',
+        b:'$\\det(B)=7(-25)-(-8)(20)+7(2)=-175+160+14=-1$.' },
+      { h:'Decision',
+        b:'The determinant is $-1$, which is not zero. Nonzero determinant means the columns are independent, so the vectors are linearly independent.' }
+    ],
+    answer:'The vectors are linearly independent because $\\det(B)=-1\\ne0$.',
+    variations:{
+      compact:'Put the vectors as columns of $B=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$. Since $\\det(B)=-1\\ne0$, the columns are linearly independent. Therefore $v_1,v_2,v_3$ are linearly independent.',
+      beginner:[
+        'Linearly independent means no vector in the group is unnecessary or copied from the others.',
+        'Because these are three vectors in $\\mathbb R^3$, we can use the determinant shortcut.',
+        'Put the vectors as columns: $B=[v_1\\ v_2\\ v_3]=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$.',
+        'Use the formula $a(ei-fh)-b(di-fg)+c(dh-eg)$.',
+        'Substitution gives $7(-25)-(-8)(20)+7(2)$.',
+        'That equals $-175+160+14=-1$.',
+        '$-1$ is not zero, so the determinant test says the vectors are linearly independent.'
+      ],
+      exam:'Let $B=[v_1\\ v_2\\ v_3]=\\begin{bmatrix}7&-8&7\\\\-4&5&0\\\\-6&7&-5\\end{bmatrix}$. Then $\\det(B)=7(5(-5)-0\\cdot7)-(-8)((-4)(-5)-0(-6))+7((-4)(7)-5(-6))=-175+160+14=-1\\ne0$. Hence the columns of $B$ are linearly independent, so $\\{v_1,v_2,v_3\\}$ is linearly independent.'
+    },
+    checks:[
+      { q:'What do we do first for the determinant test?', a:'Put the vectors side by side as columns of one square matrix.' },
+      { q:'What does $\\det(B)\\ne0$ tell us?', a:'The columns are linearly independent.' },
+      { q:'If the determinant had been $0$, what would the answer be?', a:'The vectors would be linearly dependent.' }
+    ]
   },
   {
     id:'final-2024-q3', paper:'BMLA Final Spring 2024', qn:3, marks:15, topic:'eigen',

@@ -53,6 +53,12 @@ window.MathJax = {
   .quick-menu-drawer { width:min(440px,100%); max-height:calc(100vh - 2rem); overflow:auto; background:rgba(255,255,255,0.96); backdrop-filter:blur(12px); border:2px solid rgba(168,85,247,0.18); border-radius:1.25rem; box-shadow:0 24px 70px rgba(15,23,42,0.3); }
   .jump-chip { border:1px solid #e9d5ff; background:white; color:#4c1d95; }
   .jump-chip:hover { border-color:#a855f7; background:#faf5ff; }
+  .answer-panel { border:2px solid rgba(168,85,247,0.12); border-radius:1rem; background:rgba(255,255,255,0.82); overflow:hidden; }
+  .answer-panel summary { padding:0.8rem 1rem; font-weight:700; color:#4c1d95; background:linear-gradient(90deg,#faf5ff,#fff); }
+  .answer-panel-body { padding:0 1rem 1rem; }
+  .mini-step { border:1px solid #e9d5ff; border-radius:0.75rem; background:#fff; }
+  .mini-step summary { padding:0.65rem 0.8rem; color:#6d28d9; font-weight:700; font-size:0.86rem; }
+  .study-plan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:0.75rem; }
   .concept-chip { position:relative; border:1px solid #c4b5fd; background:#faf5ff; color:#6d28d9; }
   .concept-chip:hover::after, .concept-chip:focus::after {
     content:attr(data-tip); position:absolute; left:0; top:calc(100% + 8px); z-index:60; width:min(320px,80vw);
@@ -157,6 +163,19 @@ window.MathJax = {
       <div class="flex items-center justify-between mb-3"><h3 class="font-display font-semibold text-xl flex items-center gap-2">🎯 Today's Battle Plan</h3><span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full" id="todayDate"></span></div>
       <div id="todayPlan" class="space-y-2"></div>
     </div>
+  </div>
+  <div class="card p-6 mb-5">
+    <div class="flex flex-wrap items-start justify-between gap-3 mobile-stack mb-4">
+      <div>
+        <h3 class="font-display font-semibold text-xl flex items-center gap-2">Study Plan Engine</h3>
+        <p class="text-sm text-slate-600">Beginner-first, based on your saved progress and days left.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 no-print">
+        <button onclick="updateStudyPlan(true)" class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">Update My Study Plan</button>
+        <button onclick="copyStudyCoachPrompt()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold">Copy AI Coach Prompt</button>
+      </div>
+    </div>
+    <div id="studyPlanBox" class="study-plan-grid"></div>
   </div>
   <div class="card p-6 mb-5">
     <h3 class="font-display font-semibold text-xl mb-4 flex items-center gap-2">🎖️ Badges <span class="text-sm text-slate-400 font-normal">(<span id="badgeCount">0</span>/12)</span></h3>
@@ -303,7 +322,7 @@ window.MathJax = {
 const STORAGE_KEY = 'bmla_quest_v2';
 let state = loadState();
 function loadState() { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); if (s) return Object.assign(defaultState(), s); } catch(e) {} return defaultState(); }
-function defaultState() { const lectures = {}; LECTURES.forEach(l => lectures[l.n] = 'not-started'); return { xp:0, streak:0, lastActive:null, lectures, badges:[], flash:{}, quiz:{taken:0,byTopic:{}}, mock:{attempts:[]}, activity:{}, sound:true }; }
+function defaultState() { const lectures = {}; LECTURES.forEach(l => lectures[l.n] = 'not-started'); return { xp:0, streak:0, lastActive:null, lectures, badges:[], flash:{}, quiz:{taken:0,byTopic:{}}, mock:{attempts:[]}, activity:{}, sound:true, ui:{paperPanels:{}} }; }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 function bumpActivity(xp) {
@@ -383,7 +402,7 @@ function refreshHome() {
   document.getElementById('overallLabel').textContent = `${mastered}/${LECTURES.length} mastered (${studied} touched)`;
   const circ = 2*Math.PI*70;
   document.getElementById('ringFill').style.strokeDashoffset = circ-(pct/100)*circ;
-  renderTodayPlan(); renderBadges();
+  renderTodayPlan(); updateStudyPlan(false); renderBadges();
 }
 function renderTodayPlan() {
   const days = Math.max(0, Math.floor((new Date('2026-05-25T10:00:00')-new Date())/86400000));
@@ -399,6 +418,50 @@ function renderTodayPlan() {
   const plan = plans[days] || ['Pick a section and chip away!'];
   const wrap = document.getElementById('todayPlan');
   wrap.innerHTML = plan.map((p,i) => `<div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"><div class="text-lg">${['1️⃣','2️⃣','3️⃣','4️⃣'][i] || '✨'}</div><div class="flex-1 text-sm">${p}</div></div>`).join('');
+}
+function studyPlanSnapshot() {
+  const exam = new Date('2026-05-25T10:00:00');
+  const daysLeft = Math.max(0, Math.ceil((exam-new Date())/86400000));
+  const touched = LECTURES.filter(l => state.lectures[l.n] !== 'not-started').length;
+  const mastered = LECTURES.filter(l => state.lectures[l.n] === 'mastered').length;
+  const flashDone = Object.keys(state.flash || {}).length;
+  const mockAttempts = state.mock.attempts.length;
+  const weak = TOPICS.map(t => {
+    const quiz = state.quiz.byTopic[t.id] || {correct:0,total:0};
+    const lecs = LECTURES.filter(l => l.topic === t.id);
+    const topicTouched = lecs.filter(l => state.lectures[l.n] !== 'not-started').length;
+    const quizPct = quiz.total ? Math.round(quiz.correct/quiz.total*100) : null;
+    const urgency = ['matrix','det','eigen','lp','transassign'].includes(t.id) ? 2 : 1;
+    return { topic:t, quiz, topicTouched, quizPct, score:topicTouched + (quizPct !== null && quizPct >= 70 ? 2 : 0) - urgency };
+  }).sort((a,b) => a.score-b.score).slice(0,3);
+  return { daysLeft, touched, mastered, flashDone, mockAttempts, weak };
+}
+function updateStudyPlan(showToast=false) {
+  const box = document.getElementById('studyPlanBox');
+  if (!box) return;
+  const snap = studyPlanSnapshot();
+  const weakLabels = snap.weak.map(w => `${w.topic.emoji} ${w.topic.name}`).join(', ');
+  const beginnerMode = snap.mastered < 8 || snap.touched < 14;
+  const cards = [
+    ['Today', beginnerMode ? 'Stop reading passively. Do Final 2024 Q1, then Q2 slowly. Write every arithmetic step by hand.' : 'Do one timed mixed set, then repair only the weakest topic.'],
+    ['Next 3 Hours', '60 min foundations: determinant + row operations. 75 min Q1/Q2 practice. 30 min flashcards. 15 min mistake list.'],
+    ['Tonight', 'Redo Q1 and Q2 without looking. Then mark syllabus topics as Studying/Revised so the app can steer tomorrow.'],
+    ['Weak Topics', weakLabels || 'No weak topic data yet. Start with Matrix, Determinants, Eigen, LP.'],
+    ['Skip For Now', 'Pretty notes, long videos, app tweaking, and full mocks until you can solve 3 beginner questions with steps.']
+  ];
+  box.innerHTML = cards.map(([h,b]) => `<div class="rounded-xl bg-white/85 border border-purple-100 p-4"><p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">${h}</p><p class="text-sm leading-relaxed">${b}</p></div>`).join('');
+  if (showToast) toast('Study plan updated from your current progress.');
+}
+function copyStudyCoachPrompt() {
+  const snap = studyPlanSnapshot();
+  const prompt = `I am Hassan, a complete beginner preparing for BMLA/MTS 212 final on May 25, 2026. Build me a strict, realistic study plan from now until the exam.\n\nCurrent app progress:\n- Days left: ${snap.daysLeft}\n- Lectures touched: ${snap.touched}/${LECTURES.length}\n- Lectures mastered: ${snap.mastered}/${LECTURES.length}\n- Flashcards attempted: ${snap.flashDone}\n- Quizzes taken: ${state.quiz.taken}\n- Mock attempts: ${snap.mockAttempts}\n- Weak topics from app: ${snap.weak.map(w => w.topic.name).join(', ')}\n\nRules:\n1. Assume I know almost nothing.\n2. Prioritize active recall, solved examples, past-paper questions, and mistakes list.\n3. Give me a plan for Today, Next 3 Hours, Tonight, and Tomorrow.\n4. Tell me exactly what to skip.\n5. Use calm, direct language. No cringe motivation.`;
+  navigator.clipboard.writeText(prompt).then(() => {
+    toast('Study coach prompt copied. Opening Claude.');
+    window.open('https://claude.ai/new', '_blank');
+  }).catch(() => {
+    window.open('https://claude.ai/new', '_blank');
+    toast('Opened Claude. Paste your study status manually if clipboard is blocked.');
+  });
 }
 function renderBadges() { const wrap = document.getElementById('badgeGrid'); document.getElementById('badgeCount').textContent = state.badges.length; wrap.innerHTML = BADGES.map(b => { const has = state.badges.includes(b.id); return `<div class="text-center p-3 rounded-xl ${has?'bg-gradient-to-br from-amber-100 to-yellow-200':'bg-slate-50 badge-locked'}" title="${b.desc}"><div class="text-3xl mb-1">${b.icon}</div><p class="text-xs font-medium leading-tight">${b.name}</p></div>`; }).join(''); }
 function statusButtons(lectureNo) {
@@ -679,6 +742,122 @@ function renderStudyMenu() {
       </div>
     </div>`;
 }
+function ensureUiState() {
+  state.ui = state.ui || {};
+  state.ui.paperPanels = state.ui.paperPanels || {};
+  return state.ui;
+}
+function panelOpen(id, key, defaultOpen=true) {
+  const ui = ensureUiState();
+  const saved = ui.paperPanels[id] && ui.paperPanels[id][key];
+  return typeof saved === 'boolean' ? saved : defaultOpen;
+}
+function rememberPanel(id, key, open) {
+  const ui = ensureUiState();
+  ui.paperPanels[id] = ui.paperPanels[id] || {};
+  ui.paperPanels[id][key] = open;
+  saveState();
+}
+function answerPanel(id, key, title, body, defaultOpen=true) {
+  return `<details class="answer-panel" data-panel="${key}" ${panelOpen(id,key,defaultOpen)?'open':''} ontoggle="rememberPanel('${id}','${key}',this.open)">
+    <summary>${title}</summary>
+    <div class="answer-panel-body text-sm leading-relaxed math-scroll">${body}</div>
+  </details>`;
+}
+function miniStepList(id, items) {
+  return `<div class="space-y-2">${items.map((s, i) => {
+    const key = `step-${i}`;
+    return `<details class="mini-step" data-panel="${key}" ${panelOpen(id,key,i<2)?'open':''} ontoggle="rememberPanel('${id}','${key}',this.open)">
+      <summary>Step ${i+1}</summary>
+      <div class="px-3 pb-3 text-sm leading-relaxed math-scroll">${s}</div>
+    </details>`;
+  }).join('')}</div>`;
+}
+function checksList(id, checks) {
+  if (!checks || !checks.length) return '<p class="text-sm text-slate-500">No practice checks added yet.</p>';
+  return `<div class="space-y-2">${checks.map((c, i) => `<details class="mini-step" data-panel="check-${i}" ${panelOpen(id,`check-${i}`,false)?'open':''} ontoggle="rememberPanel('${id}','check-${i}',this.open)">
+    <summary>Check ${i+1}: ${c.q}</summary>
+    <div class="px-3 pb-3 text-sm leading-relaxed">${c.a}</div>
+  </details>`).join('')}</div>`;
+}
+function setQuestionPanels(id, open) {
+  const card = document.getElementById('paper-card-'+id);
+  if (!card) return;
+  const ui = ensureUiState();
+  ui.paperPanels[id] = ui.paperPanels[id] || {};
+  card.querySelectorAll('details.answer-panel, details.mini-step').forEach(d => {
+    d.open = open;
+    if (d.dataset.panel) ui.paperPanels[id][d.dataset.panel] = open;
+  });
+  saveState();
+}
+renderPastPapers = function() {
+  const wrap = document.getElementById('pastPaperList');
+  if (!wrap || typeof PAST_PAPERS === 'undefined') return;
+  renderPastPaperControls();
+  const visiblePapers = getFilteredPastPapers();
+  if (!visiblePapers.length) {
+    wrap.innerHTML = '<div class="card p-6 text-center text-slate-500">No questions match this filter.</div>';
+    return;
+  }
+  wrap.innerHTML = visiblePapers.map((p, idx) => {
+    const topic = TOPICS.find(t => t.id === p.topic) || TOPICS[0];
+    const concepts = p.concepts && p.concepts.length ? `<div>
+      <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Quick glossary</p>
+      <div class="flex flex-wrap gap-2">${p.concepts.map(c => `<button type="button" class="concept-chip px-3 py-1.5 rounded-full text-xs font-semibold" data-tip="${escAttr(c.meaning)}" title="${escAttr(c.meaning)}">${c.term}</button>`).join('')}</div>
+    </div>` : '';
+    const guidedWork = p.guidedWork && p.guidedWork.length ? answerPanel(p.id, 'guided', 'Slow Work', `<div class="grid md:grid-cols-2 gap-3">${p.guidedWork.map(g => `<div class="rounded-lg bg-blue-50/70 border border-blue-100 p-3"><p class="font-semibold text-blue-900 mb-1">${g.h}</p><div>${g.b}</div></div>`).join('')}</div>`, true) : '';
+    const compact = answerPanel(p.id, 'compact', 'Compact', (p.variations && p.variations.compact) || p.answer, true);
+    const beginnerItems = p.variations && p.variations.beginner ? (Array.isArray(p.variations.beginner) ? p.variations.beginner : [p.variations.beginner]) : p.steps;
+    const beginner = answerPanel(p.id, 'beginner', 'Beginner Steps', miniStepList(p.id, beginnerItems), true);
+    const exam = answerPanel(p.id, 'exam', 'Exam Answer', (p.variations && p.variations.exam) || p.answer, false);
+    const originalSteps = answerPanel(p.id, 'solution', 'Original Solution Steps', miniStepList(p.id, p.steps), false);
+    const checks = answerPanel(p.id, 'checks', 'Practice Check', checksList(p.id, p.checks), false);
+    return `<details id="paper-card-${p.id}" class="card p-0" ${idx===0?'open':''}>
+      <summary class="p-5 hover:bg-purple-50 rounded-t-2xl">
+        <div class="flex flex-wrap items-start gap-3 mobile-stack">
+          <span class="text-2xl">ðŸ“</span>
+          <div class="flex-1">
+            <p class="text-xs text-slate-500">${p.paper} Â· Question ${p.qn} Â· ${p.marks} marks</p>
+            <h3 class="font-display font-semibold text-lg">${p.title}</h3>
+            <p class="text-xs mt-1" style="color:${topic.color}">${topic.emoji} ${topic.name}</p>
+          </div>
+          <span class="text-xs text-purple-500">â–¼</span>
+        </div>
+      </summary>
+      <div class="p-5 pt-0">
+        <div class="grid xl:grid-cols-12 gap-4">
+          <aside class="xl:col-span-5 space-y-4">
+            <div class="bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-100 rounded-xl p-4">
+              <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+                <p class="text-xs uppercase tracking-wide text-pink-700 font-bold">Question</p>
+                <button onclick="askPastPaperAI('${p.id}')" class="text-xs bg-white border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50 px-3 py-1.5 rounded-lg font-semibold" title="Copy a beginner-friendly AI prompt for this exact question">AI help</button>
+              </div>
+              <div class="text-sm leading-relaxed math-scroll">${p.prompt}</div>
+            </div>
+            ${concepts}
+            <div class="grid grid-cols-2 gap-2 no-print">
+              <button onclick="setQuestionPanels('${p.id}',false)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold">Hide read sections</button>
+              <button onclick="setQuestionPanels('${p.id}',true)" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-2 rounded-lg text-xs font-bold">Show all</button>
+            </div>
+          </aside>
+          <div class="xl:col-span-7 space-y-3">
+            <div class="grid md:grid-cols-2 gap-3">${compact}${exam}</div>
+            ${guidedWork}
+            ${beginner}
+            ${originalSteps}
+            ${checks}
+            <div class="p-3 rounded-lg bg-green-50 border-l-4 border-green-500">
+              <p class="text-xs uppercase tracking-wide text-green-700 font-bold mb-1">Final Answer</p>
+              <div class="text-sm math-scroll">${p.answer}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>`;
+  }).join('');
+  if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([wrap]).catch(()=>{});
+};
 let flashDeck = [], flashPos = 0, flashStats = {good:0,hard:0,again:0}, flashSessionXp = 0;
 function initFlash() { const sel = document.getElementById('flashTopic'); if (sel.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; sel.appendChild(o); }); resetFlashDeck(); }
 function resetFlashDeck() { const topic = document.getElementById('flashTopic').value; flashDeck = FLASHCARDS.filter(c => topic === 'all' || c.t === topic); shuffleArr(flashDeck); flashPos = 0; flashStats = {good:0,hard:0,again:0}; flashSessionXp = 0; document.getElementById('flashDone').classList.add('hidden'); document.getElementById('flashCard').style.display = ''; document.getElementById('flashActions').style.display = 'none'; showFlash(); }
