@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmla-quest-v10';
+const CACHE_NAME = 'bmla-quest-v11';
 const CORE_ASSETS = [
   '/',
   '/BMLA_Quest.html',

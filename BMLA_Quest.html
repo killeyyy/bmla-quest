@@ -47,6 +47,12 @@ window.MathJax = {
   .priority-low { background:#e0f2fe; color:#075985; }
   .app-link { background:linear-gradient(135deg,#111827,#1e3a8a); color:white; box-shadow:0 10px 30px rgba(30,58,138,0.24); }
   .math-scroll { overflow-x:auto; overflow-y:visible; }
+  .quick-menu-fab { position:fixed; right:1rem; bottom:1rem; z-index:45; background:linear-gradient(135deg,#111827,#1e3a8a); color:white; }
+  .quick-menu-panel { position:fixed; inset:0; z-index:70; background:rgba(15,23,42,0.42); display:none; padding:1rem; }
+  .quick-menu-panel.open { display:flex; justify-content:flex-end; }
+  .quick-menu-drawer { width:min(440px,100%); max-height:calc(100vh - 2rem); overflow:auto; background:rgba(255,255,255,0.96); backdrop-filter:blur(12px); border:2px solid rgba(168,85,247,0.18); border-radius:1.25rem; box-shadow:0 24px 70px rgba(15,23,42,0.3); }
+  .jump-chip { border:1px solid #e9d5ff; background:white; color:#4c1d95; }
+  .jump-chip:hover { border-color:#a855f7; background:#faf5ff; }
   .concept-chip { position:relative; border:1px solid #c4b5fd; background:#faf5ff; color:#6d28d9; }
   .concept-chip:hover::after, .concept-chip:focus::after {
     content:attr(data-tip); position:absolute; left:0; top:calc(100% + 8px); z-index:60; width:min(320px,80vw);
@@ -71,6 +77,8 @@ window.MathJax = {
     .card { border-radius:1rem; }
     .mobile-stack { flex-direction:column; align-items:stretch !important; }
     .mobile-stack > * { width:100%; }
+    .quick-menu-fab { left:1rem; right:1rem; bottom:0.75rem; }
+    footer { padding-bottom:5rem !important; }
   }
   .xp-bar-fill { transition:width 0.6s cubic-bezier(0.4,0,0.2,1); background:linear-gradient(90deg,#a855f7,#ec4899,#f59e0b); }
   .float { animation: float-y 3s ease-in-out infinite; }
@@ -108,6 +116,20 @@ window.MathJax = {
     <button class="tab-btn px-4 py-2 rounded-xl bg-white font-medium text-sm" data-tab="stats">📊 Stats</button>
   </nav>
 </header>
+
+<button onclick="toggleStudyMenu(true)" class="quick-menu-fab px-4 py-3 rounded-2xl font-bold shadow-2xl no-print">Menu: topics, papers, questions</button>
+<div id="studyMenuPanel" class="quick-menu-panel no-print" onclick="if(event.target.id==='studyMenuPanel')toggleStudyMenu(false)">
+  <div class="quick-menu-drawer p-5">
+    <div class="flex items-start justify-between gap-3 mb-4">
+      <div>
+        <h2 class="font-display font-bold text-2xl gradient-text">Study Menu</h2>
+        <p class="text-sm text-slate-500">Jump without scrolling.</p>
+      </div>
+      <button onclick="toggleStudyMenu(false)" class="bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg text-sm font-bold">Close</button>
+    </div>
+    <div id="studyMenuContent" class="space-y-5"></div>
+  </div>
+</div>
 
 <main class="max-w-7xl mx-auto px-4 py-6">
 
@@ -249,10 +271,15 @@ window.MathJax = {
     <div class="flex flex-wrap items-start justify-between gap-3 mobile-stack">
       <div>
         <h2 class="font-display font-bold text-2xl mb-1">📝 Past Papers</h2>
-        <p class="text-sm text-slate-600">Typed from the scanned Spring 2026 midterm solution. Use this for active recall, not passive reading.</p>
+        <p class="text-sm text-slate-600">Filter by paper/topic or jump straight to a question.</p>
       </div>
-      <button onclick="expandPastPapers()" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-2 rounded-lg text-sm font-medium no-print">Open all solutions</button>
+      <div class="flex flex-wrap gap-2 no-print">
+        <button onclick="expandPastPapers()" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-2 rounded-lg text-sm font-medium">Open all</button>
+        <button onclick="collapsePastPapers()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">Close all</button>
+      </div>
     </div>
+    <div id="pastPaperControls" class="mt-5 grid md:grid-cols-3 gap-3 no-print"></div>
+    <div id="pastPaperQuickList" class="mt-4 flex flex-wrap gap-2 no-print"></div>
   </div>
   <div id="pastPaperList" class="space-y-4"></div>
 </section>
@@ -455,10 +482,49 @@ function renderTutContent() {
   wrap.innerHTML = html;
   if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([wrap]).catch(()=>{});
 }
+let pastPaperFilter = 'all';
+let pastTopicFilter = 'all';
+function getFilteredPastPapers() {
+  return PAST_PAPERS.filter(p =>
+    (pastPaperFilter === 'all' || p.paper === pastPaperFilter) &&
+    (pastTopicFilter === 'all' || p.topic === pastTopicFilter)
+  );
+}
+function renderPastPaperControls() {
+  const controls = document.getElementById('pastPaperControls');
+  const quick = document.getElementById('pastPaperQuickList');
+  if (!controls || !quick || typeof PAST_PAPERS === 'undefined') return;
+  const papers = [...new Set(PAST_PAPERS.map(p => p.paper))];
+  const topics = TOPICS.filter(t => PAST_PAPERS.some(p => p.topic === t.id));
+  const visible = getFilteredPastPapers();
+  controls.innerHTML = `
+    <label class="block"><span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Paper</span>
+      <select class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white text-sm" onchange="pastPaperFilter=this.value;renderPastPapers()">
+        <option value="all">All papers</option>${papers.map(p => `<option value="${escAttr(p)}" ${p===pastPaperFilter?'selected':''}>${p}</option>`).join('')}
+      </select>
+    </label>
+    <label class="block"><span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Topic</span>
+      <select class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white text-sm" onchange="pastTopicFilter=this.value;renderPastPapers()">
+        <option value="all">All topics</option>${topics.map(t => `<option value="${t.id}" ${t.id===pastTopicFilter?'selected':''}>${t.name}</option>`).join('')}
+      </select>
+    </label>
+    <label class="block"><span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Jump to question</span>
+      <select class="w-full mt-1 px-3 py-2 rounded-lg border-2 border-purple-200 bg-white text-sm" onchange="if(this.value)jumpPastPaper(this.value,true)">
+        <option value="">Choose a question</option>${visible.map(p => `<option value="${p.id}">${p.paper.replace('BMLA ','')} - Q${p.qn}: ${p.title}</option>`).join('')}
+      </select>
+    </label>`;
+  quick.innerHTML = visible.map(p => `<button onclick="jumpPastPaper('${p.id}',true)" class="jump-chip px-3 py-1.5 rounded-full text-xs font-semibold">Q${p.qn} ${p.paper.includes('Final')?'Final':'Midterm'}</button>`).join('');
+}
 function renderPastPapers() {
   const wrap = document.getElementById('pastPaperList');
   if (!wrap || typeof PAST_PAPERS === 'undefined') return;
-  wrap.innerHTML = PAST_PAPERS.map((p, idx) => {
+  renderPastPaperControls();
+  const visiblePapers = getFilteredPastPapers();
+  if (!visiblePapers.length) {
+    wrap.innerHTML = '<div class="card p-6 text-center text-slate-500">No questions match this filter.</div>';
+    return;
+  }
+  wrap.innerHTML = visiblePapers.map((p, idx) => {
     const topic = TOPICS.find(t => t.id === p.topic) || TOPICS[0];
     const concepts = p.concepts && p.concepts.length ? `<div class="mb-4">
       <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Hover glossary</p>
@@ -485,7 +551,7 @@ function renderPastPapers() {
         <div class="px-3 pb-3 text-sm leading-relaxed">${p.variations.exam || p.answer}</div>
       </details>
     </div>` : '';
-    return `<details class="card p-0" ${idx===0?'open':''}>
+    return `<details id="paper-card-${p.id}" class="card p-0" ${idx===0?'open':''}>
       <summary class="p-5 hover:bg-purple-50 rounded-t-2xl">
         <div class="flex flex-wrap items-start gap-3 mobile-stack">
           <span class="text-2xl">📝</span>
@@ -541,6 +607,77 @@ function askPastPaperAI(id) {
 }
 function expandPastPapers() {
   document.querySelectorAll('#pastPaperList details').forEach(d => d.open = true);
+}
+function collapsePastPapers() {
+  document.querySelectorAll('#pastPaperList details').forEach(d => d.open = false);
+}
+function jumpPastPaper(id, keepFilters=false) {
+  const p = PAST_PAPERS.find(item => item.id === id);
+  if (!p) return;
+  if (!keepFilters) { pastPaperFilter = p.paper; pastTopicFilter = 'all'; }
+  switchTab('pastpapers');
+  renderPastPapers();
+  toggleStudyMenu(false);
+  setTimeout(() => {
+    const card = document.getElementById('paper-card-'+id);
+    if (!card) return;
+    card.open = true;
+    card.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 80);
+}
+function jumpTopic(topicId, target='tutorials') {
+  toggleStudyMenu(false);
+  if (target === 'syllabus') {
+    switchTab('syllabus');
+    const filter = document.getElementById('indexTopicFilter');
+    if (filter) filter.value = topicId;
+    renderSyllabus();
+    return;
+  }
+  switchTab('tutorials');
+  selectTutTopic(topicId);
+}
+function toggleStudyMenu(open) {
+  const panel = document.getElementById('studyMenuPanel');
+  if (!panel) return;
+  if (open) { renderStudyMenu(); panel.classList.add('open'); }
+  else panel.classList.remove('open');
+}
+function renderStudyMenu() {
+  const wrap = document.getElementById('studyMenuContent');
+  if (!wrap) return;
+  const papers = [...new Set(PAST_PAPERS.map(p => p.paper))];
+  wrap.innerHTML = `
+    <div>
+      <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Main areas</p>
+      <div class="grid grid-cols-2 gap-2">
+        ${[['home','Home'],['syllabus','Syllabus index'],['pastpapers','Past papers'],['tutorials','Tutorials'],['cheatsheet','Cheat sheet'],['flashcards','Flashcards'],['quiz','Quiz'],['mock','Mock exam']].map(([id,label]) => `<button onclick="toggleStudyMenu(false);switchTab('${id}')" class="jump-chip px-3 py-2 rounded-xl text-sm font-semibold text-left">${label}</button>`).join('')}
+      </div>
+    </div>
+    <div>
+      <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Topics</p>
+      <div class="space-y-2">${TOPICS.map(t => `<div class="grid grid-cols-[1fr_auto_auto] gap-2 items-center">
+        <span class="text-sm font-semibold">${t.name}</span>
+        <button onclick="jumpTopic('${t.id}','tutorials')" class="jump-chip px-2 py-1 rounded-lg text-xs font-semibold">Tutorial</button>
+        <button onclick="jumpTopic('${t.id}','syllabus')" class="jump-chip px-2 py-1 rounded-lg text-xs font-semibold">Index</button>
+      </div>`).join('')}</div>
+    </div>
+    <div>
+      <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Past papers</p>
+      <div class="space-y-3">${papers.map(paper => `<div class="rounded-xl border border-purple-100 bg-purple-50/50 p-3">
+        <button onclick="pastPaperFilter='${escAttr(paper)}';pastTopicFilter='all';toggleStudyMenu(false);switchTab('pastpapers');renderPastPapers()" class="font-bold text-sm text-purple-900 text-left">${paper}</button>
+        <div class="mt-2 flex flex-wrap gap-1.5">${PAST_PAPERS.filter(p => p.paper === paper).map(p => `<button onclick="jumpPastPaper('${p.id}')" class="bg-white border border-purple-100 hover:border-purple-400 px-2 py-1 rounded-lg text-xs font-semibold">Q${p.qn}</button>`).join('')}</div>
+      </div>`).join('')}</div>
+    </div>
+    <div>
+      <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-2">Assignments</p>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <div class="rounded-xl bg-slate-100 text-slate-500 p-3"><strong>Assignment 4</strong><br><span class="text-xs">Phase 2</span></div>
+        <div class="rounded-xl bg-slate-100 text-slate-500 p-3"><strong>Assignment 3</strong><br><span class="text-xs">Phase 2</span></div>
+        <div class="rounded-xl bg-slate-100 text-slate-500 p-3"><strong>Assignment 1</strong><br><span class="text-xs">Phase 3</span></div>
+        <div class="rounded-xl bg-slate-100 text-slate-500 p-3"><strong>Assignment 2</strong><br><span class="text-xs">Phase 3</span></div>
+      </div>
+    </div>`;
 }
 let flashDeck = [], flashPos = 0, flashStats = {good:0,hard:0,again:0}, flashSessionXp = 0;
 function initFlash() { const sel = document.getElementById('flashTopic'); if (sel.children.length <= 1) TOPICS.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.emoji} ${t.name}`; sel.appendChild(o); }); resetFlashDeck(); }
@@ -609,7 +746,7 @@ function askAI(btn) {
   });
 }
 
-function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); renderPastPapers(); checkBadges(); }
+function fullRefresh() { refreshHeader(); refreshHome(); renderSyllabus(); renderCheatsheet(); refreshQuizSetup(); refreshMockSetup(); renderPastPapers(); renderStudyMenu(); checkBadges(); }
 function registerPwa() { if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 window.addEventListener('DOMContentLoaded', () => { fullRefresh(); switchTab(initialTabFromUrl()); registerPwa(); setInterval(refreshHome, 60000); });
 </script>
