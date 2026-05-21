@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 Not Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #080b0f;
+  --bg2: #0c1018;
+  --surface: #0f1520;
+  --surface2: #141c2a;
+  --surface3: #1a2438;
+  --border: #1e2d45;
+  --border2: #243552;
+  --glow: rgba(0,255,136,0.06);
+
+  --green: #00ff88;
+  --green2: #00cc6a;
+  --green-dim: rgba(0,255,136,0.15);
+  --green-border: rgba(0,255,136,0.25);
+
+  --amber: #ffb800;
+  --amber2: #e6a500;
+  --amber-dim: rgba(255,184,0,0.12);
+  --amber-border: rgba(255,184,0,0.28);
+
+  --orange: #ff6b35;
+  --orange-dim: rgba(255,107,53,0.12);
+  --orange-border: rgba(255,107,53,0.28);
+
+  --red: #ff3355;
+  --red2: #cc2244;
+  --red-dim: rgba(255,51,85,0.12);
+  --red-border: rgba(255,51,85,0.28);
+
+  --cyan: #00d4ff;
+  --cyan-dim: rgba(0,212,255,0.1);
+  --cyan-border: rgba(0,212,255,0.25);
+
+  --text: #c8d8f0;
+  --text2: #6a8aaa;
+  --text3: #3a5570;
+
+  --mono: 'Share Tech Mono', monospace;
+  --title: 'Orbitron', monospace;
+  --body: 'Rajdhani', sans-serif;
+  --radius: 4px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* scanline effect */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ===================== LAYOUT ===================== */
+.shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+/* ===================== SIDEBAR ===================== */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sb-head {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.sb-product {
+  font-family: var(--title);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--green);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sb-title {
+  font-family: var(--title);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+.sb-clock {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+.sb-date { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+.theme-btn {
+  position: absolute; top: 18px; right: 16px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text2); width: 28px; height: 28px;
+  border-radius: var(--radius); cursor: pointer; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.theme-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ring */
+.sb-ring-area {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.ring-wrap {
+  display: flex; align-items: center; gap: 14px;
+}
+.ring-svg { flex-shrink: 0; filter: drop-shadow(0 0 8px currentColor); }
+.ring-info { flex: 1; }
+.ring-pct {
+  font-family: var(--title);
+  font-size: 26px; font-weight: 800;
+  line-height: 1;
+  transition: color .3s;
+}
+.ring-lbl { font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.ring-stock { font-family: var(--mono); font-size: 12px; color: var(--text2); margin-top: 6px; }
+.status-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 2px; margin-top: 8px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.tag-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.tag-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+.tag-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange-border); }
+.tag-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+.tag-cyan { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--cyan-border); }
+
+/* depletion bar */
+.dep-bar-wrap { margin-top: 12px; }
+.dep-bar-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--text3); margin-bottom: 4px; }
+.dep-bar-track { background: var(--surface3); border-radius: 2px; height: 8px; overflow: hidden; }
+.dep-bar-fill { height: 100%; border-radius: 2px; transition: width .5s, background .3s; }
+
+/* sidebar key metrics */
+.sb-metrics { padding: 12px 18px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sb-metric { }
+.sb-metric-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 2px; }
+.sb-metric-val { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+
+/* nav */
+.sb-nav { padding: 10px 10px; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius);
+  color: var(--text2); font-family: var(--mono); font-size: 11px;
+  cursor: pointer; transition: all .15s; margin-bottom: 2px;
+  user-select: none; letter-spacing: .5px;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--surface2); color: var(--green); border-left: 2px solid var(--green); }
+.nav-item i { width: 14px; text-align: center; font-size: 12px; }
+.nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 9px; padding: 1px 5px; border-radius: 2px; font-family: var(--mono); }
+
+/* command area */
+.sb-cmd { padding: 14px 18px; border-top: 1px solid var(--border); }
+.cmd-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 6px; }
+.cmd-wrap { position: relative; }
+.cmd-input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 8px 32px 8px 10px;
+  color: var(--green); font-family: var(--mono); font-size: 11px;
+  outline: none; transition: border .15s; letter-spacing: .5px;
+  caret-color: var(--green);
+}
+.cmd-input::placeholder { color: var(--text3); }
+.cmd-input:focus { border-color: var(--green); box-shadow: 0 0 0 1px var(--green-dim); }
+.cmd-go {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  background: var(--green); border: none; border-radius: 2px;
+  color: #000; width: 22px; height: 20px; cursor: pointer;
+  font-size: 10px; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; transition: opacity .15s;
+}
+.cmd-go:hover { opacity: .85; }
+.cmd-hint { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 5px; line-height: 1.7; }
+.cmd-hint code { background: var(--surface3); padding: 0 3px; border-radius: 2px; color: var(--green); font-size: 9px; }
+
+/* ===================== MAIN ===================== */
+.main { padding: 20px 22px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp .2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* page headers */
+.ph { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+.ph-title { font-family: var(--title); font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--text); }
+.ph-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 3px; letter-spacing: .5px; }
+
+/* alert banners */
+.alert {
+  border-radius: var(--radius); padding: 10px 14px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px; font-family: var(--mono); font-size: 11px;
+}
+.alert.red { background: var(--red-dim); border: 1px solid var(--red-border); }
+.alert.amber { background: var(--amber-dim); border: 1px solid var(--amber-border); }
+.alert.green { background: var(--green-dim); border: 1px solid var(--green-border); }
+.alert i { font-size: 16px; flex-shrink: 0; }
+.alert.red i, .alert.red strong { color: var(--red); }
+.alert.amber i, .alert.amber strong { color: var(--amber); }
+.alert.green i, .alert.green strong { color: var(--green); }
+.alert span { color: var(--text2); font-size: 11px; margin-top: 1px; display: block; }
+
+/* grids */
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+
+/* stat cards */
+.scard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+  transition: border-color .15s;
+  position: relative; overflow: hidden;
+}
+.scard::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.scard.c-green::before { background: var(--green); }
+.scard.c-amber::before { background: var(--amber); }
+.scard.c-red::before { background: var(--red); }
+.scard.c-cyan::before { background: var(--cyan); }
+.scard.c-orange::before { background: var(--orange); }
+.scard:hover { border-color: var(--border2); }
+.scard-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.scard-val { font-family: var(--title); font-size: 22px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+.scard-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+/* panel */
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 14px;
+}
+.panel-head {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text2);
+}
+.panel-head i { font-size: 12px; }
+.panel-head .ph-right { margin-left: auto; display: flex; gap: 6px; }
+.panel-body { padding: 12px 14px; }
+.panel-body.no-pad { padding: 0; }
+
+/* tables */
+.tbl { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+.tbl th {
+  text-align: left; padding: 7px 10px;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.tbl td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--surface2); }
+.tbl .num { text-align: right; }
+
+/* intensity badges */
+.ibadge {
+  display: inline-block; padding: 1px 6px; border-radius: 2px;
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.ib-low { background: var(--cyan-dim); color: var(--cyan); }
+.ib-mod { background: var(--green-dim); color: var(--green); }
+.ib-high { background: var(--amber-dim); color: var(--amber); }
+.ib-vhigh { background: var(--orange-dim); color: var(--orange); }
+.ib-spike { background: var(--red-dim); color: var(--red); }
+.ib-binge { background: #ff00ff22; color: #ff88ff; border: 1px solid #ff88ff44; }
+
+/* rate rows */
+.rrow { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.rrow:last-child { border-bottom: none; }
+.rrow-lbl { font-family: var(--body); font-size: 12px; color: var(--text2); }
+.rrow-val { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+
+/* heatmap grid */
+.heatmap { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; margin-bottom: 6px; }
+.hm-cell {
+  height: 28px; border-radius: 2px; display: flex; align-items: center;
+  justify-content: center; font-family: var(--mono); font-size: 8px;
+  cursor: default; transition: opacity .15s;
+  position: relative;
+}
+.hm-cell:hover { opacity: .7; }
+.hm-cell.hm-empty { background: var(--surface3); color: var(--text3); }
+.hm-cell.hm-low { background: rgba(0,212,255,.2); color: var(--cyan); border: 1px solid rgba(0,212,255,.3); }
+.hm-cell.hm-mod { background: rgba(0,255,136,.2); color: var(--green); border: 1px solid rgba(0,255,136,.3); }
+.hm-cell.hm-high { background: rgba(255,184,0,.25); color: var(--amber); border: 1px solid rgba(255,184,0,.3); }
+.hm-cell.hm-vhigh { background: rgba(255,107,53,.25); color: var(--orange); border: 1px solid rgba(255,107,53,.3); }
+.hm-cell.hm-spike { background: rgba(255,51,85,.3); color: var(--red); border: 1px solid rgba(255,51,85,.4); }
+.hm-labels { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; margin-top: 3px; }
+.hm-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); text-align: center; }
+
+/* session timeline */
+.session-strip {
+  display: flex; align-items: stretch; gap: 0; height: 40px; border-radius: 3px; overflow: hidden;
+  margin-bottom: 8px;
+}
+.sess-block {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; font-family: var(--mono); font-size: 8px;
+  cursor: default; transition: opacity .15s;
+}
+.sess-block:hover { opacity: .8; }
+
+/* stock ladder */
+.ladder { display: flex; flex-direction: column; gap: 2px; }
+.ladder-row { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; }
+.ladder-bar-wrap { flex: 1; height: 14px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+.ladder-bar { height: 100%; border-radius: 2px; }
+.ladder-label { width: 70px; color: var(--text3); font-size: 9px; }
+.ladder-val { width: 35px; text-align: right; color: var(--text2); }
+
+/* forecast canvas area */
+.chart-wrap { position: relative; width: 100%; }
+
+/* strategy table */
+.strat-table-wrap { overflow-x: auto; }
+.strat-tbl { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10px; white-space: nowrap; }
+.strat-tbl th { padding: 6px 10px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); border-bottom: 1px solid var(--border); background: var(--surface2); text-align: left; }
+.strat-tbl td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+.strat-tbl tr:last-child td { border-bottom: none; }
+.strat-tbl tr:hover td { background: var(--surface2); }
+.strat-tbl .safe-row td { border-top: 1px solid var(--green); border-bottom: 1px solid var(--green); background: var(--green-dim) !important; color: var(--green); }
+.strat-tbl .safe-row .verdict-cell { color: var(--green); font-weight: 600; }
+
+/* active hours tabs */
+.ah-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.ah-tab {
+  font-family: var(--mono); font-size: 10px; padding: 4px 10px;
+  border-radius: 2px; cursor: pointer; border: 1px solid var(--border2);
+  color: var(--text2); background: var(--surface2); transition: all .15s;
+  letter-spacing: .5px;
+}
+.ah-tab:hover { border-color: var(--cyan); color: var(--cyan); }
+.ah-tab.active { background: var(--cyan-dim); color: var(--cyan); border-color: var(--cyan-border); }
+
+/* settings */
+.form-row {
+  display: grid; grid-template-columns: 180px 1fr; gap: 12px;
+  align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.form-row:last-child { border-bottom: none; }
+.form-lbl { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: .5px; }
+.form-lbl small { display: block; font-size: 9px; color: var(--text3); margin-top: 1px; }
+input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 7px 10px;
+  color: var(--text); font-size: 11px; outline: none;
+  font-family: var(--mono); transition: border .15s; width: 100%;
+}
+input:focus, select:focus { border-color: var(--green); }
+
+/* buttons */
+.btn { background: var(--green); color: #000; border: none; border-radius: var(--radius); padding: 7px 14px; font-family: var(--mono); font-size: 11px; font-weight: 700; cursor: pointer; transition: opacity .15s; display: inline-flex; align-items: center; gap: 6px; letter-spacing: .5px; }
+.btn:hover { opacity: .85; }
+.btn.sec { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.btn.sec:hover { border-color: var(--green); color: var(--green); }
+.btn.danger { background: var(--red); color: #fff; }
+
+/* icon button */
+.ibtn { background: transparent; border: 1px solid var(--border); color: var(--text3); width: 24px; height: 24px; border-radius: var(--radius); cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.ibtn:hover { border-color: var(--green); color: var(--green); }
+
+/* toast */
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); padding: 10px 16px; border-radius: var(--radius); font-family: var(--mono); font-size: 11px; z-index: 9999; opacity: 0; transform: translateY(16px); transition: all .3s; box-shadow: 0 4px 24px rgba(0,0,0,.5); }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.ok { border-color: var(--green-border); background: var(--green-dim); color: var(--green); }
+.toast.err { border-color: var(--red-border); background: var(--red-dim); color: var(--red); }
+
+/* pulse */
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+.pulse { animation: pulse 2s infinite; }
+
+/* target countdown */
+.countdown-big { font-family: var(--title); font-size: 36px; font-weight: 900; letter-spacing: 2px; line-height: 1; }
+.countdown-lbl { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+
+/* log add row */
+.add-row { display: grid; grid-template-columns: 1fr 1fr 80px 80px 1fr 30px; gap: 8px; align-items: end; }
+.add-row label { font-family: var(--mono); font-size: 9px; color: var(--text3); display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .8px; }
+
+/* verdict */
+.verdict { padding: 6px 10px; border-radius: var(--radius); font-family: var(--mono); font-size: 11px; font-weight: 600; text-align: center; margin-top: 8px; }
+.verdict.ok { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.verdict.tight { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+.verdict.bad { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+
+/* row delete */
+.row-del { background: transparent; border: none; color: var(--text3); cursor: pointer; padding: 2px 5px; border-radius: 2px; transition: color .15s; font-size: 10px; }
+.row-del:hover { color: var(--red); }
+
+/* target card */
+.target-card {
+  background: linear-gradient(135deg, var(--surface) 0%, #0f1f10 100%);
+  border: 1px solid var(--green-border); border-radius: var(--radius);
+  padding: 16px; position: relative; overflow: hidden;
+}
+.target-card::after {
+  content: ''; position: absolute; top: -20px; right: -20px;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, rgba(0,255,136,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* session block cards */
+.sess-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; position: relative; overflow: hidden; }
+.sess-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.sess-card.s1::before { background: var(--cyan); }
+.sess-card.s2::before { background: var(--amber); }
+.sess-card.s3::before { background: var(--red); }
+.sess-card.s-total::before { background: var(--green); }
+
+/* insight */
+.insight { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-family: var(--body); font-size: 12px; }
+.insight:last-child { border-bottom: none; }
+.insight i { font-size: 13px; margin-top: 2px; flex-shrink: 0; }
+
+@media(max-width:900px){
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; }
+  .g4 { grid-template-columns: repeat(2,1fr); }
+  .g2,.g3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============= LOCK GATE — keep this at the very top of body ============= -->
+<div id="x-locked-facade" style="position:fixed;inset:0;background:#fff;color:#222;font-family:system-ui,-apple-system,Segoe UI,sans-serif;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+  <h1 style="font-size:34px;margin:0 0 14px;font-weight:600;letter-spacing:-0.5px;">404 &mdash; Not Found</h1>
+  <p style="color:#666;margin:0;font-size:14px;max-width:520px;line-height:1.5;">The requested URL was not found on this server. That&rsquo;s all we know.</p>
+</div>
+<style>html[data-x-locked="1"] body > *:not(#x-locked-facade){display:none !important;}</style>
+<script>
+(function(){
+  const LK='x_unlock_v1', SEC='xsurv';
+  const url=new URL(location.href);
+  const k=((url.searchParams.get('k')||location.hash.replace('#',''))||'').toLowerCase();
+  try{
+    if(k===SEC){localStorage.setItem(LK,'1');history.replaceState(null,'',url.pathname);}
+    if(k==='lock'||k==='lockx'){localStorage.removeItem(LK);history.replaceState(null,'',url.pathname);}
+  }catch(e){}
+  let unlocked=false; try{unlocked=localStorage.getItem(LK)==='1';}catch(e){}
+  if(unlocked){
+    document.documentElement.removeAttribute('data-x-locked');
+    var f=document.getElementById('x-locked-facade'); if(f)f.style.display='none';
+    window.X_UNLOCKED=true;
+    document.title='Tracker';
+  } else {
+    document.documentElement.setAttribute('data-x-locked','1');
+    window.X_UNLOCKED=false;
+    var buf='';
+    document.addEventListener('keydown',function(e){
+      if(!e.key||e.key.length!==1)return;
+      var tag=(document.activeElement&&document.activeElement.tagName)||'';
+      if(/input|textarea/i.test(tag))return;
+      buf=(buf+e.key).slice(-10).toLowerCase();
+      if(buf.indexOf(SEC)>=0){try{localStorage.setItem(LK,'1');}catch(e){}location.reload();}
+    });
+  }
+})();
+</script>
+<!-- ============= END LOCK GATE ============= -->
+
+<div class="shell">
+
+<!-- =========== SIDEBAR =========== -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+    <div class="sb-product">SURVIVAL TRACKER · v4</div>
+    <div class="sb-title" id="sb-product-name">Product X</div>
+    <div class="sb-clock" id="sb-clock">--:--:-- PKT</div>
+    <div class="sb-date" id="sb-date">-- May 2026</div>
+  </div>
+
+  <div class="sb-ring-area">
+    <div class="ring-wrap">
+      <svg width="68" height="68" viewBox="0 0 68 68" class="ring-svg">
+        <circle cx="34" cy="34" r="26" fill="none" stroke="var(--surface3)" stroke-width="7"/>
+        <circle id="ring-arc" cx="34" cy="34" r="26" fill="none" stroke="var(--green)"
+          stroke-width="7" stroke-dasharray="163.36" stroke-dashoffset="24.5"
+          stroke-linecap="round" transform="rotate(-90 34 34)"
+          style="transition:stroke-dashoffset .6s,stroke .3s"/>
+      </svg>
+      <div class="ring-info">
+        <div class="ring-pct" id="ring-pct" style="color:var(--green)">85.5%</div>
+        <div class="ring-lbl">remaining</div>
+        <div class="ring-stock"><span id="sb-curr">436</span> / <span id="sb-start">510</span> units</div>
+        <div id="sb-status" class="status-tag tag-green"><span class="pulse">◆</span> HEALTHY</div>
+      </div>
+    </div>
+    <div class="dep-bar-wrap">
+      <div class="dep-bar-labels">
+        <span>0</span>
+        <span id="dep-bar-pct" style="color:var(--green)">85.5%</span>
+        <span id="dep-bar-max">510</span>
+      </div>
+      <div class="dep-bar-track">
+        <div id="dep-bar" class="dep-bar-fill" style="width:85.5%;background:var(--green)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-metrics">
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">used</div>
+      <div class="sb-metric-val" id="sb-used" style="color:var(--amber)">74</div>
+    </div>
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">wasted</div>
+      <div class="sb-metric-val" id="sb-wasted" style="color:var(--text3)">0</div>
+    </div>
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">rate (avg)</div>
+      <div class="sb-metric-val" id="sb-rate" style="color:var(--orange)">6.51</div>
+    </div>
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">allowed/hr</div>
+      <div class="sb-metric-val" id="sb-allowed" style="color:var(--cyan)">2.93</div>
+    </div>
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">time left</div>
+      <div class="sb-metric-val" id="sb-timeleft" style="color:var(--text)">148h</div>
+    </div>
+    <div class="sb-metric">
+      <div class="sb-metric-lbl">events</div>
+      <div class="sb-metric-val" id="sb-events" style="color:var(--text2)">11</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-item active" onclick="go('dashboard',this)"><i class="fa-solid fa-gauge-high"></i> DASHBOARD</div>
+    <div class="nav-item" onclick="go('sessions',this)"><i class="fa-solid fa-layer-group"></i> SESSIONS</div>
+    <div class="nav-item" onclick="go('logs',this)"><i class="fa-solid fa-list"></i> MASTER LOG</div>
+    <div class="nav-item" onclick="go('heatmap',this)"><i class="fa-solid fa-fire"></i> HEATMAP</div>
+    <div class="nav-item" onclick="go('rates',this)"><i class="fa-solid fa-gauge-simple-high"></i> RATES & ACTIVE</div>
+    <div class="nav-item" onclick="go('strategy',this)"><i class="fa-solid fa-chess"></i> STRATEGY TABLE</div>
+    <div class="nav-item" onclick="go('target',this)"><i class="fa-solid fa-crosshairs"></i> TARGET</div>
+    <div class="nav-item" onclick="go('analytics',this)"><i class="fa-solid fa-chart-area"></i> ANALYTICS</div>
+    <div class="nav-item" onclick="go('settings',this)"><i class="fa-solid fa-sliders"></i> SETTINGS</div>
+  </nav>
+
+  <div class="sb-cmd">
+    <div class="cmd-lbl">▶ command input</div>
+    <div class="cmd-wrap">
+      <input class="cmd-input" id="cmd-in" type="text" placeholder="used 6 at 14:30" onkeydown="if(event.key==='Enter')runCmd()">
+      <button class="cmd-go" onclick="runCmd()">↵</button>
+    </div>
+    <div class="cmd-hint">
+      <code>used X</code> · <code>used X at HH:MM</code><br>
+      <code>wasted X</code> · <code>added X</code> · <code>reset to X</code><br>
+      <code>correct last to X</code>
+    </div>
+  </div>
+</aside>
+
+<!-- =========== MAIN =========== -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="tab-panel active">
+  <div class="ph">
+    <div>
+      <div class="ph-title">OPERATIONAL DASHBOARD</div>
+      <div class="ph-sub" id="dash-sub">PRODUCT X · SURVIVAL MODE · PKT UTC+5</div>
+    </div>
+    <div id="dash-alert-chip"></div>
+  </div>
+
+  <div id="alert-area"></div>
+
+  <div class="g4">
+    <div class="scard c-green">
+      <div class="scard-lbl"><i class="fa-solid fa-box"></i> Start stock</div>
+      <div class="scard-val" id="d-start" style="color:var(--cyan)">510</div>
+      <div class="scard-sub">units at initialization</div>
+    </div>
+    <div class="scard c-amber">
+      <div class="scard-lbl"><i class="fa-solid fa-cubes"></i> Current stock</div>
+      <div class="scard-val" id="d-curr" style="color:var(--green)">436</div>
+      <div class="scard-sub" id="d-curr-pct">85.5% remaining</div>
+    </div>
+    <div class="scard c-orange">
+      <div class="scard-lbl"><i class="fa-solid fa-fire-flame-curved"></i> Total consumed</div>
+      <div class="scard-val" id="d-used" style="color:var(--amber)">74</div>
+      <div class="scard-sub">net consumption</div>
+    </div>
+    <div class="scard c-red">
+      <div class="scard-lbl"><i class="fa-solid fa-ban"></i> Wasted</div>
+      <div class="scard-val" id="d-wasted" style="color:var(--text3)">0</div>
+      <div class="scard-sub" id="d-waste-pct">0.00% of start</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-gauge"></i> LIVE RATES</div>
+      <div class="panel-body">
+        <div class="rrow"><span class="rrow-lbl">Overall avg rate</span><span class="rrow-val" id="r-overall" style="color:var(--amber)">6.51 u/hr</span></div>
+        <div class="rrow"><span class="rrow-lbl">Late-night session rate</span><span class="rrow-val" id="r-session" style="color:var(--red)">8.47 u/hr</span></div>
+        <div class="rrow"><span class="rrow-lbl">Avg event size</span><span class="rrow-val" id="r-avg-event">6.73 u</span></div>
+        <div class="rrow"><span class="rrow-lbl">Spike threshold (≥2×avg)</span><span class="rrow-val" id="r-spike-thresh" style="color:var(--red)">≥13.45 u</span></div>
+        <div class="rrow"><span class="rrow-lbl">Largest event</span><span class="rrow-val" id="r-largest" style="color:var(--orange)">12u @ 01:47</span></div>
+        <div class="rrow"><span class="rrow-lbl">Avg interval between events</span><span class="rrow-val" id="r-interval">—</span></div>
+        <div class="rrow" style="padding-top:10px;margin-top:4px;border-top:1px solid var(--border)">
+          <span class="rrow-lbl" style="color:var(--green);font-weight:600">MAX ALLOWED RATE</span>
+          <span class="rrow-val" style="color:var(--green);font-size:14px" id="r-allowed-big">2.93 u/hr</span>
+        </div>
+        <div class="rrow"><span class="rrow-lbl">Safe daily quota</span><span class="rrow-val" id="r-safe-daily" style="color:var(--green)">70.4 u/day</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-crosshairs"></i> TARGET SURVIVAL STATUS</div>
+      <div class="panel-body" id="target-panel-body"></div>
+    </div>
+  </div>
+
+  <!-- visual stock decline -->
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-chart-bar"></i> STOCK DECLINE LADDER</div>
+    <div class="panel-body">
+      <div class="ladder" id="stock-ladder"></div>
+    </div>
+  </div>
+
+  <!-- insights -->
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-bolt"></i> TACTICAL INSIGHTS</div>
+    <div class="panel-body" id="insights-body"></div>
+  </div>
+</div>
+
+<!-- SESSIONS -->
+<div id="tab-sessions" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">SESSION BREAKDOWN</div><div class="ph-sub">Clustered usage analysis by activity window</div></div></div>
+
+  <div class="g4" id="session-cards"></div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-timeline"></i> SESSION TIMELINE</div>
+    <div class="panel-body">
+      <div id="session-timeline-visual"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-table"></i> SESSION TABLE</div>
+    <div class="panel-body no-pad">
+      <table class="tbl" id="session-table">
+        <thead><tr>
+          <th>Session</th><th>Window</th><th>Length</th><th>Events</th>
+          <th class="num">Units</th><th class="num">Rate (u/hr)</th>
+          <th>Stock move</th><th>Notes</th>
+        </tr></thead>
+        <tbody id="session-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MASTER LOG -->
+<div id="tab-logs" class="tab-panel">
+  <div class="ph">
+    <div><div class="ph-title">MASTER LOG</div><div class="ph-sub">Full chronological event record</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn sec" onclick="exportData()"><i class="fa-solid fa-download"></i> EXPORT</button>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:12px">
+    <div class="panel-head"><i class="fa-solid fa-plus"></i> ADD ENTRY</div>
+    <div class="panel-body">
+      <div class="add-row">
+        <div><label>Date</label><input type="date" id="new-date"></div>
+        <div><label>Time (HH:MM)</label><input type="time" id="new-time"></div>
+        <div><label>Type</label><select id="new-type"><option value="used">used</option><option value="wasted">wasted</option><option value="added">added</option></select></div>
+        <div><label>Units</label><input type="number" id="new-qty" placeholder="0" min="1"></div>
+        <div><label>Note</label><input type="text" id="new-note" placeholder="optional..."></div>
+        <div style="padding-top:16px"><button class="btn" onclick="addEntry()">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-clock-rotate-left"></i> ALL EVENTS</div>
+    <div class="panel-body no-pad" style="overflow-x:auto">
+      <table class="tbl" id="master-log-table">
+        <thead><tr>
+          <th>#</th><th>Date</th><th>Time</th><th>Session</th>
+          <th class="num">Units</th><th class="num">Stock after</th>
+          <th class="num">Gap</th><th>Intensity</th>
+          <th class="num">Cum. used</th><th>Note</th><th></th>
+        </tr></thead>
+        <tbody id="master-log-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- HEATMAP -->
+<div id="tab-heatmap" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">USAGE HEATMAP</div><div class="ph-sub">24-hour activity grid + event intensity</div></div></div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-calendar-week"></i> 24-HOUR HEATMAP</div>
+    <div class="panel-body">
+      <div id="heatmap-legend" style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;font-family:var(--mono);font-size:9px"></div>
+      <div class="heatmap" id="heatmap-grid"></div>
+      <div class="hm-labels" id="heatmap-labels"></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-column"></i> EVENT SIZE DISTRIBUTION</div>
+      <div class="panel-body" id="event-bars-wrap"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-pie"></i> INTENSITY BREAKDOWN</div>
+      <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-intensity"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RATES & ACTIVE HOURS -->
+<div id="tab-rates" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">RATES & ACTIVE-HOUR SURVIVAL</div><div class="ph-sub">Safety zones by daily active hours</div></div></div>
+
+  <div class="g3">
+    <div class="scard c-red">
+      <div class="scard-lbl"><i class="fa-solid fa-fire"></i> Current rate</div>
+      <div class="scard-val" id="rates-actual" style="color:var(--orange)">6.51</div>
+      <div class="scard-sub">u/hr overall avg</div>
+    </div>
+    <div class="scard c-green">
+      <div class="scard-lbl"><i class="fa-solid fa-shield-halved"></i> Safe rate (24h)</div>
+      <div class="scard-val" id="rates-safe24" style="color:var(--green)">2.93</div>
+      <div class="scard-sub">u/hr to reach target</div>
+    </div>
+    <div class="scard c-cyan">
+      <div class="scard-lbl"><i class="fa-solid fa-calendar-day"></i> Safe daily quota</div>
+      <div class="scard-val" id="rates-daily-safe" style="color:var(--cyan)">70.4</div>
+      <div class="scard-sub">units/day (all scenarios)</div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-head"><i class="fa-solid fa-person-running"></i> ACTIVE-HOUR SURVIVAL MODEL</div>
+    <div class="panel-body">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:12px">
+        Assumes you only use product during active waking hours. Daily safe quota = 70.4u regardless of model.<br>
+        Current stock: <span style="color:var(--text)" id="ah-curr-stock">436</span> units · Target: 25 May 10:00 PKT · Days left: <span style="color:var(--text)" id="ah-days-left">~6.20</span>
+      </div>
+      <div class="panel-body no-pad" style="overflow-x:auto">
+        <table class="tbl" id="active-hours-table">
+          <thead><tr>
+            <th>Active hrs/day</th>
+            <th class="num">Total active hrs to target</th>
+            <th class="num">Max safe u/hr</th>
+            <th class="num">Max daily use</th>
+            <th>Current pace verdict</th>
+          </tr></thead>
+          <tbody id="active-hours-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-line"></i> RATE COMPARISON</div>
+      <div class="panel-body" id="rate-compare-bars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-clock"></i> HOURLY FORECAST (next 12h)</div>
+      <div class="panel-body">
+        <div id="hourly-forecast"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STRATEGY TABLE -->
+<div id="tab-strategy" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">STOCK-OUT STRATEGY TABLE</div><div class="ph-sub">Reduction scenarios across active-hour models</div></div></div>
+
+  <div class="ah-tabs" id="strat-tabs"></div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-chess-knight"></i> STRATEGY SCENARIOS — <span id="strat-ah-label" style="color:var(--cyan)">12 ACTIVE HRS/DAY</span></div>
+    <div class="strat-table-wrap">
+      <table class="strat-tbl" id="strat-table">
+        <thead><tr>
+          <th>Strategy</th>
+          <th class="num">Active rate (u/hr)</th>
+          <th class="num">Daily use</th>
+          <th class="num">Need until target</th>
+          <th class="num">Left at target</th>
+          <th>Stock-out (PKT)</th>
+          <th>Verdict</th>
+        </tr></thead>
+        <tbody id="strat-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TARGET -->
+<div id="tab-target" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">TARGET SURVIVAL</div><div class="ph-sub">25 May 2026 · 10:00 AM PKT</div></div></div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="target-card">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">TIME REMAINING</div>
+      <div class="countdown-big" id="target-countdown" style="color:var(--green)">148h 43m</div>
+      <div class="countdown-lbl" id="target-countdown-days">~6.20 days until target</div>
+      <div style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text2)">
+        Target: <strong style="color:var(--text)">25 May 2026, 10:00 AM PKT</strong>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <div class="panel-head"><i class="fa-solid fa-scale-balanced"></i> SURVIVAL VERDICT</div>
+      <div class="panel-body" id="survival-verdict-body"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><i class="fa-solid fa-chart-area"></i> STOCK DEPLETION CURVE</div>
+    <div class="panel-body"><div class="chart-wrap" style="height:260px"><canvas id="chart-depletion"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div id="tab-analytics" class="tab-panel">
+  <div class="ph"><div><div class="ph-title">ANALYTICS</div><div class="ph-sub">Visual charts & pattern analysis</div></div></div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-line"></i> STOCK OVER TIME</div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-stock"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-bar"></i> USAGE PER EVENT</div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-events"></canvas></div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-column"></i> HOURLY DISTRIBUTION</div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-hourly"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><i class="fa-solid fa-chart-pie"></i> CONSUMED VS REMAINING</div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-pie"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="tab-settings" class="tab-panel">
+  <div class="ph">
+    <div><div class="ph-title">SETTINGS</div><div class="ph-sub">Configure tracker parameters</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn sec" onclick="exportData()"><i class="fa-solid fa-download"></i> EXPORT</button>
+      <button class="btn sec" onclick="document.getElementById('import-file').click()"><i class="fa-solid fa-upload"></i> IMPORT</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <button class="btn danger" onclick="if(confirm('Reset ALL data to defaults?'))resetAll()">RESET</button>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-head"><i class="fa-solid fa-cube"></i> STOCK CONFIG</div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-lbl">Product name</div>
+        <input type="text" id="set-product" oninput="state.product=this.value;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Starting stock<small>baseline at start of tracking</small></div>
+        <input type="number" id="set-start" oninput="state.startStock=parseInt(this.value)||0;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Current stock<small>override current count</small></div>
+        <input type="number" id="set-curr" oninput="state.currentStock=parseInt(this.value)||0;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Wasted units</div>
+        <input type="number" id="set-wasted" oninput="state.wasted=parseInt(this.value)||0;save();render()">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-head"><i class="fa-solid fa-crosshairs"></i> TARGET</div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-lbl">Target date</div>
+        <input type="date" id="set-target-date" oninput="state.targetDate=this.value;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Target time (PKT)</div>
+        <input type="time" id="set-target-time" oninput="state.targetTime=this.value;save();render()">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-head"><i class="fa-solid fa-bell"></i> THRESHOLDS</div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-lbl">Critical % (≤)<small>red zone</small></div>
+        <input type="number" id="set-crit" min="0" max="100" oninput="state.critPct=parseInt(this.value)||20;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Low % (≤)<small>orange zone</small></div>
+        <input type="number" id="set-low" min="0" max="100" oninput="state.lowPct=parseInt(this.value)||40;save();render()">
+      </div>
+      <div class="form-row">
+        <div class="form-lbl">Watch % (≤)<small>amber zone</small></div>
+        <input type="number" id="set-watch" min="0" max="100" oninput="state.watchPct=parseInt(this.value)||60;save();render()">
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ==================== STORAGE KEY ====================
+const SK = 'x_survival_v4';
+
+// ==================== DEFAULT STATE ====================
+const DEFAULTS = {
+  product: 'Product X',
+  startStock: 510,
+  currentStock: 436,
+  wasted: 0,
+  targetDate: '2026-05-25',
+  targetTime: '10:00',
+  critPct: 20,
+  lowPct: 40,
+  watchPct: 60,
+  theme: 'dark',
+  activeHrsSelected: 12,
+  stratAhSelected: 12,
+  logs: [
+    {id:'l1', date:'2026-05-18', time:'17:55', type:'used', units:8,  inv:502, note:''},
+    {id:'l2', date:'2026-05-18', time:'18:14', type:'used', units:4,  inv:498, note:''},
+    {id:'l3', date:'2026-05-18', time:'20:49', type:'used', units:6,  inv:492, note:''},
+    {id:'l4', date:'2026-05-18', time:'22:03', type:'used', units:8,  inv:484, note:''},
+    {id:'l5', date:'2026-05-18', time:'23:37', type:'used', units:3,  inv:481, note:''},
+    {id:'l6', date:'2026-05-18', time:'23:41', type:'used', units:9,  inv:472, note:''},
+    {id:'l7', date:'2026-05-19', time:'01:47', type:'used', units:12, inv:460, note:''},
+    {id:'l8', date:'2026-05-19', time:'02:54', type:'used', units:6,  inv:454, note:''},
+    {id:'l9', date:'2026-05-19', time:'03:59', type:'used', units:6,  inv:448, note:''},
+    {id:'l10',date:'2026-05-19', time:'05:12', type:'used', units:7,  inv:441, note:'corrected'},
+    {id:'l11',date:'2026-05-19', time:'05:17', type:'used', units:5,  inv:436, note:''},
+  ]
+};
+
+// ==================== STATE ====================
+let state = loadState();
+let charts = {};
+
+function loadState() {
+  // FIX v4.1: deep-clone DEFAULTS — shallow {...DEFAULTS} shared the logs array reference, so mutations leaked into DEFAULTS and reset stopped working.
+  const fresh = () => JSON.parse(JSON.stringify(DEFAULTS));
+  try {
+    const s = localStorage.getItem(SK);
+    if (s) return {...fresh(), ...JSON.parse(s)};
+  } catch(e) {}
+  return fresh();
+}
+function save() {
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+}
+
+// ==================== TIME ====================
+function pkt() { return new Date(Date.now() + 5*3600000); }
+function fmtT(d) { return pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds()); }
+function fmtTs(d) { return pad(d.getUTCHours())+':'+pad(d.getUTCMinutes()); }
+function pad(n) { return String(n).padStart(2,'0'); }
+function fmtDate(d) {
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getUTCDate()+' '+mo[d.getUTCMonth()]+' '+d.getUTCFullYear();
+}
+function fmtDateShort(d) {
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getUTCDate()+' '+mo[d.getUTCMonth()];
+}
+function fmtMins(m) {
+  if (!isFinite(m)||m<0) return '—';
+  const d=Math.floor(m/1440), h=Math.floor((m%1440)/60), mn=Math.round(m%60);
+  if(d>0) return d+'d '+h+'h';
+  if(h>0) return h+'h '+mn+'m';
+  return mn+'m';
+}
+function parseLogDT(l) { return new Date(l.date+'T'+l.time+':00+05:00'); }
+
+function getTarget() {
+  return new Date(state.targetDate+'T'+state.targetTime+':00+05:00');
+}
+function hoursToTarget() {
+  // FIX v4.1: pkt() returns a +5h-shifted Date; subtracting it from getTarget() (real epoch) caused a 5h off-by-one. Use real now.
+  return (getTarget().getTime() - Date.now()) / 3600000;
+}
+
+// ==================== ANALYTICS ====================
+function calcMetrics() {
+  const usedLogs = state.logs.filter(l=>l.type==='used').sort((a,b)=>parseLogDT(a)-parseLogDT(b));
+  const totalUsed = state.startStock - state.currentStock;
+  const wasted = state.wasted;
+
+  if (usedLogs.length < 2) {
+    return { avgHr:0, daily:0, windowHr:0, avgEvent:0, spikeThresh:0, usedLogs, totalUsed, wasted };
+  }
+
+  const t0 = parseLogDT(usedLogs[0]);
+  const tN = parseLogDT(usedLogs[usedLogs.length-1]);
+  const windowHr = (tN - t0) / 3600000;
+  const avgHr = windowHr > 0 ? totalUsed / windowHr : 0;
+  const daily = avgHr * 24;
+  const avgEvent = totalUsed / usedLogs.length;
+  const spikeThresh = avgEvent * 2;
+  const bingeThresh = avgEvent * 4;
+
+  // intervals
+  const intervals = [];
+  for(let i=1;i<usedLogs.length;i++) {
+    intervals.push((parseLogDT(usedLogs[i])-parseLogDT(usedLogs[i-1]))/60000);
+  }
+  const avgInterval = intervals.length ? intervals.reduce((a,b)=>a+b,0)/intervals.length : 0;
+
+  // sessions
+  const sessions = detectSessions(usedLogs);
+
+  // largest event
+  const largest = usedLogs.reduce((a,b)=>b.units>a.units?b:a, usedLogs[0]);
+
+  return {avgHr,daily,windowHr,avgEvent,spikeThresh,bingeThresh,usedLogs,totalUsed,wasted,avgInterval,sessions,largest};
+}
+
+function detectSessions(logs) {
+  // Cluster events that are within 3h of each other
+  if(!logs.length) return [];
+  const sessions = [];
+  let sess = [logs[0]];
+  for(let i=1;i<logs.length;i++) {
+    const gap = (parseLogDT(logs[i])-parseLogDT(logs[i-1]))/3600000;
+    if(gap > 2.5) { sessions.push(finishSession(sess)); sess = []; }
+    sess.push(logs[i]);
+  }
+  if(sess.length) sessions.push(finishSession(sess));
+  return sessions;
+}
+function finishSession(logs) {
+  const t0=parseLogDT(logs[0]), tN=parseLogDT(logs[logs.length-1]);
+  const lenMin=(tN-t0)/60000;
+  const units=logs.reduce((a,b)=>a+b.units,0);
+  const rate=lenMin>0?units/(lenMin/60):0;
+  return {logs,start:logs[0].date+' '+logs[0].time,end:logs[logs.length-1].date+' '+logs[logs.length-1].time,
+    lenMin,units,rate,startInv:logs[0].inv+logs[0].units,endInv:logs[logs.length-1].inv};
+}
+
+// ==================== STATUS ====================
+function getStatus(pct) {
+  const p = pct*100;
+  if(p<=state.critPct) return {cls:'tag-red',color:'var(--red)',text:'CRITICAL',key:'crit'};
+  if(p<=state.lowPct) return {cls:'tag-orange',color:'var(--orange)',text:'LOW',key:'low'};
+  if(p<=state.watchPct) return {cls:'tag-amber',color:'var(--amber)',text:'WATCH',key:'watch'};
+  return {cls:'tag-green',color:'var(--green)',text:'HEALTHY',key:'healthy'};
+}
+
+// ==================== INTENSITY ====================
+function getIntensity(units, avgEvent) {
+  const isSpike = units >= avgEvent*2;
+  const isBinge = units >= avgEvent*4;
+  if(isBinge) return {label:'BINGE',cls:'ib-binge'};
+  if(isSpike) return {label:'SPIKE',cls:'ib-spike'};
+  if(units>=10) return {label:'V.HIGH',cls:'ib-vhigh'};
+  if(units>=7) return {label:'HIGH',cls:'ib-high'};
+  if(units>=4) return {label:'MOD',cls:'ib-mod'};
+  return {label:'LOW',cls:'ib-low'};
+}
+
+// ==================== CLOCK ====================
+function tickClock() {
+  const n = pkt();
+  document.getElementById('sb-clock').textContent = fmtT(n)+' PKT';
+  document.getElementById('sb-date').textContent = fmtDate(n);
+  document.getElementById('dash-sub').textContent = state.product.toUpperCase()+' · SURVIVAL MODE · PKT UTC+5 · '+fmtT(n);
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ==================== MAIN RENDER ====================
+function render() {
+  const m = calcMetrics();
+  const pct = state.startStock > 0 ? state.currentStock/state.startStock : 0;
+  const pctStr = (pct*100).toFixed(1)+'%';
+  const status = getStatus(pct);
+  const hrsLeft = m.avgHr > 0 ? state.currentStock/m.avgHr : 9999;
+  const hrsToTarget = hoursToTarget();
+  const allowedHr = hrsToTarget > 0 ? state.currentStock/hrsToTarget : 0;
+  const targetDt = getTarget();
+
+  // sidebar ring
+  const circ = 163.36;
+  const arc = document.getElementById('ring-arc');
+  arc.style.strokeDashoffset = circ*(1-pct);
+  arc.style.stroke = status.color;
+  el('ring-pct').textContent = pctStr;
+  el('ring-pct').style.color = status.color;
+  el('sb-curr').textContent = state.currentStock;
+  el('sb-start').textContent = state.startStock;
+  el('dep-bar').style.width = pctStr;
+  el('dep-bar').style.background = status.color;
+  el('dep-bar-pct').textContent = pctStr;
+  el('dep-bar-pct').style.color = status.color;
+  el('dep-bar-max').textContent = state.startStock;
+  const sc = el('sb-status');
+  sc.className = 'status-tag '+status.cls;
+  sc.innerHTML = '<span class="pulse">◆</span> '+status.text;
+  el('sb-product-name').textContent = state.product;
+  el('sb-used').textContent = m.totalUsed;
+  el('sb-wasted').textContent = state.wasted;
+  el('sb-rate').textContent = m.avgHr.toFixed(2);
+  el('sb-allowed').textContent = allowedHr.toFixed(2);
+  el('sb-timeleft').textContent = fmtMins(hrsLeft*60).split(' ')[0];
+  el('sb-events').textContent = m.usedLogs.length;
+
+  // dashboard stats
+  el('d-start').textContent = state.startStock;
+  el('d-curr').textContent = state.currentStock;
+  el('d-curr').style.color = status.color;
+  el('d-curr-pct').textContent = (pct*100).toFixed(1)+'% remaining';
+  el('d-used').textContent = m.totalUsed;
+  el('d-wasted').textContent = state.wasted;
+  el('d-waste-pct').textContent = state.startStock>0?(state.wasted/state.startStock*100).toFixed(2)+'% of start':'0.00%';
+
+  // rates
+  el('r-overall').textContent = m.avgHr.toFixed(2)+' u/hr';
+  const sessions = m.sessions||[];
+  const lastSess = sessions[sessions.length-1];
+  el('r-session').textContent = lastSess ? lastSess.rate.toFixed(2)+' u/hr' : '—';
+  el('r-avg-event').textContent = m.avgEvent.toFixed(2)+' u';
+  el('r-spike-thresh').textContent = '≥'+m.spikeThresh.toFixed(2)+' u';
+  el('r-largest').textContent = m.largest ? m.largest.units+'u @ '+m.largest.time : '—';
+  el('r-interval').textContent = fmtMins(m.avgInterval);
+  el('r-allowed-big').textContent = allowedHr.toFixed(2)+' u/hr';
+  el('r-safe-daily').textContent = (allowedHr*24).toFixed(1)+' u/day';
+
+  // rates page
+  if(el('rates-actual')) el('rates-actual').textContent = m.avgHr.toFixed(2);
+  if(el('rates-safe24')) el('rates-safe24').textContent = allowedHr.toFixed(2);
+  if(el('rates-daily-safe')) el('rates-daily-safe').textContent = (allowedHr*24).toFixed(1);
+  if(el('ah-curr-stock')) el('ah-curr-stock').textContent = state.currentStock;
+  if(el('ah-days-left')) el('ah-days-left').textContent = '~'+(hrsToTarget/24).toFixed(2);
+
+  // target countdown
+  if(el('target-countdown')) {
+    const h=Math.floor(Math.max(0,hrsToTarget)), mm=Math.round((Math.max(0,hrsToTarget)-h)*60);
+    el('target-countdown').textContent = h+'h '+pad(mm)+'m';
+    el('target-countdown').style.color = hrsLeft>=hrsToTarget?'var(--green)':hrsLeft>=hrsToTarget*.7?'var(--amber)':'var(--red)';
+    el('target-countdown-days').textContent = '~'+(hrsToTarget/24).toFixed(2)+' days until target';
+  }
+
+  // alerts
+  renderAlerts(m, hrsLeft, hrsToTarget, allowedHr, targetDt);
+
+  // target panel
+  renderTargetPanel(m, hrsLeft, hrsToTarget, allowedHr, targetDt, pct);
+
+  // stock ladder
+  renderStockLadder(m);
+
+  // insights
+  renderInsights(m, hrsLeft, hrsToTarget, allowedHr, pct);
+
+  // sessions
+  renderSessions(m);
+
+  // master log
+  renderMasterLog(m);
+
+  // heatmap
+  renderHeatmap(m);
+
+  // active hours
+  renderActiveHours(m, hrsToTarget, allowedHr);
+
+  // rate compare bars
+  renderRateCompare(m, allowedHr);
+
+  // hourly forecast
+  renderHourlyForecast(m);
+
+  // strategy table
+  renderStrategyTable(m, hrsToTarget);
+
+  // survival verdict
+  renderSurvivalVerdict(m, hrsLeft, hrsToTarget, allowedHr, targetDt);
+
+  // charts
+  updateCharts(m, hrsLeft, hrsToTarget, allowedHr, targetDt);
+
+  // event bars (heatmap page)
+  renderEventBars(m);
+
+  // settings inputs
+  updateSettingsInputs();
+}
+
+function el(id) { return document.getElementById(id); }
+
+function renderAlerts(m, hrsLeft, hrsToTarget, allowedHr, targetDt) {
+  let html='';
+  if(state.currentStock<=0) {
+    html=`<div class="alert red"><i class="fa-solid fa-skull pulse"></i><div><strong>STOCK DEPLETED</strong><span>No units remaining.</span></div></div>`;
+  } else if(hrsLeft < hrsToTarget) {
+    const shortage = Math.ceil((hrsToTarget-hrsLeft)*m.avgHr);
+    html=`<div class="alert red"><i class="fa-solid fa-circle-exclamation pulse"></i><div><strong>WILL NOT REACH TARGET</strong><span>At current pace, stock runs out ~${fmtMins(hrsLeft*60)} from now — ${Math.round(hrsToTarget-hrsLeft)}h before target. Short by ~${shortage} units.</span></div></div>`;
+  } else if(m.avgHr > allowedHr*1.5) {
+    html=`<div class="alert amber"><i class="fa-solid fa-triangle-exclamation"></i><div><strong>BURN RATE TOO HIGH</strong><span>Current ${m.avgHr.toFixed(2)} u/hr is ${(m.avgHr/allowedHr).toFixed(1)}× the allowed rate. Reduce usage immediately.</span></div></div>`;
+  }
+  el('alert-area').innerHTML=html;
+
+  // reorder chip
+  const rc = el('dash-alert-chip');
+  if(hrsLeft<hrsToTarget) {
+    rc.innerHTML=`<span class="status-tag tag-red pulse"><i class="fa-solid fa-skull" style="font-size:9px"></i> WILL STOCK OUT</span>`;
+  } else if(m.avgHr>allowedHr) {
+    rc.innerHTML=`<span class="status-tag tag-amber pulse"><i class="fa-solid fa-triangle-exclamation" style="font-size:9px"></i> RATE TOO HIGH</span>`;
+  } else {
+    rc.innerHTML=`<span class="status-tag tag-green"><i class="fa-solid fa-check" style="font-size:9px"></i> ON TRACK</span>`;
+  }
+}
+
+function renderTargetPanel(m, hrsLeft, hrsToTarget, allowedHr, targetDt, pct) {
+  const needed = Math.ceil(m.avgHr * hrsToTarget);
+  const leftAtTarget = state.currentStock - needed;
+  let verdict, vClass, vIcon;
+  if(leftAtTarget >= 0) {
+    verdict='✅ WILL SURVIVE'; vClass='ok'; vIcon='fa-check-circle';
+  } else if(leftAtTarget >= -state.currentStock*0.1) {
+    verdict='⚠ VERY TIGHT'; vClass='tight'; vIcon='fa-triangle-exclamation';
+  } else {
+    verdict='❌ WILL STOCK OUT'; vClass='bad'; vIcon='fa-skull';
+  }
+  el('target-panel-body').innerHTML=`
+    <div class="rrow"><span class="rrow-lbl">Target</span><span class="rrow-val" style="color:var(--cyan)">25 May 10:00 PKT</span></div>
+    <div class="rrow"><span class="rrow-lbl">Time to target</span><span class="rrow-val">${fmtMins(hrsToTarget*60)}</span></div>
+    <div class="rrow"><span class="rrow-lbl">Units needed (current pace)</span><span class="rrow-val" style="color:var(--amber)">${needed}</span></div>
+    <div class="rrow"><span class="rrow-lbl">Stock left at target</span><span class="rrow-val" style="color:${leftAtTarget>=0?'var(--green)':'var(--red)'}">${leftAtTarget>=0?'+'+leftAtTarget:leftAtTarget}</span></div>
+    <div class="rrow"><span class="rrow-lbl">Allowed rate to survive</span><span class="rrow-val" style="color:var(--green)">${allowedHr.toFixed(2)} u/hr</span></div>
+    <div class="rrow"><span class="rrow-lbl">Current rate vs allowed</span><span class="rrow-val" style="color:${m.avgHr<=allowedHr?'var(--green)':'var(--red)'}">${m.avgHr.toFixed(2)} / ${allowedHr.toFixed(2)}</span></div>
+    <div class="verdict ${vClass}">${verdict}</div>
+  `;
+}
+
+function renderStockLadder(m) {
+  const logs = m.usedLogs;
+  if(!logs.length) { el('stock-ladder').innerHTML=''; return; }
+  let html='';
+  const maxUnits = Math.max(...logs.map(l=>l.units));
+  logs.forEach((l,i)=>{
+    const pct2=l.inv/state.startStock;
+    const sc=getStatus(pct2);
+    const barW=Math.max(2,l.inv/state.startStock*100);
+    const evW=Math.max(2,l.units/maxUnits*60);
+    const int=getIntensity(l.units, m.avgEvent);
+    const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const d=new Date(l.date);
+    const dateLabel=d.getUTCDate()+' '+mo[d.getUTCMonth()];
+    html+=`<div class="ladder-row">
+      <span class="ladder-label" style="color:var(--text3)">${dateLabel} ${l.time}</span>
+      <div class="ladder-bar-wrap"><div class="ladder-bar" style="width:${barW}%;background:${sc.color}"></div></div>
+      <span class="ladder-val" style="color:${sc.color}">${l.inv}</span>
+      <div style="width:${evW}px;height:10px;background:var(--amber);border-radius:2px;opacity:.7;margin-left:8px" title="${l.units}u"></div>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:4px">${l.units}u</span>
+      <span class="ibadge ${int.cls}" style="margin-left:6px">${int.label}</span>
+    </div>`;
+  });
+  el('stock-ladder').innerHTML=html;
+}
+
+function renderInsights(m, hrsLeft, hrsToTarget, allowedHr, pct) {
+  const items=[];
+  if(m.avgHr>allowedHr){
+    items.push({icon:'fa-triangle-exclamation',color:'var(--red)',text:`Burn rate ${m.avgHr.toFixed(2)} u/hr is ${(m.avgHr/allowedHr).toFixed(1)}× the safe ceiling of ${allowedHr.toFixed(2)} u/hr until target.`});
+  } else {
+    items.push({icon:'fa-check-circle',color:'var(--green)',text:`On track — current rate ${m.avgHr.toFixed(2)} u/hr is within the ${allowedHr.toFixed(2)} u/hr safe ceiling.`});
+  }
+  const lastSess=m.sessions&&m.sessions[m.sessions.length-1];
+  if(lastSess&&lastSess.rate>allowedHr*1.5){
+    items.push({icon:'fa-fire',color:'var(--orange)',text:`Current session running at ${lastSess.rate.toFixed(2)} u/hr — ${(lastSess.rate/allowedHr).toFixed(1)}× the target rate. ${lastSess.units} units in ${fmtMins(lastSess.lenMin)}.`});
+  }
+  items.push({icon:'fa-bullseye',color:'var(--cyan)',text:`Daily hard cap: ${(allowedHr*24).toFixed(0)} units/day · Hourly hard cap: ${allowedHr.toFixed(2)} u/hr · Events: max ${Math.floor(allowedHr)} units per use at current pace.`});
+  if(m.largest&&m.largest.units>=m.spikeThresh){
+    items.push({icon:'fa-bolt',color:'var(--amber)',text:`Largest event (${m.largest.units}u at ${m.largest.time}) was a SPIKE — ${(m.largest.units/m.avgEvent).toFixed(1)}× average. Watch for pattern.`});
+  }
+  el('insights-body').innerHTML=items.map(it=>`
+    <div class="insight">
+      <i class="fa-solid ${it.icon}" style="color:${it.color}"></i>
+      <span style="color:var(--text2)">${it.text}</span>
+    </div>`).join('');
+}
+
+function renderSessions(m) {
+  const SESS_NAMES=['S1 Early Evening','S2 Evening','S3 Late Night'];
+  const sessions=m.sessions||[];
+  const colors=['var(--cyan)','var(--amber)','var(--red)'];
+  const cssClasses=['s1','s2','s3'];
+
+  // cards
+  let cards='';
+  sessions.forEach((s,i)=>{
+    const clr=colors[i]||'var(--green)';
+    const cls=cssClasses[i]||'s-total';
+    cards+=`<div class="sess-card ${cls}">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${SESS_NAMES[i]||'Session '+(i+1)}</div>
+      <div style="font-family:var(--title);font-size:20px;font-weight:700;color:${clr};margin-bottom:4px">${s.units}u</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text2)">Rate: ${s.rate.toFixed(2)} u/hr</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px">${fmtMins(s.lenMin)} · ${s.logs.length} events</div>
+    </div>`;
+  });
+  // total card
+  const totalUnits=sessions.reduce((a,b)=>a+b.units,0);
+  cards+=`<div class="sess-card s-total">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">TOTAL</div>
+    <div style="font-family:var(--title);font-size:20px;font-weight:700;color:var(--green);margin-bottom:4px">${totalUnits}u</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text2)">Rate: ${m.avgHr.toFixed(2)} u/hr</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px">${m.usedLogs.length} events total</div>
+  </div>`;
+  if(el('session-cards')) el('session-cards').innerHTML=cards;
+
+  // session timeline visual
+  if(el('session-timeline-visual')&&sessions.length) {
+    const totalMs=sessions.reduce((a,b)=>a+b.lenMin,0)*60000;
+    let thtml=`<div style="display:flex;gap:3px;height:50px;border-radius:3px;overflow:hidden;margin-bottom:8px">`;
+    sessions.forEach((s,i)=>{
+      const w=Math.max(4,(s.lenMin*60000/Math.max(totalMs,1))*100);
+      const clr=colors[i]||'var(--green)';
+      thtml+=`<div style="flex:${w};background:${clr}22;border:1px solid ${clr}55;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:2px;min-width:40px">
+        <div style="font-family:var(--title);font-size:13px;font-weight:700;color:${clr}">${s.units}u</div>
+        <div style="font-family:var(--mono);font-size:8px;color:${clr}99">${s.rate.toFixed(1)}/hr</div>
+      </div>`;
+    });
+    thtml+='</div>';
+    thtml+='<div style="display:flex;gap:3px">';
+    sessions.forEach((s,i)=>{
+      const clr=colors[i]||'var(--green)';
+      thtml+=`<div style="flex:1;font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center">${SESS_NAMES[i]||'S'+(i+1)}<br>${s.start.split(' ')[1]}→${s.end.split(' ')[1]}</div>`;
+    });
+    thtml+='</div>';
+    el('session-timeline-visual').innerHTML=thtml;
+  }
+
+  // session table
+  if(el('session-tbody')) {
+    let tbody='';
+    sessions.forEach((s,i)=>{
+      const clr=colors[i]||'var(--green)';
+      tbody+=`<tr>
+        <td style="color:${clr};font-weight:600">${SESS_NAMES[i]||'S'+(i+1)}</td>
+        <td style="color:var(--text2)">${s.start.split(' ')[1]} → ${s.end.split(' ')[1]}</td>
+        <td>${fmtMins(s.lenMin)}</td>
+        <td class="num">${s.logs.length}</td>
+        <td class="num" style="color:${clr}">${s.units}</td>
+        <td class="num">${s.rate.toFixed(2)}</td>
+        <td>${s.startInv} → ${s.endInv}</td>
+        <td style="color:var(--text3);font-size:10px">${s.rate>m.avgHr*1.5?'<span class="ibadge ib-spike">HOT</span>':''}</td>
+      </tr>`;
+    });
+    el('session-tbody').innerHTML=tbody;
+  }
+}
+
+function renderMasterLog(m) {
+  if(!el('master-log-tbody')) return;
+  const logs=[...state.logs].sort((a,b)=>parseLogDT(a)-parseLogDT(b));
+  let cumUsed=0, tbody='';
+  logs.forEach((l,i)=>{
+    const used=l.type==='used';
+    if(used) cumUsed+=l.units;
+    const int=used?getIntensity(l.units,m.avgEvent):{label:'—',cls:''};
+    const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const d=new Date(l.date);
+    const dateLabel=d.getUTCDate()+' '+mo[d.getUTCMonth()];
+    let gap='—';
+    if(i>0){
+      const prev=logs[i-1];
+      const diffM=(parseLogDT(l)-parseLogDT(prev))/60000;
+      gap=fmtMins(diffM);
+    }
+    const sess=m.sessions?m.sessions.findIndex(s=>s.logs.some(sl=>sl.id===l.id)):0;
+    const sessLabel=sess>=0?`S${sess+1}`:'—';
+    const typeColor=l.type==='used'?'var(--amber)':l.type==='wasted'?'var(--red)':'var(--green)';
+    const invColor=l.inv/state.startStock>=0.5?'var(--text)':l.inv/state.startStock>=0.3?'var(--amber)':'var(--red)';
+    tbody+=`<tr>
+      <td style="color:var(--text3)">${i+1}</td>
+      <td style="color:var(--text2)">${dateLabel}</td>
+      <td style="font-family:var(--mono)">${l.time}</td>
+      <td><span style="font-family:var(--mono);font-size:9px;color:var(--text3)">${sessLabel}</span></td>
+      <td class="num" style="color:${typeColor};font-weight:600">${l.type==='used'?'-':'+'} ${l.units}</td>
+      <td class="num" style="color:${invColor}">${l.inv}</td>
+      <td style="color:var(--text3)">${gap}</td>
+      <td>${int.label!=='—'?`<span class="ibadge ${int.cls}">${int.label}</span>`:''}</td>
+      <td class="num" style="color:var(--text2)">${cumUsed}</td>
+      <td style="color:var(--text3);font-size:10px">${l.note||''}</td>
+      <td><button class="row-del" onclick="deleteLog('${l.id}')" title="Delete">✕</button></td>
+    </tr>`;
+  });
+  el('master-log-tbody').innerHTML=tbody;
+}
+
+function renderHeatmap(m) {
+  if(!el('heatmap-grid')) return;
+  // bucket by hour
+  const buckets=Array(24).fill(0);
+  const bucketCounts=Array(24).fill(0);
+  m.usedLogs.forEach(l=>{
+    const h=parseInt(l.time.split(':')[0]);
+    buckets[h]+=l.units;
+    bucketCounts[h]++;
+  });
+  const maxBucket=Math.max(...buckets,1);
+
+  let gridHtml='';
+  buckets.forEach((u,h)=>{
+    let cls='hm-empty', label='';
+    if(u>0) {
+      label=u;
+      if(u>=m.spikeThresh) cls='hm-spike';
+      else if(u>=10) cls='hm-vhigh';
+      else if(u>=7) cls='hm-high';
+      else if(u>=4) cls='hm-mod';
+      else cls='hm-low';
+    }
+    gridHtml+=`<div class="hm-cell ${cls}" title="${h}:00 — ${u>0?u+'u':''}">${label}</div>`;
+  });
+  el('heatmap-grid').innerHTML=gridHtml;
+
+  let labelsHtml='';
+  for(let h=0;h<24;h++) labelsHtml+=`<div class="hm-lbl">${pad(h)}</div>`;
+  el('heatmap-labels').innerHTML=labelsHtml;
+
+  // legend
+  el('heatmap-legend').innerHTML=[
+    {cls:'hm-empty',label:'Empty'},
+    {cls:'hm-low',label:'1-3u (Low)'},
+    {cls:'hm-mod',label:'4-6u (Mod)'},
+    {cls:'hm-high',label:'7-9u (High)'},
+    {cls:'hm-vhigh',label:'10+ (V.High)'},
+    {cls:'hm-spike',label:'Spike ≥2×avg'},
+  ].map(x=>`<span style="display:flex;align-items:center;gap:4px"><span class="hm-cell ${x.cls}" style="width:14px;height:14px;flex-shrink:0"></span>${x.label}</span>`).join('');
+}
+
+function renderEventBars(m) {
+  if(!el('event-bars-wrap')) return;
+  const maxU=Math.max(...m.usedLogs.map(l=>l.units),1);
+  const html=m.usedLogs.map(l=>{
+    const int=getIntensity(l.units,m.avgEvent);
+    const w=Math.max(2,l.units/maxU*100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;font-family:var(--mono);font-size:10px">
+      <span style="width:40px;color:var(--text3)">${l.time}</span>
+      <div style="flex:1;height:16px;background:var(--surface3);border-radius:2px;overflow:hidden">
+        <div style="height:100%;width:${w}%;border-radius:2px" class="${int.cls.replace('ib-','bar-')}" style="background:var(--amber)"></div>
+      </div>
+      <span style="width:22px;text-align:right">${l.units}</span>
+      <span class="ibadge ${int.cls}">${int.label}</span>
+    </div>`;
+  }).join('');
+  el('event-bars-wrap').innerHTML=html||'<div style="color:var(--text3)">No events</div>';
+  // fix colors via inline style since CSS class won't have bg
+  el('event-bars-wrap').querySelectorAll('[class*="bar-"]').forEach(b=>{
+    if(b.classList.contains('bar-spike')) b.style.background='var(--red)';
+    else if(b.classList.contains('bar-vhigh')) b.style.background='var(--orange)';
+    else if(b.classList.contains('bar-high')) b.style.background='var(--amber)';
+    else if(b.classList.contains('bar-mod')) b.style.background='var(--green)';
+    else b.style.background='var(--cyan)';
+  });
+}
+
+function renderActiveHours(m, hrsToTarget, allowedHr) {
+  if(!el('active-hours-tbody')) return;
+  const AH=[8,10,12,14,16];
+  const daysLeft=hrsToTarget/24;
+  let tbody='';
+  AH.forEach(ah=>{
+    const totalActiveHrs=ah*daysLeft;
+    const maxSafeHr=state.currentStock/totalActiveHrs;
+    const maxDaily=maxSafeHr*ah;
+    const verdict=m.avgHr<=maxSafeHr?`<span style="color:var(--green)">✅ SAFE (${m.avgHr.toFixed(2)} ≤ ${maxSafeHr.toFixed(2)})</span>`
+                  :m.avgHr<=maxSafeHr*1.3?`<span style="color:var(--amber)">⚠ TIGHT</span>`
+                  :`<span style="color:var(--red)">❌ TOO HIGH (${(m.avgHr/maxSafeHr).toFixed(1)}×)</span>`;
+    const isSelected=state.activeHrsSelected===ah;
+    tbody+=`<tr style="${isSelected?'background:var(--surface2)':''}">
+      <td style="${isSelected?'color:var(--cyan);font-weight:600':''}">
+        ${ah}h/day ${isSelected?'<span style="font-family:var(--mono);font-size:9px;color:var(--cyan)">(selected)</span>':''}
+      </td>
+      <td class="num">${totalActiveHrs.toFixed(1)}h</td>
+      <td class="num" style="font-weight:600">${maxSafeHr.toFixed(2)} u/hr</td>
+      <td class="num">${maxDaily.toFixed(1)} u/day</td>
+      <td>${verdict}</td>
+    </tr>`;
+  });
+  el('active-hours-tbody').innerHTML=tbody;
+}
+
+function renderRateCompare(m, allowedHr) {
+  if(!el('rate-compare-bars')) return;
+  const items=[
+    {label:'Current overall rate',val:m.avgHr,color:'var(--orange)'},
+    {label:'Late-night session rate',val:m.sessions&&m.sessions[m.sessions.length-1]?m.sessions[m.sessions.length-1].rate:0,color:'var(--red)'},
+    {label:'Allowed rate (24h model)',val:allowedHr,color:'var(--green)'},
+    {label:'Active-model safe rate (12h)',val:state.currentStock/(hrsToTarget_()*12/24),color:'var(--cyan)'},
+  ];
+  function hrsToTarget_(){return hoursToTarget();}
+  const maxV=Math.max(...items.map(x=>x.val),1);
+  el('rate-compare-bars').innerHTML=items.map(it=>{
+    const w=Math.min(100,it.val/maxV*100);
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span style="color:var(--text2)">${it.label}</span>
+        <span style="color:${it.color};font-family:var(--mono);font-weight:600">${it.val.toFixed(2)} u/hr</span>
+      </div>
+      <div style="height:7px;background:var(--surface3);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${w}%;background:${it.color};border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHourlyForecast(m) {
+  if(!el('hourly-forecast')) return;
+  const now=pkt();
+  const startH=now.getUTCHours();
+  let remaining=state.currentStock;
+  let html='<div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:grid;grid-template-columns:50px 1fr 45px 45px;gap:8px"><span>Hour</span><span>Forecast</span><span>Rate</span><span>Left</span></div>';
+  for(let i=0;i<12;i++){
+    const h=(startH+i)%24;
+    const isNight=(h>=0&&h<=6)||(h>=22);
+    const rate=isNight?m.avgHr*1.2:m.avgHr*0.7;
+    const proj=Math.min(remaining,rate);
+    remaining=Math.max(0,remaining-proj);
+    const rColor=remaining/state.startStock>=0.5?'var(--green)':remaining/state.startStock>=0.3?'var(--amber)':'var(--red)';
+    const barW=Math.min(100,proj/Math.max(m.avgHr,.1)/2*100);
+    html+=`<div style="display:grid;grid-template-columns:50px 1fr 45px 45px;gap:8px;align-items:center;font-family:var(--mono);font-size:10px;padding:3px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--text3)">${pad(h)}:00${isNight?' 🌙':''}</span>
+      <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${barW}%;background:${isNight?'var(--red)':'var(--blue)' };border-radius:3px"></div>
+      </div>
+      <span style="color:var(--text3)">${proj.toFixed(1)}</span>
+      <span style="color:${rColor}">${Math.round(remaining)}</span>
+    </div>`;
+    if(remaining<=0)break;
+  }
+  el('hourly-forecast').innerHTML=html;
+}
+
+function renderStrategyTable(m, hrsToTarget) {
+  // Build tabs for active hours
+  if(!el('strat-tabs')) return;
+  const AH=[8,10,12,14,16];
+  el('strat-tabs').innerHTML=AH.map(ah=>`
+    <div class="ah-tab ${state.stratAhSelected===ah?'active':''}" onclick="selectStratAh(${ah})">${ah}h/day</div>
+  `).join('');
+  el('strat-ah-label').textContent=state.stratAhSelected+' ACTIVE HRS/DAY';
+
+  const daysLeft=hrsToTarget/24;
+  const totalActiveHrs=state.stratAhSelected*daysLeft;
+  const baseRate=m.avgHr;
+  const strategies=[
+    {label:'Current pace',factor:1.0},
+    {label:'Reduce 10%',factor:0.90},
+    {label:'Reduce 20%',factor:0.80},
+    {label:'Reduce 25%',factor:0.75},
+    {label:'Reduce 30%',factor:0.70},
+    {label:'Reduce 40%',factor:0.60},
+    {label:'── SAFE LINE ──',safe:true},
+    {label:'Reduce 50%',factor:0.50},
+    {label:'Reduce 60%',factor:0.40},
+    {label:'Reduce 70%',factor:0.30},
+    {label:'Reduce 80%',factor:0.20},
+    {label:'Reduce 90%',factor:0.10},
+  ];
+
+  const safeRate=totalActiveHrs>0?state.currentStock/totalActiveHrs:0;
+  let tbody='';
+  strategies.forEach(s=>{
+    if(s.safe){
+      tbody+=`<tr class="safe-row">
+        <td>── SAFE LINE ──</td>
+        <td class="num">${safeRate.toFixed(2)}</td>
+        <td class="num">${(safeRate*state.stratAhSelected).toFixed(1)}</td>
+        <td class="num">${state.currentStock}</td>
+        <td class="num verdict-cell">0</td>
+        <td>= ${state.targetDate} ${state.targetTime}</td>
+        <td class="verdict-cell">✅ Break-even</td>
+      </tr>`;
+      return;
+    }
+    const activeRate=baseRate*s.factor;
+    const dailyUse=activeRate*state.stratAhSelected;
+    const needed=activeRate*totalActiveHrs;
+    const leftAtTarget=state.currentStock-needed;
+    const hrsLeft2=activeRate>0?state.currentStock/activeRate:9999;
+    const now=pkt();
+    const stockOut=new Date(now.getTime()+hrsLeft2*3600000);
+
+    const canSurvive=leftAtTarget>=0;
+    const verdict=canSurvive
+      ?`<span style="color:var(--green)">✅ +${Math.round(leftAtTarget)}</span>`
+      :`<span style="color:var(--red)">❌ ${Math.round(leftAtTarget)}</span>`;
+    const stockOutStr=canSurvive?'Never (surplus)':fmtDateShort(stockOut)+' '+fmtTs(stockOut);
+
+    tbody+=`<tr>
+      <td style="${s.factor===1?'color:var(--amber)':''}">${s.label}</td>
+      <td class="num">${activeRate.toFixed(2)}</td>
+      <td class="num">${dailyUse.toFixed(1)}</td>
+      <td class="num">${Math.ceil(needed)}</td>
+      <td class="num">${Math.round(leftAtTarget)}</td>
+      <td style="font-family:var(--mono);font-size:10px;color:${canSurvive?'var(--text3)':'var(--red)'}">${stockOutStr}</td>
+      <td>${verdict}</td>
+    </tr>`;
+  });
+  if(el('strat-tbody')) el('strat-tbody').innerHTML=tbody;
+}
+
+function selectStratAh(ah) {
+  state.stratAhSelected=ah;
+  save();
+  const m=calcMetrics();
+  renderStrategyTable(m,hoursToTarget());
+}
+
+function renderSurvivalVerdict(m, hrsLeft, hrsToTarget, allowedHr, targetDt) {
+  if(!el('survival-verdict-body')) return;
+  const needed=Math.ceil(m.avgHr*hrsToTarget);
+  const leftAtTarget=state.currentStock-needed;
+  const shortage=leftAtTarget<0?Math.abs(leftAtTarget):0;
+  let verdict,vClass,icon;
+  if(leftAtTarget>=0){verdict='✅ WILL SURVIVE TO TARGET';vClass='ok';icon='fa-check-circle';}
+  else if(shortage<state.currentStock*.1){verdict='⚠ EXTREMELY TIGHT';vClass='tight';icon='fa-triangle-exclamation';}
+  else{verdict='❌ WILL STOCK OUT BEFORE TARGET';vClass='bad';icon='fa-skull';}
+
+  el('survival-verdict-body').innerHTML=`
+    <div class="rrow"><span class="rrow-lbl">Stock now</span><span class="rrow-val">${state.currentStock} units</span></div>
+    <div class="rrow"><span class="rrow-lbl">Needed at current pace</span><span class="rrow-val" style="color:var(--amber)">${needed} units</span></div>
+    <div class="rrow"><span class="rrow-lbl">Left at target</span><span class="rrow-val" style="color:${leftAtTarget>=0?'var(--green)':'var(--red)'}">${leftAtTarget>=0?'+'+leftAtTarget:leftAtTarget} units</span></div>
+    <div class="rrow"><span class="rrow-lbl">Shortage</span><span class="rrow-val" style="color:${shortage>0?'var(--red)':'var(--green)'}">${shortage>0?shortage+' units':'None'}</span></div>
+    <div class="rrow"><span class="rrow-lbl">Needed reduction to survive</span><span class="rrow-val" style="color:var(--cyan)">${m.avgHr>allowedHr?((1-allowedHr/m.avgHr)*100).toFixed(0)+'%':'—'}</span></div>
+    <div class="verdict ${vClass}"><i class="fa-solid ${icon}"></i> ${verdict}</div>
+  `;
+}
+
+// ==================== CHARTS ====================
+function chartColors() {
+  return {
+    green:'#00ff88',amber:'#ffb800',red:'#ff3355',cyan:'#00d4ff',
+    orange:'#ff6b35',grid:'#1e2d45',text:'#6a8aaa',bg:'#0f1520'
+  };
+}
+function destroyChart(k){if(charts[k]){charts[k].destroy();delete charts[k];}}
+
+function updateCharts(m, hrsLeft, hrsToTarget, allowedHr, targetDt) {
+  const C=chartColors();
+  const logs=m.usedLogs;
+
+  // stock over time
+  const scCanvas=el('chart-stock');
+  if(scCanvas){
+    destroyChart('stock');
+    const labels=logs.map(l=>l.time);
+    const data=logs.map(l=>l.inv);
+    charts.stock=new Chart(scCanvas,{
+      type:'line',
+      data:{labels,datasets:[{label:'Stock',data,borderColor:C.cyan,backgroundColor:C.cyan+'22',tension:.3,fill:true,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:C.cyan}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:C.text,font:{size:9}},grid:{color:C.grid}},y:{ticks:{color:C.text},grid:{color:C.grid},beginAtZero:false}}}
+    });
+  }
+
+  // events chart
+  const evCanvas=el('chart-events');
+  if(evCanvas){
+    destroyChart('events');
+    const labels=logs.map(l=>l.time);
+    const data=logs.map(l=>l.units);
+    const bgColors=logs.map(l=>l.units>=m.spikeThresh?C.red:l.units>=10?C.orange:l.units>=7?C.amber:l.units>=4?C.green:C.cyan);
+    charts.events=new Chart(evCanvas,{
+      type:'bar',
+      data:{labels,datasets:[{label:'Units used',data,backgroundColor:bgColors,borderRadius:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:C.text,font:{size:9}},grid:{color:C.grid}},y:{ticks:{color:C.text},grid:{color:C.grid},beginAtZero:true}}}
+    });
+  }
+
+  // hourly distribution
+  const hourCanvas=el('chart-hourly');
+  if(hourCanvas){
+    destroyChart('hourly');
+    const buckets=Array(24).fill(0);
+    logs.forEach(l=>{const h=parseInt(l.time.split(':')[0]);buckets[h]+=l.units;});
+    const bgC=buckets.map((_,h)=>h>=22||h<=6?C.red:C.amber);
+    charts.hourly=new Chart(hourCanvas,{
+      type:'bar',
+      data:{labels:Array.from({length:24},(_,i)=>pad(i)),datasets:[{data:buckets,backgroundColor:bgC,borderRadius:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:C.text,font:{size:9}},grid:{color:C.grid}},y:{ticks:{color:C.text},grid:{color:C.grid},beginAtZero:true}}}
+    });
+  }
+
+  // pie
+  const pieCanvas=el('chart-pie');
+  if(pieCanvas){
+    destroyChart('pie');
+    charts.pie=new Chart(pieCanvas,{
+      type:'doughnut',
+      data:{labels:['Used','Remaining','Wasted'],datasets:[{data:[m.totalUsed,state.currentStock,state.wasted],
+        backgroundColor:[C.amber+'cc',C.green+'cc',C.red+'cc'],borderColor:C.bg,borderWidth:3}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:C.text,font:{size:11},padding:12}}}}
+    });
+  }
+
+  // intensity pie
+  const intCanvas=el('chart-intensity');
+  if(intCanvas){
+    destroyChart('intensity');
+    const cats={LOW:0,MOD:0,HIGH:0,'V.HIGH':0,SPIKE:0,BINGE:0};
+    logs.forEach(l=>{const int=getIntensity(l.units,m.avgEvent);cats[int.label]=(cats[int.label]||0)+1;});
+    const labels2=Object.keys(cats).filter(k=>cats[k]>0);
+    const clrMap={LOW:C.cyan,MOD:C.green,HIGH:C.amber,'V.HIGH':C.orange,SPIKE:C.red,BINGE:'#ff88ff'};
+    charts.intensity=new Chart(intCanvas,{
+      type:'doughnut',
+      data:{labels:labels2,datasets:[{data:labels2.map(k=>cats[k]),
+        backgroundColor:labels2.map(k=>clrMap[k]||C.amber),borderColor:C.bg,borderWidth:3}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:C.text,font:{size:10},padding:10}}}}
+    });
+  }
+
+  // depletion curve
+  const depCanvas=el('chart-depletion');
+  if(depCanvas){
+    destroyChart('depletion');
+    const steps=20;
+    const labels3=[],dataActual=[],dataSafe=[],dataTarget=[];
+    for(let i=0;i<=steps;i++){
+      const h=hrsToTarget*i/steps;
+      labels3.push('+'+Math.round(h)+'h');
+      dataActual.push(Math.max(0,state.currentStock-m.avgHr*h));
+      dataSafe.push(Math.max(0,state.currentStock-allowedHr*h));
+      dataTarget.push(0);
+    }
+    charts.depletion=new Chart(depCanvas,{
+      type:'line',
+      data:{labels:labels3,datasets:[
+        {label:'At current pace',data:dataActual,borderColor:C.red,backgroundColor:C.red+'22',tension:.2,fill:true,pointRadius:0},
+        {label:'At safe rate',data:dataSafe,borderColor:C.green,backgroundColor:C.green+'11',tension:.2,fill:false,pointRadius:0,borderDash:[4,4]},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{color:C.text,font:{size:11},padding:14}}},
+        scales:{x:{ticks:{color:C.text,font:{size:9}},grid:{color:C.grid}},y:{ticks:{color:C.text},grid:{color:C.grid},beginAtZero:true}}}
+    });
+  }
+}
+
+// ==================== SETTINGS ====================
+function updateSettingsInputs() {
+  const setVal=(id,v)=>{const e=el(id);if(e)e.value=v;};
+  setVal('set-product',state.product);
+  setVal('set-start',state.startStock);
+  setVal('set-curr',state.currentStock);
+  setVal('set-wasted',state.wasted);
+  setVal('set-target-date',state.targetDate);
+  setVal('set-target-time',state.targetTime);
+  setVal('set-crit',state.critPct);
+  setVal('set-low',state.lowPct);
+  setVal('set-watch',state.watchPct);
+}
+
+// ==================== LOG MANAGEMENT ====================
+function recalc() {
+  const sorted=[...state.logs].sort((a,b)=>parseLogDT(a)-parseLogDT(b));
+  let inv=state.startStock;
+  sorted.forEach(l=>{
+    if(l.type==='used') inv-=l.units;
+    else if(l.type==='wasted') inv-=l.units;
+    else if(l.type==='added') inv+=l.units;
+    l.inv=inv;
+  });
+  state.logs=sorted;
+  state.currentStock=inv;
+  state.wasted=sorted.filter(l=>l.type==='wasted').reduce((a,b)=>a+b.units,0);
+}
+
+function addEntry() {
+  const date=el('new-date').value||pkt().toISOString().slice(0,10);
+  const time=el('new-time').value||fmtTs(pkt());
+  const type=el('new-type').value;
+  const qty=parseInt(el('new-qty').value);
+  const note=el('new-note').value||'';
+  if(!qty||qty<1){toast('Enter valid qty','err');return;}
+  state.logs.push({id:'l_'+Date.now(),date,time,type,units:qty,inv:0,note});
+  recalc();save();render();
+  el('new-qty').value='';el('new-note').value='';
+  toast(`Logged: ${type} ${qty} @ ${time}`,'ok');
+}
+
+function deleteLog(id) {
+  if(!confirm('Delete this entry?'))return;
+  state.logs=state.logs.filter(l=>l.id!==id);
+  recalc();save();render();
+  toast('Entry deleted','ok');
+}
+
+// ==================== COMMAND PARSER ====================
+function pkTime(hhmmStr) {
+  const now=pkt();
+  const [h,mi]=hhmmStr.split(':').map(Number);
+  const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),h,mi,0));
+  if(d>now)d.setUTCDate(d.getUTCDate()-1);
+  return {date:d.toISOString().slice(0,10),time:hhmmStr.padStart(5,'0')};
+}
+
+function runCmd() {
+  const raw=el('cmd-in').value.trim();
+  if(!raw)return;
+  el('cmd-in').value='';
+  const cmd=raw.toLowerCase().trim();
+  let m2;
+
+  // shorthand: "HH:MM - X" → used X at HH:MM
+  if(m2=cmd.match(/^(\d{1,2}:\d{2})\s*[-–]\s*(\d+)$/)){
+    const {date,time}=pkTime(m2[1]);
+    const qty=parseInt(m2[2]);
+    state.logs.push({id:'l_'+Date.now(),date,time,type:'used',units:qty,inv:0,note:''});
+    recalc();save();render();
+    toast(`Used ${qty} @ ${time}`,'ok');return;
+  }
+  if(m2=cmd.match(/^used\s+(\d+)(?:\s+at\s+(\d{1,2}:\d{2}))?/)){
+    const qty=parseInt(m2[1]);
+    const {date,time}=m2[2]?pkTime(m2[2]):{date:pkt().toISOString().slice(0,10),time:fmtTs(pkt())};
+    state.logs.push({id:'l_'+Date.now(),date,time,type:'used',units:qty,inv:0,note:''});
+    recalc();save();render();toast(`Used ${qty} @ ${time}. Stock: ${state.currentStock}`,'ok');return;
+  }
+  if(m2=cmd.match(/^wasted\s+(\d+)(?:\s+at\s+(\d{1,2}:\d{2}))?/)){
+    const qty=parseInt(m2[1]);
+    const {date,time}=m2[2]?pkTime(m2[2]):{date:pkt().toISOString().slice(0,10),time:fmtTs(pkt())};
+    state.logs.push({id:'l_'+Date.now(),date,time,type:'wasted',units:qty,inv:0,note:''});
+    recalc();save();render();toast(`Wasted ${qty}. Stock: ${state.currentStock}`,'ok');return;
+  }
+  if(m2=cmd.match(/^added\s+(\d+)(?:\s+at\s+(\d{1,2}:\d{2}))?/)){
+    const qty=parseInt(m2[1]);
+    const {date,time}=m2[2]?pkTime(m2[2]):{date:pkt().toISOString().slice(0,10),time:fmtTs(pkt())};
+    state.logs.push({id:'l_'+Date.now(),date,time,type:'added',units:qty,inv:0,note:''});
+    recalc();save();render();toast(`Added ${qty}. Stock: ${state.currentStock}`,'ok');return;
+  }
+  if(m2=cmd.match(/^reset\s+to\s+(\d+)/)){
+    state.currentStock=parseInt(m2[1]);state.startStock=parseInt(m2[1]);state.logs=[];state.wasted=0;
+    save();render();toast(`Reset to ${m2[1]}`,'ok');return;
+  }
+  if(cmd==='lockx'||cmd==='lock'){
+    try{localStorage.removeItem('x_unlock_v1');}catch(e){}
+    location.href=location.pathname;
+    return;
+  }
+  if(m2=cmd.match(/^correct\s+last\s+to\s+(\d+)/)){
+    const sorted=[...state.logs].sort((a,b)=>parseLogDT(a)-parseLogDT(b));
+    const last=sorted[sorted.length-1];
+    if(last){last.units=parseInt(m2[1]);recalc();save();render();toast('Corrected last entry','ok');}
+    return;
+  }
+  toast('Unknown command: '+raw,'err');
+}
+
+// ==================== EXPORT / IMPORT ====================
+function exportData() {
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='x_survival_backup_'+Date.now()+'.json';a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded','ok');
+}
+function importData(ev) {
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{try{const fresh=JSON.parse(JSON.stringify(DEFAULTS));state={...fresh,...JSON.parse(e.target.result)};save();render();toast('Data imported','ok');}catch{toast('Invalid file','err');}};
+  r.readAsText(f);
+}
+function resetAll(){ if(!confirm('Reset all data to defaults? This wipes your logs.')) return; state=JSON.parse(JSON.stringify(DEFAULTS)); save(); render(); toast('Reset to defaults','ok'); }
+
+// ==================== TABS ====================
+function go(name, el2) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const panel=document.getElementById('tab-'+name);
+  if(panel)panel.classList.add('active');
+  if(el2)el2.classList.add('active');
+  render();
+}
+
+// ==================== THEME ====================
+function toggleTheme() {
+  state.theme=state.theme==='dark'?'light':'dark';
+  applyTheme();save();
+  setTimeout(()=>{const m=calcMetrics();updateCharts(m,m.avgHr>0?state.currentStock/m.avgHr:9999,hoursToTarget(),state.currentStock/Math.max(.01,hoursToTarget()),getTarget());},100);
+}
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme',state.theme);
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.innerHTML=state.theme==='dark'?'<i class="fa-solid fa-moon"></i>':'<i class="fa-solid fa-sun"></i>';
+  if(state.theme==='light'){
+    document.documentElement.style.setProperty('--bg','#f0f2f5');
+    document.documentElement.style.setProperty('--bg2','#e8eaed');
+    document.documentElement.style.setProperty('--surface','#ffffff');
+    document.documentElement.style.setProperty('--surface2','#f5f7fa');
+    document.documentElement.style.setProperty('--surface3','#ebedf0');
+    document.documentElement.style.setProperty('--border','#dde1eb');
+    document.documentElement.style.setProperty('--border2','#c8cedb');
+    document.documentElement.style.setProperty('--text','#1a2035');
+    document.documentElement.style.setProperty('--text2','#4a5568');
+    document.documentElement.style.setProperty('--text3','#8a95a8');
+    document.documentElement.style.setProperty('--green','#00a060');
+    document.documentElement.style.setProperty('--amber','#c07010');
+    document.documentElement.style.setProperty('--red','#c02040');
+    document.documentElement.style.setProperty('--cyan','#0088bb');
+    document.documentElement.style.setProperty('--orange','#c05010');
+  } else {
+    document.documentElement.style.setProperty('--bg','#080b0f');
+    document.documentElement.style.setProperty('--bg2','#0c1018');
+    document.documentElement.style.setProperty('--surface','#0f1520');
+    document.documentElement.style.setProperty('--surface2','#141c2a');
+    document.documentElement.style.setProperty('--surface3','#1a2438');
+    document.documentElement.style.setProperty('--border','#1e2d45');
+    document.documentElement.style.setProperty('--border2','#243552');
+    document.documentElement.style.setProperty('--text','#c8d8f0');
+    document.documentElement.style.setProperty('--text2','#6a8aaa');
+    document.documentElement.style.setProperty('--text3','#3a5570');
+    document.documentElement.style.setProperty('--green','#00ff88');
+    document.documentElement.style.setProperty('--amber','#ffb800');
+    document.documentElement.style.setProperty('--red','#ff3355');
+    document.documentElement.style.setProperty('--cyan','#00d4ff');
+    document.documentElement.style.setProperty('--orange','#ff6b35');
+  }
+}
+
+// ==================== TOAST ====================
+function toast(msg,type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',2200);
+}
+
+// ==================== INIT ====================
+if (window.X_UNLOCKED) {
+  applyTheme();
+  el('new-date').value=pkt().toISOString().slice(0,10);
+  el('new-time').value=fmtTs(pkt());
+  render();
+}
+</script>
+</body>
+</html>
