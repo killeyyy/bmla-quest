@@ -683,6 +683,39 @@ input[type="range"]::-moz-range-thumb {
 .syl-legend { display: flex; gap: 14px; font-family: var(--f-mono); font-size: 10px; color: var(--text-3); margin-top: 10px; flex-wrap: wrap; }
 .syl-legend span b { font-weight: 600; }
 
+/* ============================================================================
+   STUDY-LOG WIDGET — tracks active time spent in the app per day
+   ============================================================================ */
+.studylog {
+  margin-bottom: 22px; padding: 18px 22px; border-radius: var(--r-xl);
+  background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(16,185,129,0.05)), var(--surf-1);
+  border: 1px solid var(--border-2); position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1.4fr 1fr 1.3fr; gap: 24px; align-items: center;
+}
+@media (max-width: 1000px) { .studylog { grid-template-columns: 1fr; gap: 16px; } }
+.studylog::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad-cyan); opacity: 0.7; }
+.sl-block-l .sl-label { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+.sl-block-l .sl-label i { color: var(--cyan-2); font-size: 11px; }
+.sl-time { font-family: var(--f-display); font-size: 34px; font-weight: 700; color: var(--text-1); letter-spacing: -0.5px; line-height: 1; }
+.sl-time small { font-size: 13px; font-family: var(--f-mono); color: var(--text-3); margin-left: 5px; font-weight: 400; }
+.sl-target { font-family: var(--f-mono); font-size: 11px; color: var(--text-3); margin-top: 8px; }
+.sl-target b { color: var(--cyan-2); font-weight: 600; }
+.sl-bar-wrap { }
+.sl-bar-pct { font-family: var(--f-display); font-size: 26px; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+.sl-bar-pct.over { color: var(--emerald-2); }
+.sl-bar-track { height: 8px; background: var(--surf-2); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+.sl-bar-fill { height: 100%; background: var(--grad-cyan); transition: width .5s; border-radius: 99px; }
+.sl-bar-foot { text-align: center; margin-top: 6px; font-family: var(--f-mono); font-size: 10px; color: var(--text-3); }
+.sl-spark { display: flex; align-items: flex-end; justify-content: space-between; height: 56px; gap: 4px; }
+.sl-spark-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.sl-spark-bar { width: 100%; background: var(--surf-3); border-radius: 3px 3px 0 0; min-height: 2px; transition: height .4s; }
+.sl-spark-bar.today { background: var(--grad-cyan); }
+.sl-spark-bar.met { background: var(--grad-emerald); }
+.sl-spark-lbl { font-family: var(--f-mono); font-size: 9px; color: var(--text-3); }
+.sl-spark-row { display: flex; gap: 4px; align-items: flex-end; }
+.sl-active-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); margin-left: 6px; animation: pulse 2s ease-in-out infinite; }
+.sl-active-dot.off { background: var(--text-4); box-shadow: none; animation: none; }
+
 /* number tick */
 .tick { display: inline-block; }
 
@@ -947,6 +980,24 @@ input[type="range"]::-moz-range-thumb {
           <span><b style="color:var(--amber-2)">🟡</b> Revised</span>
           <span><b style="color:var(--emerald-2)">⭐</b> Mastered</span>
           <span style="margin-left:auto">click chip to advance · long-press to reset</span>
+        </div>
+      </div>
+
+      <!-- STUDY LOG -->
+      <div class="studylog anim-in-d2">
+        <div class="sl-block-l">
+          <div class="sl-label"><i class="fa-solid fa-stopwatch"></i> Study time today <span class="sl-active-dot" id="sl-dot" title="tracking active"></span></div>
+          <div class="sl-time" id="sl-time">0h 0m</div>
+          <div class="sl-target">target <b id="sl-target">6h</b> · streak <b id="sl-streak">0</b>d</div>
+        </div>
+        <div class="sl-bar-wrap">
+          <div class="sl-bar-pct" id="sl-pct">0%</div>
+          <div class="sl-bar-track"><div class="sl-bar-fill" id="sl-fill" style="width:0%"></div></div>
+          <div class="sl-bar-foot" id="sl-foot">tap-tracked while page is open + active</div>
+        </div>
+        <div class="sl-spark-wrap">
+          <div class="sl-spark" id="sl-spark"></div>
+          <div class="sl-bar-foot" style="margin-top:8px">last 7 days · grey bar = target</div>
         </div>
       </div>
 
@@ -1568,6 +1619,7 @@ function render(){
 
   // ============= SYLLABUS =============
   renderSyllabus();
+  renderStudyLog();
 
   // ============= RECENT / SESSIONS =============
   renderRecentEvents(m);
@@ -1683,6 +1735,84 @@ function sylCycle(id){
   toast(`${SYL_CHAPTERS.find(c=>c.id===id).name}: ${['Not started','Studying','Revised','Mastered'][s[id]]}`, s[id]===3?'ok':'ok');
 }
 function sylReset(id){ const s=sylLoad(); s[id]=0; sylSave(s); renderSyllabus(); toast('Chapter reset','warn'); }
+
+/* ============================================================================
+   STUDY-LOG TRACKER — counts active seconds per day, persists localStorage
+   ============================================================================ */
+const SL_KEY = 'bmla_study_v1';
+const SL_IDLE_MS = 90000; // user considered idle after 90s of no input
+let _slLastActivity = Date.now();
+['mousemove','keydown','click','scroll','touchstart','visibilitychange'].forEach(ev=>{
+  document.addEventListener(ev, ()=>{ _slLastActivity = Date.now(); }, {passive:true});
+});
+function slLoad(){ try{ return JSON.parse(localStorage.getItem(SL_KEY))||{}; }catch(e){ return {}; } }
+function slSave(s){ try{ localStorage.setItem(SL_KEY, JSON.stringify(s)); }catch(e){} }
+function slTodayKey(){ const n=pktNow(); return `${n.getUTCFullYear()}-${pad(n.getUTCMonth()+1)}-${pad(n.getUTCDate())}`; }
+function slTick(){
+  if(document.hidden) return; // tab not visible — skip
+  if(Date.now() - _slLastActivity > SL_IDLE_MS) return; // user idle
+  const s = slLoad();
+  const k = slTodayKey();
+  s[k] = (s[k]||0) + 1; // +1 second
+  slSave(s);
+}
+setInterval(slTick, 1000);
+function slTarget(){
+  // 6h/day in final 3 days, else 4h
+  const examMs = new Date('2026-05-25T10:00:00+05:00').getTime();
+  const days = (examMs - Date.now())/86400000;
+  return (days<=3 ? 6 : 4) * 3600; // seconds
+}
+function slFmt(sec){
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  return h+'h '+pad(m)+'m';
+}
+function renderStudyLog(){
+  if(!$('sl-time')) return;
+  const s = slLoad();
+  const today = s[slTodayKey()]||0;
+  const target = slTarget();
+  $('sl-time').innerHTML = slFmt(today);
+  $('sl-target').textContent = (target/3600)+'h';
+  const pct = target>0 ? Math.min(200, today/target*100) : 0;
+  $('sl-pct').textContent = pct.toFixed(0)+'%';
+  $('sl-pct').classList.toggle('over', pct>=100);
+  $('sl-fill').style.width = Math.min(100, pct)+'%';
+  $('sl-foot').textContent = today>=target ? '🎯 target hit — bonus time' : `${slFmt(target-today)} left to hit target`;
+  // streak: consecutive days backwards where target was met
+  let streak=0; const now=pktNow();
+  for(let i=1;i<60;i++){
+    const d=new Date(now.getTime()-i*86400000);
+    const k=`${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`;
+    if((s[k]||0) >= target*0.66) streak++; else break; // 66% counts as a study day
+  }
+  $('sl-streak').textContent = streak;
+  // spark — last 7 days
+  let html='';
+  const maxV = Math.max(target, ...Object.values(s), 1);
+  for(let i=6;i>=0;i--){
+    const d=new Date(now.getTime()-i*86400000);
+    const k=`${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`;
+    const v = s[k]||0;
+    const h = Math.min(100, v/maxV*100);
+    const targetH = Math.min(100, target/maxV*100);
+    const isToday = i===0;
+    const met = v>=target;
+    const label = isToday ? 'today' : ['mon','tue','wed','thu','fri','sat','sun'][d.getUTCDay()===0?6:d.getUTCDay()-1];
+    html += `<div class="sl-spark-col" title="${k}: ${slFmt(v)}">
+      <div class="sl-spark-row" style="width:100%;height:48px;align-items:flex-end">
+        <div style="flex:1;height:${targetH}%;background:rgba(255,255,255,0.06);border-radius:3px 3px 0 0"></div>
+        <div class="sl-spark-bar ${isToday?'today':met?'met':''}" style="height:${h}%;flex:1"></div>
+      </div>
+      <div class="sl-spark-lbl" style="color:${isToday?'var(--cyan-2)':'var(--text-3)'}">${label}</div>
+    </div>`;
+  }
+  $('sl-spark').innerHTML = html;
+  // dot
+  const active = !document.hidden && (Date.now()-_slLastActivity <= SL_IDLE_MS);
+  $('sl-dot').classList.toggle('off', !active);
+}
+setInterval(renderStudyLog, 5000);
 
 /* ============================================================================
    RECENT EVENTS + SESSIONS (dashboard)
