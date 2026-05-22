@@ -182,16 +182,16 @@ body { overflow-x: hidden; }
 
 /* clock card */
 .clock-card {
-  margin: 14px 16px; padding: 14px 14px 12px; border-radius: var(--r-lg);
+  margin: 14px 16px; padding: 18px 14px 14px; border-radius: var(--r-lg);
   background: linear-gradient(135deg, var(--surf-1), var(--surf-2));
-  border: 1px solid var(--border-1); position: relative; overflow: hidden;
+  border: 1px solid var(--border-1); position: relative;
 }
 .clock-card::before {
   content: ''; position: absolute; top: -50%; right: -30%; width: 160px; height: 160px;
   background: radial-gradient(circle, var(--violet) 0%, transparent 65%);
   opacity: 0.18; filter: blur(20px);
 }
-.clock-time { font-family: var(--f-mono); font-size: 22px; font-weight: 600; color: var(--text-1); letter-spacing: 1.5px; line-height: 1; position: relative; }
+.clock-time { font-family: var(--f-mono); font-size: 22px; font-weight: 600; color: var(--text-1); letter-spacing: 1.5px; line-height: 1.2; position: relative; padding-top: 2px; }
 .clock-time::after { content: 'PKT'; font-size: 10px; margin-left: 6px; color: var(--cyan); font-weight: 500; }
 .clock-date { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); margin-top: 6px; letter-spacing: .5px; }
 .clock-countdown { display: flex; gap: 8px; margin-top: 12px; font-family: var(--f-mono); font-size: 11px; color: var(--text-2); }
@@ -384,6 +384,7 @@ body { overflow-x: hidden; }
 .hero-stat-num small { font-size: 13px; font-family: var(--f-mono); color: var(--text-3); margin-left: 4px; font-weight: 400; }
 .hero-stat-foot { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); margin-top: 8px; }
 .hero-stat-foot b { color: var(--text-2); font-weight: 500; }
+.hero-stat-tag { margin-top: 8px; }
 
 /* sparkline area in hero */
 .hero-spark { margin-top: 16px; height: 60px; }
@@ -640,6 +641,48 @@ input[type="range"]::-moz-range-thumb {
   .hero-number { font-size: 56px; letter-spacing: -2px; }
 }
 
+/* ============================================================================
+   SYLLABUS STRIP — BMLA exam mastery tracker
+   ============================================================================ */
+.syllabus {
+  margin-bottom: 22px; padding: 20px 22px; border-radius: var(--r-xl);
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06)), var(--surf-1);
+  border: 1px solid var(--border-2); position: relative; overflow: hidden;
+}
+.syllabus::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad-aurora); opacity: 0.7;
+}
+.syl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+.syl-h-l { display: flex; align-items: center; gap: 10px; }
+.syl-title { font-family: var(--f-display); font-size: 15px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.syl-sub { font-family: var(--f-mono); font-size: 10.5px; color: var(--text-3); }
+.syl-sub b { color: var(--rose-2); font-weight: 600; }
+.syl-pct { font-family: var(--f-display); font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+.syl-bar-wrap { margin: 6px 0 14px; }
+.syl-bar-track { height: 6px; background: var(--surf-2); border-radius: 99px; overflow: hidden; }
+.syl-bar-fill { height: 100%; background: var(--grad-aurora); border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.syl-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+.syl-chip {
+  display: flex; align-items: center; gap: 10px; padding: 9px 11px;
+  background: var(--bg-1); border: 1px solid var(--border-1); border-radius: var(--r-md);
+  cursor: pointer; transition: all .15s; user-select: none;
+}
+.syl-chip:hover { border-color: var(--border-3); transform: translateY(-1px); }
+.syl-chip-ic { font-size: 14px; flex-shrink: 0; width: 22px; text-align: center; }
+.syl-chip-body { flex: 1; min-width: 0; }
+.syl-chip-name { font-size: 12px; font-weight: 600; color: var(--text-1); line-height: 1.2; }
+.syl-chip-range { font-family: var(--f-mono); font-size: 9.5px; color: var(--text-3); margin-top: 2px; letter-spacing: .3px; }
+.syl-chip[data-st="0"] .syl-chip-ic { color: var(--text-3); }
+.syl-chip[data-st="1"] .syl-chip-ic { color: var(--cyan-2); }
+.syl-chip[data-st="2"] .syl-chip-ic { color: var(--amber-2); }
+.syl-chip[data-st="3"] .syl-chip-ic { color: var(--emerald-2); }
+.syl-chip[data-st="3"] { background: linear-gradient(135deg, var(--emerald-bg), var(--bg-1)); border-color: var(--emerald-br); }
+.syl-chip[data-st="2"] { background: linear-gradient(135deg, var(--amber-bg), var(--bg-1)); border-color: var(--amber-br); }
+.syl-chip[data-st="1"] { background: linear-gradient(135deg, var(--cyan-bg), var(--bg-1)); border-color: var(--cyan-br); }
+.syl-legend { display: flex; gap: 14px; font-family: var(--f-mono); font-size: 10px; color: var(--text-3); margin-top: 10px; flex-wrap: wrap; }
+.syl-legend span b { font-weight: 600; }
+
 /* number tick */
 .tick { display: inline-block; }
 
@@ -785,7 +828,8 @@ input[type="range"]::-moz-range-thumb {
           <div class="hero-stat">
             <div>
               <div class="hero-stat-lbl">Stock-out projection</div>
-              <div class="hero-stat-num" id="hero-stockout">--<small>d --h</small></div>
+              <div class="hero-stat-num" id="hero-stockout">-- d --h</div>
+              <div class="hero-stat-tag" id="hero-stockout-tag"></div>
               <div class="hero-stat-foot">at current pace · <b id="hero-stockout-eta">--</b></div>
             </div>
             <div class="hero-spark"><canvas id="hero-spark"></canvas></div>
@@ -879,6 +923,30 @@ input[type="range"]::-moz-range-thumb {
             <div class="verdict-bar-marker" id="v-bar-marker" style="left:100%"></div>
           </div>
           <div class="verdict-bar-axes"><span>0</span><span id="v-bar-mid">--</span><span id="v-bar-max">cap</span></div>
+        </div>
+      </div>
+
+      <!-- SYLLABUS STRIP -->
+      <div class="syllabus anim-in-d2">
+        <div class="syl-head">
+          <div class="syl-h-l">
+            <div>
+              <div class="syl-title">📚 BMLA Syllabus mastery</div>
+              <div class="syl-sub">Tap a chapter to advance · <b id="syl-days">--</b> days to exam · 6 of 7 × 4 marks</div>
+            </div>
+          </div>
+          <div class="syl-pct gtext" id="syl-pct">--%</div>
+        </div>
+        <div class="syl-bar-wrap">
+          <div class="syl-bar-track"><div class="syl-bar-fill" id="syl-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="syl-chips" id="syl-chips"></div>
+        <div class="syl-legend">
+          <span><b style="color:var(--text-3)">⬜</b> Not started</span>
+          <span><b style="color:var(--cyan-2)">🔵</b> Studying</span>
+          <span><b style="color:var(--amber-2)">🟡</b> Revised</span>
+          <span><b style="color:var(--emerald-2)">⭐</b> Mastered</span>
+          <span style="margin-left:auto">click chip to advance · long-press to reset</span>
         </div>
       </div>
 
@@ -1442,9 +1510,10 @@ function render(){
     const hoursLeft=state.currentStock/m.avgHr;
     const eta=new Date(Date.now()+hoursLeft*3600000+5*3600000);
     const d=Math.floor(hoursLeft/24), h=Math.floor(hoursLeft%24);
-    $('hero-stockout').innerHTML = (d>0?d+'d ':'')+h+'h <small>'+(hoursLeft>hrsToTarget_?'(post-target)':'(pre-target!)')+'</small>';
+    $('hero-stockout').textContent = (d>0?d+'d ':'')+h+'h';
+    $('hero-stockout-tag').innerHTML = `<span class="tag ${hoursLeft>hrsToTarget_?'tag-em':'tag-rs'}">${hoursLeft>hrsToTarget_?'POST-TARGET · surplus':'PRE-TARGET · short'}</span>`;
     $('hero-stockout-eta').textContent = fmtDateShort(eta)+' '+pad(eta.getUTCHours())+':'+pad(eta.getUTCMinutes());
-  } else { $('hero-stockout').innerHTML='--<small>d --h</small>'; $('hero-stockout-eta').textContent='—'; }
+  } else { $('hero-stockout').textContent='-- d --h'; if($('hero-stockout-tag')) $('hero-stockout-tag').innerHTML=''; $('hero-stockout-eta').textContent='—'; }
 
   // today's budget
   const todayPKT=pktNow();
@@ -1496,6 +1565,9 @@ function render(){
 
   // ============= INSIGHTS =============
   renderInsights(m, hrsToTarget_, safeCap, dailyQuota, todayUsed, todayCap);
+
+  // ============= SYLLABUS =============
+  renderSyllabus();
 
   // ============= RECENT / SESSIONS =============
   renderRecentEvents(m);
@@ -1561,6 +1633,56 @@ function renderInsights(m, hrsToTarget_, safeCap, dailyQuota, todayUsed, todayCa
   $('insight-list').innerHTML = out.map(i=>`<div class="insight ${i.cls}"><div class="insight-ic"><i class="fa-solid ${i.ic}"></i></div><div class="insight-txt">${i.t}</div></div>`).join('') || `<div class="empty"><i class="fa-regular fa-folder-open"></i>No insights yet — log some events.</div>`;
   $('ins-count').textContent = out.length+' insights';
 }
+
+/* ============================================================================
+   SYLLABUS STRIP — BMLA chapter mastery (click chip to cycle status)
+   ============================================================================ */
+const SYL_KEY = 'bmla_syl_v1';
+const SYL_CHAPTERS = [
+  {id:'ch1a', name:'Linear Systems',       range:'Lay 1.1–1.5'},
+  {id:'ch1b', name:'Indep & Transforms',   range:'Lay 1.7–1.9'},
+  {id:'ch2',  name:'Matrix Ops & Inverse', range:'Lay 2.1–2.3'},
+  {id:'ch3',  name:'Determinants',         range:'Lay 3.1–3.3'},
+  {id:'ch5',  name:'Eigenvalues + Markov', range:'Lay 5.1–5.3 + M'},
+  {id:'lp',   name:'Linear Programming',   range:'Budnick L17–24'},
+  {id:'tr',   name:'Transportation',       range:'Budnick L25–28'}
+];
+const SYL_ICONS = ['⬜','🔵','🟡','⭐'];
+function sylLoad(){ try{ return JSON.parse(localStorage.getItem(SYL_KEY))||{}; }catch(e){ return {}; } }
+function sylSave(s){ try{ localStorage.setItem(SYL_KEY, JSON.stringify(s)); }catch(e){} }
+function renderSyllabus(){
+  if(!$('syl-chips')) return;
+  const s = sylLoad();
+  // days to BMLA exam
+  const examMs = new Date('2026-05-25T10:00:00+05:00').getTime();
+  const daysLeft = Math.max(0, Math.ceil((examMs - Date.now())/86400000));
+  $('syl-days').textContent = daysLeft;
+  // chips
+  $('syl-chips').innerHTML = SYL_CHAPTERS.map(c=>{
+    const st = s[c.id]||0;
+    return `<div class="syl-chip" data-st="${st}" data-id="${c.id}" onclick="sylCycle('${c.id}')" oncontextmenu="event.preventDefault();sylReset('${c.id}');">
+      <div class="syl-chip-ic">${SYL_ICONS[st]}</div>
+      <div class="syl-chip-body">
+        <div class="syl-chip-name">${c.name}</div>
+        <div class="syl-chip-range">${c.range}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // total %
+  const sum = SYL_CHAPTERS.reduce((a,c)=>a+(s[c.id]||0), 0);
+  const max = SYL_CHAPTERS.length*3;
+  const pct = max>0 ? Math.round(sum/max*100) : 0;
+  $('syl-pct').textContent = pct+'%';
+  $('syl-bar-fill').style.width = pct+'%';
+}
+function sylCycle(id){
+  const s = sylLoad();
+  s[id] = ((s[id]||0)+1) % 4;
+  sylSave(s);
+  renderSyllabus();
+  toast(`${SYL_CHAPTERS.find(c=>c.id===id).name}: ${['Not started','Studying','Revised','Mastered'][s[id]]}`, s[id]===3?'ok':'ok');
+}
+function sylReset(id){ const s=sylLoad(); s[id]=0; sylSave(s); renderSyllabus(); toast('Chapter reset','warn'); }
 
 /* ============================================================================
    RECENT EVENTS + SESSIONS (dashboard)
