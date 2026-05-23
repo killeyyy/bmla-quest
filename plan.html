@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo-dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMLA Battle Plan · question index + 3-day timeline</title>
+<meta name="theme-color" content="#05070d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ============================================================================
+   THEME ENGINE — 4 palettes × dark/light = 8 themes
+   ============================================================================ */
+:root{
+  --f-display:'Space Grotesk','Inter',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px;
+}
+
+/* ===== INDIGO DARK (default) ===== */
+[data-theme="indigo-dark"]{
+  --bg-0:#05070d; --bg-1:#0a0e16; --surf-1:#131929; --surf-2:#1a2236; --surf-3:#232d46;
+  --bd-1:rgba(255,255,255,0.06); --bd-2:rgba(255,255,255,0.10); --bd-3:rgba(255,255,255,0.16);
+  --t-1:#f4f7fc; --t-2:#b6c2d4; --t-3:#7c8aa3; --t-4:#4a5670;
+  --a-1:#8b5cf6; --a-1b:rgba(139,92,246,0.14); --a-1br:rgba(139,92,246,0.32);
+  --a-2:#22d3ee; --a-2b:rgba(34,211,238,0.12); --a-2br:rgba(34,211,238,0.32);
+  --a-3:#34d399; --a-3b:rgba(52,211,153,0.12); --a-3br:rgba(52,211,153,0.32);
+  --a-4:#fbbf24; --a-4b:rgba(251,191,36,0.12); --a-4br:rgba(251,191,36,0.32);
+  --a-5:#fb7185; --a-5b:rgba(251,113,133,0.12); --a-5br:rgba(251,113,133,0.32);
+  --a-6:#fb923c; --a-6b:rgba(251,146,60,0.12); --a-6br:rgba(251,146,60,0.32);
+  --a-7:#a78bfa; --a-7b:rgba(167,139,250,0.12); --a-7br:rgba(167,139,250,0.32);
+  --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  --grad-2:linear-gradient(135deg,#22d3ee,#34d399);
+  --grad-aurora:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+  --blob-1:#6366f1; --blob-2:#06b6d4;
+}
+/* ===== INDIGO LIGHT ===== */
+[data-theme="indigo-light"]{
+  --bg-0:#f5f7fb; --bg-1:#fff; --surf-1:#fff; --surf-2:#f0f3f9; --surf-3:#e3e8f2;
+  --bd-1:rgba(15,23,42,0.07); --bd-2:rgba(15,23,42,0.12); --bd-3:rgba(15,23,42,0.20);
+  --t-1:#0f172a; --t-2:#334155; --t-3:#64748b; --t-4:#94a3b8;
+  --a-1:#6366f1; --a-1b:rgba(99,102,241,0.10); --a-1br:rgba(99,102,241,0.28);
+  --a-2:#0891b2; --a-2b:rgba(8,145,178,0.10); --a-2br:rgba(8,145,178,0.28);
+  --a-3:#059669; --a-3b:rgba(5,150,105,0.10); --a-3br:rgba(5,150,105,0.28);
+  --a-4:#d97706; --a-4b:rgba(217,119,6,0.10); --a-4br:rgba(217,119,6,0.28);
+  --a-5:#e11d48; --a-5b:rgba(225,29,72,0.10); --a-5br:rgba(225,29,72,0.28);
+  --a-6:#ea580c; --a-6b:rgba(234,88,12,0.10); --a-6br:rgba(234,88,12,0.28);
+  --a-7:#7c3aed; --a-7b:rgba(124,58,237,0.10); --a-7br:rgba(124,58,237,0.28);
+  --grad:linear-gradient(135deg,#6366f1,#0891b2);
+  --grad-2:linear-gradient(135deg,#0891b2,#059669);
+  --grad-aurora:linear-gradient(135deg,#a5b4fc 0%,#c4b5fd 50%,#fbcfe8 100%);
+  --blob-1:#a5b4fc; --blob-2:#67e8f9;
+}
+/* ===== SUNSET DARK ===== */
+[data-theme="sunset-dark"]{
+  --bg-0:#1a0e0a; --bg-1:#211410; --surf-1:#2a1a14; --surf-2:#3a241c; --surf-3:#4a2e23;
+  --bd-1:rgba(255,220,180,0.06); --bd-2:rgba(255,220,180,0.10); --bd-3:rgba(255,220,180,0.18);
+  --t-1:#fff7ed; --t-2:#fed7aa; --t-3:#c4a58f; --t-4:#8b7361;
+  --a-1:#f97316; --a-1b:rgba(249,115,22,0.14); --a-1br:rgba(249,115,22,0.32);
+  --a-2:#fb923c; --a-2b:rgba(251,146,60,0.12); --a-2br:rgba(251,146,60,0.32);
+  --a-3:#fbbf24; --a-3b:rgba(251,191,36,0.12); --a-3br:rgba(251,191,36,0.32);
+  --a-4:#fde047; --a-4b:rgba(253,224,71,0.12); --a-4br:rgba(253,224,71,0.32);
+  --a-5:#f43f5e; --a-5b:rgba(244,63,94,0.12); --a-5br:rgba(244,63,94,0.32);
+  --a-6:#ec4899; --a-6b:rgba(236,72,153,0.12); --a-6br:rgba(236,72,153,0.32);
+  --a-7:#f9a8d4; --a-7b:rgba(249,168,212,0.12); --a-7br:rgba(249,168,212,0.32);
+  --grad:linear-gradient(135deg,#f97316,#f43f5e);
+  --grad-2:linear-gradient(135deg,#fbbf24,#f97316);
+  --grad-aurora:linear-gradient(135deg,#fb923c 0%,#f43f5e 50%,#ec4899 100%);
+  --blob-1:#f97316; --blob-2:#f43f5e;
+}
+/* ===== SUNSET LIGHT ===== */
+[data-theme="sunset-light"]{
+  --bg-0:#fff7ed; --bg-1:#fff; --surf-1:#fff; --surf-2:#ffedd5; --surf-3:#fed7aa;
+  --bd-1:rgba(120,53,15,0.10); --bd-2:rgba(120,53,15,0.16); --bd-3:rgba(120,53,15,0.26);
+  --t-1:#451a03; --t-2:#7c2d12; --t-3:#9a3412; --t-4:#c2410c;
+  --a-1:#c2410c; --a-1b:rgba(194,65,12,0.10); --a-1br:rgba(194,65,12,0.30);
+  --a-2:#ea580c; --a-2b:rgba(234,88,12,0.10); --a-2br:rgba(234,88,12,0.30);
+  --a-3:#d97706; --a-3b:rgba(217,119,6,0.10); --a-3br:rgba(217,119,6,0.30);
+  --a-4:#a16207; --a-4b:rgba(161,98,7,0.10); --a-4br:rgba(161,98,7,0.30);
+  --a-5:#be123c; --a-5b:rgba(190,18,57,0.10); --a-5br:rgba(190,18,57,0.30);
+  --a-6:#9d174d; --a-6b:rgba(157,23,77,0.10); --a-6br:rgba(157,23,77,0.30);
+  --a-7:#86198f; --a-7b:rgba(134,25,143,0.10); --a-7br:rgba(134,25,143,0.30);
+  --grad:linear-gradient(135deg,#ea580c,#be123c);
+  --grad-2:linear-gradient(135deg,#d97706,#ea580c);
+  --grad-aurora:linear-gradient(135deg,#fdba74 0%,#fb7185 50%,#f9a8d4 100%);
+  --blob-1:#fdba74; --blob-2:#fb7185;
+}
+/* ===== FOREST DARK ===== */
+[data-theme="forest-dark"]{
+  --bg-0:#04130b; --bg-1:#071a10; --surf-1:#0c2418; --surf-2:#143123; --surf-3:#1f4231;
+  --bd-1:rgba(180,255,210,0.06); --bd-2:rgba(180,255,210,0.10); --bd-3:rgba(180,255,210,0.20);
+  --t-1:#ecfdf5; --t-2:#a7f3d0; --t-3:#6ee7b7; --t-4:#4d7c5f;
+  --a-1:#10b981; --a-1b:rgba(16,185,129,0.14); --a-1br:rgba(16,185,129,0.34);
+  --a-2:#14b8a6; --a-2b:rgba(20,184,166,0.12); --a-2br:rgba(20,184,166,0.32);
+  --a-3:#22d3ee; --a-3b:rgba(34,211,238,0.12); --a-3br:rgba(34,211,238,0.32);
+  --a-4:#a3e635; --a-4b:rgba(163,230,53,0.12); --a-4br:rgba(163,230,53,0.32);
+  --a-5:#facc15; --a-5b:rgba(250,204,21,0.12); --a-5br:rgba(250,204,21,0.32);
+  --a-6:#84cc16; --a-6b:rgba(132,204,22,0.12); --a-6br:rgba(132,204,22,0.32);
+  --a-7:#06b6d4; --a-7b:rgba(6,182,212,0.12); --a-7br:rgba(6,182,212,0.32);
+  --grad:linear-gradient(135deg,#10b981,#22d3ee);
+  --grad-2:linear-gradient(135deg,#84cc16,#10b981);
+  --grad-aurora:linear-gradient(135deg,#10b981 0%,#14b8a6 50%,#22d3ee 100%);
+  --blob-1:#10b981; --blob-2:#14b8a6;
+}
+/* ===== FOREST LIGHT ===== */
+[data-theme="forest-light"]{
+  --bg-0:#f0fdf4; --bg-1:#fff; --surf-1:#fff; --surf-2:#dcfce7; --surf-3:#bbf7d0;
+  --bd-1:rgba(6,78,59,0.08); --bd-2:rgba(6,78,59,0.14); --bd-3:rgba(6,78,59,0.24);
+  --t-1:#064e3b; --t-2:#065f46; --t-3:#047857; --t-4:#059669;
+  --a-1:#047857; --a-1b:rgba(4,120,87,0.10); --a-1br:rgba(4,120,87,0.30);
+  --a-2:#0f766e; --a-2b:rgba(15,118,110,0.10); --a-2br:rgba(15,118,110,0.30);
+  --a-3:#0891b2; --a-3b:rgba(8,145,178,0.10); --a-3br:rgba(8,145,178,0.30);
+  --a-4:#65a30d; --a-4b:rgba(101,163,13,0.10); --a-4br:rgba(101,163,13,0.30);
+  --a-5:#ca8a04; --a-5b:rgba(202,138,4,0.10); --a-5br:rgba(202,138,4,0.30);
+  --a-6:#4d7c0f; --a-6b:rgba(77,124,15,0.10); --a-6br:rgba(77,124,15,0.30);
+  --a-7:#0e7490; --a-7b:rgba(14,116,144,0.10); --a-7br:rgba(14,116,144,0.30);
+  --grad:linear-gradient(135deg,#047857,#0891b2);
+  --grad-2:linear-gradient(135deg,#65a30d,#047857);
+  --grad-aurora:linear-gradient(135deg,#a7f3d0 0%,#86efac 50%,#67e8f9 100%);
+  --blob-1:#a7f3d0; --blob-2:#67e8f9;
+}
+/* ===== MONO DARK ===== */
+[data-theme="mono-dark"]{
+  --bg-0:#0a0a0b; --bg-1:#111113; --surf-1:#1a1a1d; --surf-2:#222226; --surf-3:#2c2c31;
+  --bd-1:rgba(255,255,255,0.06); --bd-2:rgba(255,255,255,0.10); --bd-3:rgba(255,255,255,0.18);
+  --t-1:#fafafa; --t-2:#d4d4d8; --t-3:#a1a1aa; --t-4:#71717a;
+  --a-1:#fafafa; --a-1b:rgba(250,250,250,0.10); --a-1br:rgba(250,250,250,0.28);
+  --a-2:#e4e4e7; --a-2b:rgba(228,228,231,0.10); --a-2br:rgba(228,228,231,0.28);
+  --a-3:#a1a1aa; --a-3b:rgba(161,161,170,0.10); --a-3br:rgba(161,161,170,0.28);
+  --a-4:#71717a; --a-4b:rgba(113,113,122,0.10); --a-4br:rgba(113,113,122,0.28);
+  --a-5:#52525b; --a-5b:rgba(82,82,91,0.10); --a-5br:rgba(82,82,91,0.28);
+  --a-6:#3f3f46; --a-6b:rgba(63,63,70,0.10); --a-6br:rgba(63,63,70,0.28);
+  --a-7:#27272a; --a-7b:rgba(39,39,42,0.10); --a-7br:rgba(39,39,42,0.28);
+  --grad:linear-gradient(135deg,#fafafa,#a1a1aa);
+  --grad-2:linear-gradient(135deg,#d4d4d8,#71717a);
+  --grad-aurora:linear-gradient(135deg,#fafafa 0%,#a1a1aa 50%,#52525b 100%);
+  --blob-1:#52525b; --blob-2:#3f3f46;
+}
+/* ===== MONO LIGHT ===== */
+[data-theme="mono-light"]{
+  --bg-0:#fafafa; --bg-1:#fff; --surf-1:#fff; --surf-2:#f4f4f5; --surf-3:#e4e4e7;
+  --bd-1:rgba(0,0,0,0.06); --bd-2:rgba(0,0,0,0.10); --bd-3:rgba(0,0,0,0.18);
+  --t-1:#09090b; --t-2:#27272a; --t-3:#52525b; --t-4:#a1a1aa;
+  --a-1:#09090b; --a-1b:rgba(9,9,11,0.06); --a-1br:rgba(9,9,11,0.22);
+  --a-2:#27272a; --a-2b:rgba(39,39,42,0.06); --a-2br:rgba(39,39,42,0.22);
+  --a-3:#52525b; --a-3b:rgba(82,82,91,0.06); --a-3br:rgba(82,82,91,0.22);
+  --a-4:#71717a; --a-4b:rgba(113,113,122,0.06); --a-4br:rgba(113,113,122,0.22);
+  --a-5:#a1a1aa; --a-5b:rgba(161,161,170,0.08); --a-5br:rgba(161,161,170,0.24);
+  --a-6:#3f3f46; --a-6b:rgba(63,63,70,0.06); --a-6br:rgba(63,63,70,0.22);
+  --a-7:#18181b; --a-7b:rgba(24,24,27,0.06); --a-7br:rgba(24,24,27,0.22);
+  --grad:linear-gradient(135deg,#09090b,#52525b);
+  --grad-2:linear-gradient(135deg,#27272a,#71717a);
+  --grad-aurora:linear-gradient(135deg,#a1a1aa 0%,#71717a 50%,#52525b 100%);
+  --blob-1:#e4e4e7; --blob-2:#d4d4d8;
+}
+
+/* ============================================================================
+   RESET + BASE
+   ============================================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-0);color:var(--t-1);font-family:var(--f-body);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background 0.3s,color 0.3s}
+body{overflow-x:hidden}
+
+/* aurora */
+.bg-aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;opacity:0.55}
+.bg-aurora::before,.bg-aurora::after{content:'';position:absolute;border-radius:50%;filter:blur(120px);opacity:0.35;animation:drift 22s ease-in-out infinite}
+.bg-aurora::before{width:520px;height:520px;background:radial-gradient(circle,var(--blob-1) 0%,transparent 70%);top:-10%;left:-10%}
+.bg-aurora::after{width:620px;height:620px;background:radial-gradient(circle,var(--blob-2) 0%,transparent 70%);bottom:-15%;right:-10%;animation-delay:-11s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-30px,30px) scale(0.95)}}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surf-3);border-radius:4px}
+
+/* ============================================================================
+   STICKY TOPBAR
+   ============================================================================ */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(0,0,0,0.5);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd-1);padding:10px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+[data-theme$="-light"] .topbar{background:rgba(255,255,255,0.7)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:30px;height:30px;border-radius:8px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:13px;box-shadow:0 0 18px rgba(139,92,246,0.30)}
+.tb-name{font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:-0.2px;color:var(--t-1)}
+.tb-name small{font-family:var(--f-mono);font-size:9px;color:var(--t-3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-top:1px}
+.tb-cd{font-family:var(--f-mono);font-size:13px;color:var(--t-2);background:var(--surf-1);padding:6px 12px;border-radius:99px;border:1px solid var(--bd-1)}
+.tb-cd b{color:var(--a-1);font-weight:700}
+.tb-spacer{flex:1}
+.tb-picker{position:relative;display:flex;gap:6px;align-items:center}
+.tb-picker-label{font-family:var(--f-mono);font-size:9.5px;color:var(--t-3);text-transform:uppercase;letter-spacing:1px;margin-right:2px}
+.swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;position:relative}
+.swatch:hover{transform:scale(1.12)}
+.swatch.active{border-color:var(--t-1)}
+.swatch.s-indigo{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
+.swatch.s-sunset{background:linear-gradient(135deg,#f97316,#f43f5e)}
+.swatch.s-forest{background:linear-gradient(135deg,#10b981,#22d3ee)}
+.swatch.s-mono{background:linear-gradient(135deg,#fafafa,#52525b)}
+.tb-mode{display:flex;background:var(--surf-1);padding:3px;border-radius:99px;border:1px solid var(--bd-1)}
+.tb-mode button{background:transparent;border:0;color:var(--t-3);width:26px;height:26px;border-radius:99px;cursor:pointer;font-size:11px;display:grid;place-items:center}
+.tb-mode button.on{background:var(--surf-3);color:var(--t-1)}
+
+/* ============================================================================
+   SHELL
+   ============================================================================ */
+.shell{display:grid;grid-template-columns:240px 1fr;gap:0;max-width:1600px;margin:0 auto}
+@media(max-width:980px){.shell{grid-template-columns:1fr}}
+
+/* ============================================================================
+   SIDEBAR NAV — sticky chapter rail
+   ============================================================================ */
+.rail{padding:22px 14px 80px 22px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;align-self:start}
+@media(max-width:980px){.rail{position:relative;top:0;height:auto;padding:16px 14px;border-bottom:1px solid var(--bd-1);background:var(--bg-1)}}
+.rail-section{font-family:var(--f-mono);font-size:9.5px;color:var(--t-4);text-transform:uppercase;letter-spacing:1.5px;padding:0 8px 8px;margin-top:14px}
+.rail-section:first-child{margin-top:0}
+.rail-link{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:var(--r-md);color:var(--t-2);font-size:12.5px;font-weight:500;cursor:pointer;transition:all 0.15s;text-decoration:none;position:relative;margin-bottom:2px;user-select:none}
+.rail-link:hover{background:var(--surf-1);color:var(--t-1)}
+.rail-link.active{background:linear-gradient(90deg,var(--a-1b),transparent);color:var(--t-1)}
+.rail-link.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--grad);border-radius:99px}
+.rail-link .ic{width:18px;text-align:center;font-size:13px}
+.rail-link[data-ch="5"] .ic{color:var(--a-1)}
+.rail-link[data-ch="lp"] .ic{color:var(--a-2)}
+.rail-link[data-ch="tr"] .ic{color:var(--a-3)}
+.rail-link[data-ch="2"] .ic{color:var(--a-6)}
+.rail-link[data-ch="3"] .ic{color:var(--a-5)}
+.rail-link[data-ch="1a"] .ic{color:var(--a-4)}
+.rail-link[data-ch="1b"] .ic{color:var(--a-4)}
+.rail-link .badge{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;color:var(--t-4);background:var(--surf-2);padding:2px 6px;border-radius:99px;border:1px solid var(--bd-1)}
+.rail-link.active .badge{color:var(--a-1);border-color:var(--a-1br);background:var(--a-1b)}
+.rail-foot{margin-top:24px;padding:12px 14px;border-radius:var(--r-md);background:var(--surf-1);border:1px solid var(--bd-1);font-family:var(--f-mono);font-size:10px;color:var(--t-3);line-height:1.6}
+.rail-foot a{color:var(--a-2);text-decoration:none}
+
+/* ============================================================================
+   MAIN CONTENT
+   ============================================================================ */
+.main{padding:22px 22px 100px;min-width:0}
+@media(max-width:980px){.main{padding:16px 14px 80px}}
+
+/* hero card */
+.hero{padding:24px;border-radius:var(--r-xl);background:radial-gradient(circle at top right,var(--a-1b),transparent 60%),radial-gradient(circle at bottom left,var(--a-2b),transparent 55%),linear-gradient(180deg,var(--surf-1),var(--bg-1));border:1px solid var(--bd-2);margin-bottom:22px;position:relative;overflow:hidden}
+.hero-eyebrow{font-family:var(--f-mono);font-size:11px;color:var(--a-2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.dot-pulse{width:6px;height:6px;border-radius:50%;background:var(--a-3);box-shadow:0 0 10px var(--a-3);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero-title{font-family:var(--f-display);font-size:13px;font-weight:600;color:var(--t-2);margin-bottom:4px}
+.hero-cd{font-family:var(--f-display);font-size:clamp(38px,6vw,72px);font-weight:800;line-height:1;letter-spacing:-2px;background:linear-gradient(135deg,var(--t-1) 0%,var(--a-1) 60%,var(--a-2) 100%);background-clip:text;-webkit-background-clip:text;color:transparent;display:inline-block}
+.hero-cd-sub{font-family:var(--f-mono);font-size:15px;color:var(--t-2);margin-left:8px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+@media(max-width:780px){.hero-grid{grid-template-columns:1fr}}
+.hs{padding:14px 16px;border-radius:var(--r-lg);background:rgba(0,0,0,0.18);border:1px solid var(--bd-1);position:relative;overflow:hidden}
+[data-theme$="-light"] .hs{background:rgba(0,0,0,0.04)}
+.hs::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0.7}
+.hs-lbl{font-family:var(--f-mono);font-size:9.5px;color:var(--t-3);letter-spacing:1.4px;text-transform:uppercase}
+.hs-val{font-family:var(--f-display);font-size:24px;font-weight:700;color:var(--t-1);line-height:1;margin-top:8px;letter-spacing:-0.5px}
+.hs-val small{font-size:12px;font-family:var(--f-mono);color:var(--t-3);margin-left:4px;font-weight:400}
+.hs-foot{font-family:var(--f-mono);font-size:10px;color:var(--t-3);margin-top:6px}
+.hs-bar{margin-top:8px;height:5px;background:var(--surf-2);border-radius:99px;overflow:hidden}
+.hs-bar-fill{height:100%;background:var(--grad-2);transition:width 0.5s;border-radius:99px}
+
+/* section heads */
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:32px 0 14px;flex-wrap:wrap}
+.sec-head:first-child{margin-top:0}
+.sec-title{font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-0.4px;color:var(--t-1);display:flex;align-items:center;gap:10px}
+.sec-title i{color:var(--a-1);font-size:16px}
+.sec-sub{font-family:var(--f-mono);font-size:11px;color:var(--t-3);margin-top:2px}
+
+/* gantt timeline */
+.gantt{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:980px){.gantt{grid-template-columns:1fr}}
+.day{background:linear-gradient(180deg,var(--surf-1),var(--bg-1));border:1px solid var(--bd-1);border-radius:var(--r-lg);padding:12px;display:flex;flex-direction:column;gap:6px}
+.day.today{border-color:var(--a-1br);box-shadow:0 0 22px var(--a-1b)}
+.day.today .day-name{color:var(--a-1)}
+.day.exam{border-color:var(--a-5br);box-shadow:0 0 22px var(--a-5b)}
+.day.exam .day-name{color:var(--a-5)}
+.day-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 6px;border-bottom:1px solid var(--bd-1);margin-bottom:6px}
+.day-name{font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--t-1);letter-spacing:-0.2px}
+.day-date{font-family:var(--f-mono);font-size:9.5px;color:var(--t-3);text-transform:uppercase;letter-spacing:1.1px}
+.day-hrs{font-family:var(--f-mono);font-size:11px;color:var(--a-2);font-weight:600}
+.blk{padding:9px 11px;border-radius:var(--r-md);background:var(--bg-1);border:1px solid var(--bd-1);border-left:3px solid var(--t-4);cursor:pointer;transition:all 0.15s;position:relative}
+.blk:hover{transform:translateY(-1px);border-color:var(--bd-2);background:var(--surf-1)}
+.blk-time{font-family:var(--f-mono);font-size:9.5px;color:var(--t-3);letter-spacing:0.4px;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.blk-time .hrs{color:var(--a-2);font-weight:600}
+.blk-title{font-size:12px;font-weight:600;color:var(--t-1);line-height:1.3}
+.blk-sub{font-family:var(--f-mono);font-size:10px;color:var(--t-3);margin-top:3px;letter-spacing:0.2px}
+.blk-row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:10px}
+.blk-stat{font-size:14px}
+.blk[data-ch="5"]{border-left-color:var(--a-1)}
+.blk[data-ch="lp"]{border-left-color:var(--a-2)}
+.blk[data-ch="tr"]{border-left-color:var(--a-3)}
+.blk[data-ch="2"]{border-left-color:var(--a-6)}
+.blk[data-ch="3"]{border-left-color:var(--a-5)}
+.blk[data-ch="1a"],.blk[data-ch="1b"]{border-left-color:var(--a-4)}
+.blk[data-ch="meal"],.blk[data-ch="sleep"]{background:transparent;border:1px dashed var(--bd-1);border-left:1px dashed var(--bd-1);opacity:0.6;cursor:default}
+.blk[data-ch="meal"]:hover,.blk[data-ch="sleep"]:hover{transform:none}
+.blk[data-ch="exam"]{background:linear-gradient(135deg,var(--a-5b),var(--bg-1));border-color:var(--a-5br);border-left-color:var(--a-5)}
+.blk[data-st="2"]{background:linear-gradient(135deg,var(--a-3b),var(--bg-1));border-color:var(--a-3br)}
+.blk[data-st="2"] .blk-title{color:var(--a-3);text-decoration:line-through;text-decoration-thickness:1px}
+.blk[data-st="1"]{background:linear-gradient(135deg,var(--a-2b),var(--bg-1));border-color:var(--a-2br)}
+.blk[data-st="1"] .blk-title{color:var(--a-2)}
+
+/* ============================================================================
+   CHAPTER PAGES — long-scroll with anchored sections
+   ============================================================================ */
+.chap{margin-bottom:36px;scroll-margin-top:80px}
+.chap-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--surf-1),var(--bg-1));border:1px solid var(--bd-2);border-left:4px solid var(--a-1);margin-bottom:14px;position:relative;overflow:hidden}
+.chap[data-ch="5"] .chap-head{border-left-color:var(--a-1)}
+.chap[data-ch="lp"] .chap-head{border-left-color:var(--a-2)}
+.chap[data-ch="tr"] .chap-head{border-left-color:var(--a-3)}
+.chap[data-ch="2"] .chap-head{border-left-color:var(--a-6)}
+.chap[data-ch="3"] .chap-head{border-left-color:var(--a-5)}
+.chap[data-ch="1a"] .chap-head,.chap[data-ch="1b"] .chap-head{border-left-color:var(--a-4)}
+.chap-h-l{flex:1;min-width:0}
+.chap-h-icon{font-size:24px;flex-shrink:0;margin-right:14px}
+.chap-name{font-family:var(--f-display);font-size:20px;font-weight:700;color:var(--t-1);letter-spacing:-0.4px;display:flex;align-items:center;gap:10px}
+.chap-mast{font-size:18px}
+.chap-meta{font-family:var(--f-mono);font-size:11px;color:var(--t-3);margin-top:4px;letter-spacing:0.3px}
+.chap-meta b{color:var(--t-1);font-weight:600}
+.chap-prog{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:140px}
+.chap-prog-num{font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--t-1)}
+.chap-prog-bar{width:140px;height:5px;background:var(--surf-2);border-radius:99px;overflow:hidden}
+.chap-prog-fill{height:100%;background:var(--grad);transition:width 0.5s;border-radius:99px}
+
+.sec{padding:14px 16px;background:var(--surf-1);border:1px solid var(--bd-1);border-radius:var(--r-md);margin-bottom:10px;scroll-margin-top:80px}
+.sec-h{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.sec-id-tag{font-family:var(--f-mono);font-size:11px;color:var(--a-1);background:var(--a-1b);padding:3px 8px;border-radius:99px;border:1px solid var(--a-1br);font-weight:700;margin-right:8px;letter-spacing:0.3px}
+.chap[data-ch="lp"] .sec-id-tag{color:var(--a-2);background:var(--a-2b);border-color:var(--a-2br)}
+.chap[data-ch="tr"] .sec-id-tag{color:var(--a-3);background:var(--a-3b);border-color:var(--a-3br)}
+.chap[data-ch="2"] .sec-id-tag{color:var(--a-6);background:var(--a-6b);border-color:var(--a-6br)}
+.chap[data-ch="3"] .sec-id-tag{color:var(--a-5);background:var(--a-5b);border-color:var(--a-5br)}
+.chap[data-ch="1a"] .sec-id-tag,.chap[data-ch="1b"] .sec-id-tag{color:var(--a-4);background:var(--a-4b);border-color:var(--a-4br)}
+.sec-n{font-family:var(--f-display);font-size:14px;font-weight:700;color:var(--t-1);letter-spacing:-0.1px;line-height:1.3}
+.sec-m{font-family:var(--f-mono);font-size:10px;color:var(--t-3);letter-spacing:0.3px}
+.sec-m b{color:var(--a-2);font-weight:600}
+.sec-key{font-family:var(--f-mono);font-size:11px;color:var(--t-2);background:rgba(255,255,255,0.02);padding:5px 9px;border-radius:var(--r-sm);border-left:2px solid var(--a-2);margin:6px 0 10px;line-height:1.5}
+[data-theme$="-light"] .sec-key{background:rgba(0,0,0,0.025)}
+.clu{padding:7px 10px;background:var(--bg-1);border:1px solid var(--bd-1);border-radius:var(--r-sm);margin-bottom:6px}
+.clu-lbl{font-size:11.5px;color:var(--t-2);margin-bottom:5px;font-weight:500;line-height:1.4}
+.clu-qs{display:flex;flex-wrap:wrap;gap:5px}
+.q{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;background:var(--surf-2);border:1px solid var(--bd-1);border-radius:99px;font-family:var(--f-mono);font-size:10.5px;color:var(--t-2);cursor:pointer;transition:all 0.15s;user-select:none;white-space:nowrap}
+.q:hover{border-color:var(--bd-3);color:var(--t-1);transform:translateY(-1px)}
+.q.done{background:var(--a-3b);border-color:var(--a-3br);color:var(--a-3);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--a-3br)}
+.q-ic{font-size:10px;line-height:1}
+
+/* utility */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r-md);font-family:var(--f-body);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid var(--bd-2);background:var(--surf-1);color:var(--t-1);text-decoration:none}
+.btn:hover{background:var(--surf-2);border-color:var(--bd-3);transform:translateY(-1px)}
+.btn-primary{background:var(--grad);border-color:transparent;color:#fff}
+.gtext{background:var(--grad-aurora);-webkit-background-clip:text;background-clip:text;color:transparent}
+.toast-wrap{position:fixed;top:70px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surf-2);border:1px solid var(--bd-2);border-left:3px solid var(--a-1);padding:9px 14px;border-radius:var(--r-md);font-size:12.5px;min-width:200px;max-width:340px;animation:slideIn 0.25s cubic-bezier(0.4,0,0.2,1);color:var(--t-1)}
+.toast.ok{border-left-color:var(--a-3)}
+.toast.warn{border-left-color:var(--a-4)}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+
+.cta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+.anim-in{animation:fadeUp 0.4s cubic-bezier(0.4,0,0.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.mobile-only{display:none}
+@media(max-width:980px){.mobile-only{display:block} .desktop-only{display:none}}
+
+</style>
+</head>
+<body>
+<div class="bg-aurora"></div>
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo"><i class="fa-solid fa-bolt-lightning"></i></div>
+    <div class="tb-name">BMLA Battle Plan<small>MTS 212 · Final 25 May</small></div>
+  </div>
+  <div class="tb-cd"><i class="fa-regular fa-clock" style="color:var(--t-3)"></i> <b id="tb-cd">--h --m</b> to exam</div>
+  <div class="tb-spacer"></div>
+  <div class="tb-picker">
+    <span class="tb-picker-label">palette</span>
+    <div class="swatch s-indigo" data-p="indigo" title="Indigo"></div>
+    <div class="swatch s-sunset" data-p="sunset" title="Sunset"></div>
+    <div class="swatch s-forest" data-p="forest" title="Forest"></div>
+    <div class="swatch s-mono"   data-p="mono"   title="Mono"></div>
+  </div>
+  <div class="tb-mode">
+    <button data-m="dark"  title="Dark"><i class="fa-solid fa-moon"></i></button>
+    <button data-m="light" title="Light"><i class="fa-solid fa-sun"></i></button>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- SIDEBAR RAIL -->
+  <aside class="rail desktop-only" id="rail">
+    <div class="rail-section">jump to</div>
+    <a class="rail-link" href="#hero" data-target="hero"><i class="ic fa-solid fa-house"></i> Overview</a>
+    <a class="rail-link" href="#timeline" data-target="timeline"><i class="ic fa-solid fa-calendar-days"></i> Timeline</a>
+    <div class="rail-section">chapters</div>
+    <a class="rail-link" href="#ch-5"  data-target="ch-5"  data-ch="5"><i class="ic fa-solid fa-square-root-variable"></i> Ch 5 + Markov <span class="badge" id="b-5">--</span></a>
+    <a class="rail-link" href="#ch-lp" data-target="ch-lp" data-ch="lp"><i class="ic fa-solid fa-chart-line"></i> Linear Prog <span class="badge" id="b-lp">--</span></a>
+    <a class="rail-link" href="#ch-tr" data-target="ch-tr" data-ch="tr"><i class="ic fa-solid fa-truck-fast"></i> Transportation <span class="badge" id="b-tr">--</span></a>
+    <a class="rail-link" href="#ch-2"  data-target="ch-2"  data-ch="2"><i class="ic fa-solid fa-table-cells"></i> Ch 2 · IMT <span class="badge" id="b-2">--</span></a>
+    <a class="rail-link" href="#ch-3"  data-target="ch-3"  data-ch="3"><i class="ic fa-solid fa-bullseye"></i> Ch 3 · Det <span class="badge" id="b-3">--</span></a>
+    <a class="rail-link" href="#ch-1a" data-target="ch-1a" data-ch="1a"><i class="ic fa-solid fa-grip-lines"></i> Ch 1.1–1.5 <span class="badge" id="b-1a">--</span></a>
+    <a class="rail-link" href="#ch-1b" data-target="ch-1b" data-ch="1b"><i class="ic fa-solid fa-arrow-right-arrow-left"></i> Ch 1.7–1.9 <span class="badge" id="b-1b">--</span></a>
+    <div class="rail-foot">
+      <i class="fa-solid fa-link"></i> Live tracker: <a href="https://bmla-quest.vercel.app/x.html?k=hassan2026" target="_blank">x.html</a><br>
+      <i class="fa-solid fa-bolt"></i> Auto-log: each Q checked adds <b style="color:var(--a-2)">+5min</b> to study log
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero anim-in" id="hero">
+      <div class="hero-eyebrow"><span class="dot-pulse"></span> Live · Sat 23 May · 9:15 PM PKT start</div>
+      <div class="hero-title">3 days · 6-of-7 × 4 marks · MTC-19, Tabba Hall 8</div>
+      <div><span class="hero-cd" id="cd">--h --m</span><span class="hero-cd-sub">to exam</span></div>
+      <div class="hero-grid">
+        <div class="hs"><div class="hs-lbl">Budget</div><div class="hs-val">~20<small>h study</small></div><div class="hs-foot">crunch · ⭐×2 Ch5+LP · 🟡×4 rest</div></div>
+        <div class="hs"><div class="hs-lbl">Questions done</div><div class="hs-val" id="hs-q">0<small>/--</small></div><div class="hs-bar"><div class="hs-bar-fill" id="hs-q-bar"></div></div><div class="hs-foot" id="hs-q-foot">tap a Q pill to mark done · auto +5min log</div></div>
+        <div class="hs"><div class="hs-lbl">Study today</div><div class="hs-val" id="hs-st">0h 0m</div><div class="hs-bar"><div class="hs-bar-fill" id="hs-st-bar"></div></div><div class="hs-foot" id="hs-st-foot">target 6h</div></div>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://bmla-quest.vercel.app/x.html?k=hassan2026" target="_blank"><i class="fa-solid fa-stopwatch"></i> Open tracker</a>
+        <button class="btn" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset everything</button>
+      </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section id="timeline">
+      <div class="sec-head">
+        <div><div class="sec-title"><i class="fa-solid fa-calendar-days"></i> 3-day timeline</div><div class="sec-sub">click a block: ⬜ → 🔵 in-progress → ⭐ done · sleep/meals dimmed</div></div>
+      </div>
+      <div class="gantt" id="gantt"></div>
+    </section>
+
+    <!-- CHAPTERS -->
+    <div id="chapters"></div>
+
+  </main>
+</div>
+
+<script>
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const EXAM_MS = new Date('2026-05-25T10:00:00+05:00').getTime();
+const TK = 'bmla_plan_v2';      // timeline block states
+const QK = 'bmla_qx_v2';        // question check states
+const SLK = 'bmla_study_v1';    // study log (shared with x.html)
+const THK = 'bmla_theme_v1';    // theme
+
+function load(k){ try{ return JSON.parse(localStorage.getItem(k))||{}; }catch(e){ return {}; } }
+function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+function toast(msg, kind='ok'){
+  const w=document.getElementById('toast-wrap');
+  const el=document.createElement('div'); el.className='toast '+kind; el.textContent=msg;
+  w.appendChild(el); setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; setTimeout(()=>el.remove(),200); }, 1800);
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function pktNow(){ return new Date(Date.now() + 5*3600000); }
+function todayKey(){ const n=pktNow(); return `${n.getUTCFullYear()}-${pad(n.getUTCMonth()+1)}-${pad(n.getUTCDate())}`; }
+
+/* ============================================================================
+   THEME
+   ============================================================================ */
+function applyTheme(){
+  const t = load(THK);
+  const palette = t.palette || 'indigo';
+  const mode = t.mode || 'dark';
+  document.documentElement.dataset.theme = palette+'-'+mode;
+  document.querySelectorAll('.swatch').forEach(s=> s.classList.toggle('active', s.dataset.p===palette));
+  document.querySelectorAll('.tb-mode button').forEach(b=> b.classList.toggle('on', b.dataset.m===mode));
+}
+function setPalette(p){ const t=load(THK); t.palette=p; save(THK,t); applyTheme(); }
+function setMode(m){ const t=load(THK); t.mode=m; save(THK,t); applyTheme(); }
+applyTheme();
+document.querySelectorAll('.swatch').forEach(s=> s.addEventListener('click', ()=>setPalette(s.dataset.p)));
+document.querySelectorAll('.tb-mode button').forEach(b=> b.addEventListener('click', ()=>setMode(b.dataset.m)));
+
+/* ============================================================================
+   COUNTDOWN
+   ============================================================================ */
+function tickCD(){
+  const ms = EXAM_MS - Date.now();
+  if(ms<=0){ const a=document.getElementById('cd'),b=document.getElementById('tb-cd'); if(a)a.textContent='EXAM TIME'; if(b)b.textContent='LIVE'; return; }
+  const h = Math.floor(ms/3600000);
+  const m = Math.floor((ms%3600000)/60000);
+  const s = Math.floor((ms%60000)/1000);
+  const txt = h+'h '+pad(m)+'m '+pad(s)+'s';
+  const a=document.getElementById('cd'); if(a) a.textContent = txt;
+  const b=document.getElementById('tb-cd'); if(b) b.textContent = h+'h '+pad(m)+'m';
+}
+setInterval(tickCD, 1000); tickCD();
+
+/* ============================================================================
+   SCHEDULE — 3-day Gantt
+   ============================================================================ */
+const SCHEDULE = [
+  {day:'sat', name:'Saturday', date:'23 May · TONIGHT', today:true, blocks:[
+    {id:'sat-1', start:'9:30',  end:'12:00 AM', hrs:2.5, ch:'5', name:'Ch 5.1 finish + 5.2 char eq', sub:'Lay §5.1 + §5.2'},
+    {id:'sat-2', start:'12:00', end:'12:15 AM', hrs:0.25,ch:'meal', name:'☕ Tea break', sub:''},
+    {id:'sat-3', start:'12:15', end:'2:00 AM',  hrs:1.75,ch:'5', name:'Ch 5.3 diagonalization start', sub:'A=PDP⁻¹ recipe + 2 worked'},
+    {id:'sat-z', start:'2:00 AM',end:'7:00 AM', hrs:5.0, ch:'sleep', name:'😴 Sleep (5h)', sub:''}
+  ]},
+  {day:'sun', name:'Sunday', date:'24 May · CRUNCH', blocks:[
+    {id:'sun-1', start:'7:00',  end:'7:30 AM',  hrs:0.5, ch:'meal', name:'🥐 Breakfast', sub:''},
+    {id:'sun-2', start:'7:30',  end:'10:30 AM', hrs:3.0, ch:'5', name:'Ch 5.3 finish + Markov ⭐', sub:'Aᵏ via PDᵏP⁻¹ · (M−I)p=0'},
+    {id:'sun-3', start:'10:30', end:'10:45 AM', hrs:0.25,ch:'meal', name:'☕ Break', sub:''},
+    {id:'sun-4', start:'10:45', end:'1:45 PM',  hrs:3.0, ch:'lp', name:'LP formulation + graphical', sub:'Budnick L17-18'},
+    {id:'sun-5', start:'1:45',  end:'2:30 PM',  hrs:0.75,ch:'meal', name:'🍱 Lunch', sub:''},
+    {id:'sun-6', start:'2:30',  end:'5:30 PM',  hrs:3.0, ch:'lp', name:'LP simplex (Phase I+II) + dual', sub:'Budnick L20-24'},
+    {id:'sun-7', start:'5:30',  end:'6:00 PM',  hrs:0.5, ch:'meal', name:'☕ Tea break', sub:''},
+    {id:'sun-8', start:'6:00',  end:'8:00 PM',  hrs:2.0, ch:'tr', name:'Transp ALL (NWCM/VAM/MODI/Hung)', sub:'Budnick L25-28'},
+    {id:'sun-9', start:'8:00',  end:'8:30 PM',  hrs:0.5, ch:'meal', name:'🍽 Dinner', sub:''},
+    {id:'sun-10',start:'8:30',  end:'10:00 PM', hrs:1.5, ch:'2', name:'Ch 2 Matrix ops + IMT', sub:'[A|I]→[I|A⁻¹] · recite IMT'},
+    {id:'sun-11',start:'10:00', end:'10:15 PM', hrs:0.25,ch:'meal', name:'☕ Break', sub:''},
+    {id:'sun-12',start:'10:15', end:'11:00 PM', hrs:0.75,ch:'3', name:'Ch 3 determinants fast', sub:'cofactor · triangular shortcut'},
+    {id:'sun-z', start:'11:00 PM',end:'6:00 AM', hrs:7.0, ch:'sleep', name:'😴 Sleep (7h) · non-negotiable', sub:''}
+  ]},
+  {day:'mon', name:'Monday', date:'25 May · EXAM DAY', exam:true, blocks:[
+    {id:'mon-1', start:'6:00',  end:'6:30 AM',  hrs:0.5, ch:'meal', name:'🚿 Wake + shower + breakfast', sub:''},
+    {id:'mon-2', start:'6:30',  end:'7:30 AM',  hrs:1.0, ch:'1b', name:'Ch 1.7-1.9 light · LI + transforms', sub:'A=[T(e₁)…T(eₙ)] · formulas only'},
+    {id:'mon-3', start:'7:30',  end:'8:00 AM',  hrs:0.5, ch:'1a', name:'Ch 1.1-1.5 skim · REF/RREF', sub:'parametric form template'},
+    {id:'mon-4', start:'8:00',  end:'8:30 AM',  hrs:0.5, ch:'meal', name:'🧠 Cheat sheet final glance', sub:'IMT · diag · simplex · Hungarian'},
+    {id:'mon-5', start:'8:30',  end:'9:00 AM',  hrs:0.5, ch:'meal', name:'☕ Pack 2 pens + ID', sub:''},
+    {id:'mon-6', start:'9:00',  end:'9:30 AM',  hrs:0.5, ch:'meal', name:'🚗 Commute to IBA', sub:'MTC-19 Tabba Hall 8'},
+    {id:'mon-7', start:'9:30',  end:'10:00 AM', hrs:0.5, ch:'meal', name:'🪑 Settle in', sub:''},
+    {id:'mon-8', start:'10:00 AM',end:'1:00 PM',hrs:3.0, ch:'exam', name:'🎯 EXAM · 6 of 7 × 4 marks', sub:'first 5 min: read ALL 7 · pick 6'}
+  ]}
+];
+
+/* ============================================================================
+   QUESTION INDEX — VERIFIED from Lay 3rd ed for Ch 5
+   Format: each cluster lists EXACT exercise numbers from the textbook
+   ============================================================================ */
+const CHAPTERS = [
+  {id:'5',  name:'Eigenvalues + Markov', icon:'fa-square-root-variable', book:'Lay §5.1–5.3 + class', mast:'⭐ Mastered', meta:'⭐⭐⭐ HIGH likelihood · ~11h allocated'},
+  {id:'lp', name:'Linear Programming',   icon:'fa-chart-line',           book:'Budnick L17–24',       mast:'⭐ Mastered', meta:'⭐⭐⭐ HIGH likelihood · ~6h allocated'},
+  {id:'tr', name:'Transportation',       icon:'fa-truck-fast',           book:'Budnick L25–28',       mast:'🟡 Revised',  meta:'⭐⭐ MED · ~2h allocated · fast pass'},
+  {id:'2',  name:'Matrix Ops + Inverse', icon:'fa-table-cells',          book:'Lay §2.1–2.3',         mast:'🟡 Revised',  meta:'⭐⭐ MED · ~1.5h allocated'},
+  {id:'3',  name:'Determinants',         icon:'fa-bullseye',             book:'Lay §3.1–3.3',         mast:'🟡 Revised',  meta:'⭐⭐ MED · ~0.75h allocated · cofactor + triangular shortcut'},
+  {id:'1a', name:'Linear Systems',       icon:'fa-grip-lines',           book:'Lay §1.1–1.5',         mast:'🟡 Skim',     meta:'⭐ LOW · ~30m Mon AM · formulas only'},
+  {id:'1b', name:'Indep & Transforms',   icon:'fa-arrow-right-arrow-left',book:'Lay §1.7–1.9',        mast:'🟡 Skim',     meta:'⭐⭐ MED · ~1h Mon AM'}
+];
+
+const SECTIONS = [
+  // ============ Ch 5 (VERIFIED against Lay 3rd ed pp.307-326) ============
+  {ch:'5', id:'5.1', name:'Eigenvalues & Eigenvectors', book:'Lay §5.1 (p.302–309)', est:'40m',
+   key:'Ax=λx · eigenspace = Nul(A−λI) · TEST: solve (A−λI)x=0',
+   clusters:[
+     {label:'Verify λ is an eigenvalue (just plug in)', qs:['Q1','Q2','Q7','Q8']},
+     {label:'Verify v is an eigenvector (compute Av, see if = λv)', qs:['Q3','Q4','Q5','Q6']},
+     {label:'Find basis for eigenspace given λ — bread & butter', qs:['Q9','Q10','Q11','Q12','Q13','Q14','Q15','Q16']},
+     {label:'Find eigenvalues — triangular matrix shortcut (gimme)', qs:['Q17','Q18']},
+     {label:'Find eigenvalue with no calc (special structure)', qs:['Q19','Q20']},
+     {label:'T/F questions — read the chapter, then attempt', qs:['Q21','Q22']}
+   ]},
+  {ch:'5', id:'5.2', name:'The Characteristic Equation', book:'Lay §5.2 (p.310–318)', est:'50m',
+   key:'det(A−λI) = 0 → solve for λ · sum eigenvalues = trace',
+   clusters:[
+     {label:'Char polynomial 2×2 — DRILL speed (8 reps)', qs:['Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8']},
+     {label:'Char polynomial 3×3 — cofactor expand', qs:['Q9','Q10','Q11','Q12','Q13','Q14']},
+     {label:'Triangular 4×4 + multiplicities', qs:['Q15','Q16','Q17']},
+     {label:'⭐ Find h such that eigenspace is 2-dim (geometric multiplicity)', qs:['Q18']},
+     {label:'T/F questions', qs:['Q21','Q22']}
+   ]},
+  {ch:'5', id:'5.3', name:'Diagonalization', book:'Lay §5.3 (p.319–326)', est:'60m',
+   key:'A = PDP⁻¹ · need n indep eigenvectors · Aᵏ = PDᵏP⁻¹',
+   clusters:[
+     {label:'⭐ Compute Aᵏ given P, D (small fast wins)', qs:['Q1','Q2','Q3','Q4']},
+     {label:'Find eigenvalues + eigenspace from factored A=PDP⁻¹', qs:['Q5','Q6']},
+     {label:'⭐⭐ Diagonalize 2×2 — full procedure (find your own λs)', qs:['Q7','Q8','Q9','Q10']},
+     {label:'⭐⭐⭐ Diagonalize 3×3 — eigenvalues given (focus on P,D)', qs:['Q11','Q12','Q13','Q14','Q15','Q16']},
+     {label:'Diagonalize 3×3+ — eigenvalues NOT given (harder)', qs:['Q17','Q18','Q19','Q20']},
+     {label:'T/F + conceptual diagonalizability', qs:['Q21','Q22','Q23','Q24','Q25','Q26']}
+   ]},
+  {ch:'5', id:'M', name:'⭐ Markov Chains (class addition · NOT in Lay)', book:'Chap5_Lectures_notes.pdf', est:'45m',
+   key:'⭐⭐⭐ steady state p: (M−I)p = 0 with Σpᵢ = 1 · M = transition matrix (col sums = 1)',
+   clusters:[
+     {label:'Drill 1 · 2-state Markov: M=[[0.7,0.3],[0.4,0.6]]', qs:['solve']},
+     {label:'Drill 2 · 2-state Markov: M=[[0.8,0.2],[0.5,0.5]]', qs:['solve']},
+     {label:'Drill 3 · 3-state Markov (e.g. weather sunny/cloudy/rain)', qs:['solve']},
+     {label:'Verify M is stochastic (col sums = 1) before solving', qs:['check']},
+     {label:'Long-run probability — show Mᵏx₀ → p (link to diagonalization)', qs:['concept']}
+   ]},
+
+  // ============ Ch 2 (Lay) — note: 2.1-2.3 standard exercises ============
+  {ch:'2', id:'2.1', name:'Matrix Operations', book:'Lay §2.1', est:'15m',
+   key:'add · multiply · transpose · A² = AA',
+   clusters:[
+     {label:'Compute AB, BA, A², Aᵀ', qs:['Q1','Q3','Q5','Q7']},
+     {label:'Equality / dimension conditions', qs:['Q11','Q13']}
+   ]},
+  {ch:'2', id:'2.2', name:'The Inverse of a Matrix', book:'Lay §2.2', est:'30m',
+   key:'⭐ [A|I] → [I|A⁻¹] · 2×2: A⁻¹ = 1/(ad−bc) · [[d,−b],[−c,a]]',
+   clusters:[
+     {label:'2×2 inverse formula (1/det · adjugate)', qs:['Q1','Q3','Q5']},
+     {label:'⭐ 3×3 inverse via [A|I]→[I|A⁻¹]', qs:['Q7','Q9','Q11','Q13']},
+     {label:'Solve Ax=b using A⁻¹', qs:['Q15','Q17']}
+   ]},
+  {ch:'2', id:'2.3', name:'Invertible Matrix Theorem (IMT)', book:'Lay §2.3', est:'25m',
+   key:'⭐⭐⭐ EXAM STAPLE · 14 equivalent statements — must recite cold',
+   clusters:[
+     {label:'Apply IMT to determine invertibility', qs:['Q1','Q3','Q5','Q7','Q11','Q13','Q15','Q17']},
+     {label:'⭐ RECITE all 14 IMT statements from blank paper (3× until cold)', qs:['IMT recite']}
+   ]},
+
+  // ============ Ch 3 (Lay) ============
+  {ch:'3', id:'3.1', name:'Introduction to Determinants', book:'Lay §3.1', est:'15m',
+   key:'cofactor expand along any row/col · choose row/col with most zeros',
+   clusters:[
+     {label:'Cofactor expansion 3×3', qs:['Q5','Q7','Q9']},
+     {label:'4×4 determinant', qs:['Q11','Q13','Q17']}
+   ]},
+  {ch:'3', id:'3.2', name:'Properties of Determinants', book:'Lay §3.2', est:'15m',
+   key:'⭐ swap×(−1) · scale×k · replace=same · triangular = ∏diag · det(AB)=det(A)det(B)',
+   clusters:[
+     {label:'Compute det using row ops', qs:['Q5','Q9','Q11']},
+     {label:'⭐ Triangular shortcut — pure cheap marks', qs:['Q1','Q3']},
+     {label:'det(AB), det(Aᵀ), det(A⁻¹)', qs:['Q15','Q19']}
+   ]},
+  {ch:'3', id:'3.3', name:"Cramer's Rule + Adjugate", book:'Lay §3.3', est:'15m',
+   key:"xᵢ = det(Aᵢ)/det(A) where Aᵢ replaces col i with b",
+   clusters:[
+     {label:"Apply Cramer's rule to small system", qs:['Q1','Q3','Q5']},
+     {label:'Inverse via adjugate (cofactor matrix)', qs:['Q9','Q11']}
+   ]},
+
+  // ============ Ch 1.1-1.5 ============
+  {ch:'1a', id:'1.1', name:'Systems of Linear Equations', book:'Lay §1.1', est:'15m',
+   key:'consistency · pivot/free vars',
+   clusters:[
+     {label:'Solve small systems', qs:['Q5','Q7','Q9']},
+     {label:'Consistency conditions (find h)', qs:['Q19','Q23']}
+   ]},
+  {ch:'1a', id:'1.2', name:'Row Reduction (REF/RREF)', book:'Lay §1.2', est:'20m',
+   key:'forward + backward phase · identify pivots',
+   clusters:[
+     {label:'Row reduce to RREF', qs:['Q1','Q3','Q5']},
+     {label:'Pivot positions + free vars', qs:['Q13','Q15','Q17','Q19']}
+   ]},
+  {ch:'1a', id:'1.3', name:'Vector Equations & Span', book:'Lay §1.3', est:'12m',
+   key:'span = set of all linear combos',
+   clusters:[
+     {label:'Solve x₁a₁+x₂a₂=b', qs:['Q5','Q7']},
+     {label:'Is b in span{a₁,a₂,...}?', qs:['Q11','Q13']}
+   ]},
+  {ch:'1a', id:'1.4', name:'Matrix Equation Ax=b', book:'Lay §1.4', est:'12m',
+   key:'columns of A must span Rᵐ for all b',
+   clusters:[
+     {label:'Compute Ax (matrix-vector)', qs:['Q1','Q3','Q5']},
+     {label:'Existence/consistency from cols', qs:['Q11','Q13','Q17']}
+   ]},
+  {ch:'1a', id:'1.5', name:'Solution Sets · Parametric Form', book:'Lay §1.5', est:'15m',
+   key:'parametric vector form for ∞ solutions',
+   clusters:[
+     {label:'Write parametric vector form', qs:['Q5','Q7','Q11']},
+     {label:'Homogeneous vs particular', qs:['Q15','Q23']}
+   ]},
+
+  // ============ Ch 1.7-1.9 ============
+  {ch:'1b', id:'1.7', name:'Linear Independence', book:'Lay §1.7', est:'20m',
+   key:'TEST: Ax=0 has only trivial soln (no free vars)',
+   clusters:[
+     {label:'Determine independence by row-reducing', qs:['Q1','Q5','Q7','Q9']},
+     {label:'Find h for indep/dep', qs:['Q15','Q17']}
+   ]},
+  {ch:'1b', id:'1.8', name:'Linear Transformations', book:'Lay §1.8', est:'15m',
+   key:'T(x) = Ax · linearity: T(u+v)=T(u)+T(v), T(cu)=cT(u)',
+   clusters:[
+     {label:'Compute T(x) given A', qs:['Q1','Q3','Q5']},
+     {label:'Linearity properties', qs:['Q9','Q11','Q13']}
+   ]},
+  {ch:'1b', id:'1.9', name:'Matrix of an LT', book:'Lay §1.9', est:'20m',
+   key:'⭐ A = [T(e₁) | T(e₂) | … | T(eₙ)] · standard matrix construction',
+   clusters:[
+     {label:'Find standard matrix from T', qs:['Q1','Q3','Q7','Q9']},
+     {label:'Rotation / reflection / projection matrices', qs:['Q13','Q15','Q17']},
+     {label:'One-to-one ⇔ indep cols · Onto ⇔ pivot every row', qs:['Q19','Q23']}
+   ]},
+
+  // ============ LP — Budnick (tentative — verify against your local PDF) ============
+  {ch:'lp', id:'L17', name:'LP Formulation', book:'Budnick L17 · class notes', est:'30m',
+   key:'decision vars · obj fn · ≤/≥/= constraints · non-negativity',
+   clusters:[
+     {label:'Production planning (word problem → LP)', qs:['practice 1','practice 2']},
+     {label:'Diet / blending / resource allocation', qs:['practice 3']}
+   ]},
+  {ch:'lp', id:'L18', name:'Graphical Method', book:'Budnick L18 · Lec1Modified', est:'40m',
+   key:'⭐⭐⭐ plot feasible region · evaluate at corner points',
+   clusters:[
+     {label:'2-var max/min graphical (3-5 reps)', qs:['ex 1','ex 2','ex 3']},
+     {label:'Identify unbounded / infeasible / multiple optima', qs:['ex 4','ex 5']}
+   ]},
+  {ch:'lp', id:'L20-21', name:'Simplex Method (Phase I + II)', book:'Budnick L20-21 · simplex_solution', est:'70m',
+   key:'⭐⭐⭐ std form (slack/surplus/artificial) · pivot · ratio test',
+   clusters:[
+     {label:'Standard form conversion (add slacks)', qs:['drill 1','drill 2']},
+     {label:'⭐ Simplex tableau iteration (max problem) — must do 3+', qs:['ex 1','ex 2','ex 3']},
+     {label:'Phase I — artificial vars for ≥ or = constraints', qs:['ex 4','ex 5']},
+     {label:'Detect unbounded / multiple optima from tableau', qs:['concept']}
+   ]},
+  {ch:'lp', id:'L23-24', name:'Dual Problem', book:'Budnick L23-24', est:'20m',
+   key:'primal max ↔ dual min · variable count swaps with constraint count',
+   clusters:[
+     {label:'Write dual of given primal LP', qs:['ex 1','ex 2','ex 3']},
+     {label:'Interpret dual variables (shadow prices)', qs:['concept']}
+   ]},
+
+  // ============ Transportation ============
+  {ch:'tr', id:'L25-26-IBFS', name:'Initial BFS: NWCM, LC, VAM', book:'Budnick L25-26 · Transportation_Problem', est:'40m',
+   key:'⭐ balance supply=demand · VAM = lowest penalty cost (best) · m+n−1 cells',
+   clusters:[
+     {label:'NWCM (Northwest Corner Method) — quick + easy', qs:['ex 1','ex 2']},
+     {label:'Least Cost initial BFS', qs:['ex 1']},
+     {label:"⭐⭐⭐ VAM (Vogel's Approx) — exam favorite, must master", qs:['ex 1','ex 2','ex 3']}
+   ]},
+  {ch:'tr', id:'L26-MODI', name:'MODI Optimality + Reallocation', book:'Budnick L26+', est:'30m',
+   key:'compute uᵢ,vⱼ for filled cells · rᵢⱼ for empty · if any rᵢⱼ<0 → reallocate via closed loop',
+   clusters:[
+     {label:'MODI optimality check', qs:['ex 1','ex 2']},
+     {label:'Closed loop reallocation when negative rᵢⱼ', qs:['ex 3']},
+     {label:'Degeneracy + epsilon trick (m+n−1 not met)', qs:['edge case']}
+   ]},
+  {ch:'tr', id:'L27-28', name:'Assignment + Hungarian Method', book:'Budnick L27-28', est:'25m',
+   key:'⭐⭐ row min → col min → cover zeros with min lines · if lines<n, adjust',
+   clusters:[
+     {label:'4×4 Hungarian assignment (balanced)', qs:['ex 1','ex 2']},
+     {label:'5×5 unbalanced (add dummy row/col)', qs:['ex 3']},
+     {label:'Maximization assignment (negate matrix)', qs:['ex 4']}
+   ]}
+];
+
+/* ============================================================================
+   GANTT RENDER
+   ============================================================================ */
+function renderGantt(){
+  const state = load(TK);
+  const html = SCHEDULE.map(day=>{
+    const studyHrs = day.blocks.filter(b=>!['meal','sleep','exam'].includes(b.ch)).reduce((a,b)=>a+b.hrs,0);
+    return `<div class="day${day.today?' today':''}${day.exam?' exam':''}">
+      <div class="day-head">
+        <div><div class="day-name">${day.name}${day.today?' · today':''}</div><div class="day-date">${day.date}</div></div>
+        <div class="day-hrs">${studyHrs.toFixed(1)}h</div>
+      </div>
+      ${day.blocks.map(b=>{
+        const st = state[b.id]||0;
+        const isStudy = !['meal','sleep','exam'].includes(b.ch);
+        const stIcon = ['⬜','🔵','⭐'][st];
+        return `<div class="blk" data-ch="${b.ch}" data-st="${st}" ${isStudy?'onclick="toggleBlock(\''+b.id+'\')"':''}>
+          <div class="blk-time"><span>${b.start} → ${b.end}</span><span class="hrs">${b.hrs}h</span></div>
+          <div class="blk-title">${b.name}</div>
+          ${b.sub?`<div class="blk-sub">${b.sub}</div>`:''}
+          ${isStudy?`<div class="blk-row"><span style="color:var(--t-3);font-family:var(--f-mono);font-size:9.5px">${b.ch.toUpperCase()}</span><span class="blk-stat">${stIcon}</span></div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('gantt').innerHTML = html;
+}
+
+function toggleBlock(id){
+  const s=load(TK);
+  s[id] = ((s[id]||0)+1) % 3;
+  save(TK,s);
+  renderGantt();
+  toast(['Planned','In progress','Done'][s[id]]+' · '+id);
+}
+
+/* ============================================================================
+   CHAPTERS RENDER
+   ============================================================================ */
+function chapKey(secId, ci, qi){ return secId+'::'+ci+'::'+qi; }
+function chapCount(chId){
+  const done = load(QK);
+  let total=0, doneN=0;
+  SECTIONS.filter(s=>s.ch===chId).forEach(sec=> sec.clusters.forEach((cl,ci)=> cl.qs.forEach((q,qi)=>{ total++; if(done[chapKey(sec.id,ci,qi)]) doneN++; })));
+  return {total,doneN};
+}
+
+function renderChapters(){
+  const done = load(QK);
+  const wrap = document.getElementById('chapters');
+  wrap.innerHTML = CHAPTERS.map(c=>{
+    const secs = SECTIONS.filter(s=>s.ch===c.id);
+    const {total,doneN} = chapCount(c.id);
+    const pct = total>0 ? Math.round(doneN/total*100) : 0;
+    return `<div class="chap" data-ch="${c.id}" id="ch-${c.id}">
+      <div class="chap-head">
+        <div style="display:flex;align-items:center"><i class="chap-h-icon fa-solid ${c.icon}" style="color:var(--a-${c.id==='5'?1:c.id==='lp'?2:c.id==='tr'?3:c.id==='2'?6:c.id==='3'?5:4})"></i>
+          <div class="chap-h-l">
+            <div class="chap-name">${c.name} <span class="chap-mast">${c.mast.split(' ')[0]}</span></div>
+            <div class="chap-meta">${c.book} · ${c.meta}</div>
+          </div>
+        </div>
+        <div class="chap-prog">
+          <div class="chap-prog-num">${doneN}<span style="font-family:var(--f-mono);font-size:13px;color:var(--t-3);font-weight:400">/${total} · ${pct}%</span></div>
+          <div class="chap-prog-bar"><div class="chap-prog-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      ${secs.map(sec=>{
+        const secTotal = sec.clusters.reduce((a,cl)=>a+cl.qs.length,0);
+        const secDone = sec.clusters.reduce((a,cl,ci)=>a+cl.qs.filter((q,qi)=>done[chapKey(sec.id,ci,qi)]).length,0);
+        return `<div class="sec" id="sec-${sec.id.replace(/\./g,'-')}">
+          <div class="sec-h">
+            <div><div class="sec-n"><span class="sec-id-tag">§${sec.id}</span>${sec.name}</div></div>
+            <div class="sec-m">${sec.book} · ~<b>${sec.est}</b> · <b>${secDone}/${secTotal}</b></div>
+          </div>
+          <div class="sec-key">${sec.key}</div>
+          ${sec.clusters.map((cl,ci)=>`<div class="clu">
+            <div class="clu-lbl">${cl.label}</div>
+            <div class="clu-qs">${cl.qs.map((q,qi)=>{
+              const isDone = !!done[chapKey(sec.id,ci,qi)];
+              return `<span class="q ${isDone?'done':''}" onclick="toggleQ('${sec.id}',${ci},${qi})"><span class="q-ic">${isDone?'✓':'☐'}</span>${q} <span style="opacity:0.55">§${sec.id}</span></span>`;
+            }).join('')}</div>
+          </div>`).join('')}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+  // update sidebar badges
+  CHAPTERS.forEach(c=>{
+    const {total,doneN} = chapCount(c.id);
+    const el = document.getElementById('b-'+c.id);
+    if(el) el.textContent = doneN+'/'+total;
+  });
+  // hero questions stat
+  let totalQ=0, doneQ=0;
+  CHAPTERS.forEach(c=>{ const k=chapCount(c.id); totalQ+=k.total; doneQ+=k.doneN; });
+  document.getElementById('hs-q').innerHTML = doneQ+'<small>/'+totalQ+'</small>';
+  document.getElementById('hs-q-bar').style.width = (totalQ>0?doneQ/totalQ*100:0)+'%';
+  document.getElementById('hs-q-foot').textContent = (totalQ>0?Math.round(doneQ/totalQ*100):0)+'% done · auto +5min log per Q';
+}
+
+function toggleQ(secId, ci, qi){
+  const s = load(QK);
+  const k = chapKey(secId, ci, qi);
+  let added = false;
+  if(s[k]){ delete s[k]; }
+  else{ s[k] = 1; added = true; }
+  save(QK, s);
+  // auto-log: +5min on check, -5min on uncheck
+  const sl = load(SLK);
+  const tk = todayKey();
+  sl[tk] = Math.max(0, (sl[tk]||0) + (added?300:-300));
+  save(SLK, sl);
+  renderChapters();
+  renderStudyHero();
+  toast(added?`✓ ${secId} ${qi+1} done · +5min logged`:`Unchecked · -5min`, added?'ok':'warn');
+}
+
+/* ============================================================================
+   STUDY HERO STAT
+   ============================================================================ */
+function renderStudyHero(){
+  const sl = load(SLK);
+  const sec = sl[todayKey()]||0;
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60);
+  document.getElementById('hs-st').textContent = h+'h '+m+'m';
+  const target = 6*3600;
+  const pct = Math.min(200, sec/target*100);
+  document.getElementById('hs-st-bar').style.width = Math.min(100,pct)+'%';
+  document.getElementById('hs-st-foot').textContent = sec>=target?'🎯 6h target hit':`${Math.floor((target-sec)/60)}m to 6h target`;
+}
+
+/* ============================================================================
+   RAIL SCROLL SPY
+   ============================================================================ */
+function setupScrollSpy(){
+  const links = document.querySelectorAll('.rail-link');
+  const sections = Array.from(links).map(l=>document.getElementById(l.dataset.target)).filter(Boolean);
+  function updateActive(){
+    const y = window.scrollY + 120;
+    let act = sections[0];
+    sections.forEach(s=>{ if(s.offsetTop <= y) act = s; });
+    links.forEach(l=> l.classList.toggle('active', l.dataset.target===act.id));
+  }
+  window.addEventListener('scroll', updateActive, {passive:true});
+  updateActive();
+}
+
+/* ============================================================================
+   RESET
+   ============================================================================ */
+function resetAll(){
+  if(!confirm('Reset all block statuses + question marks? (Study log preserved)')) return;
+  localStorage.removeItem(TK);
+  localStorage.removeItem(QK);
+  renderGantt();
+  renderChapters();
+  toast('Reset complete','warn');
+}
+
+renderGantt();
+renderChapters();
+renderStudyHero();
+setupScrollSpy();
+setInterval(renderStudyHero, 5000);
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
