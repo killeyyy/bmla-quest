@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, inithial-scale=1.0, maximum-scale=1.0">
 <title>404 Not Found</title>
 <meta name="theme-color" content="#05070d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1251,7 +1251,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="page-head">
         <div>
           <div class="page-title">Target</div>
-          <div class="page-sub">25 May 2026 · 10:00 AM PKT · BMLA Finals</div>
+          <div class="page-sub">25 May 2026 · 11:55 AM PKT · BMLA Finals</div>
         </div>
       </div>
       <div class="hero" style="margin-bottom:16px">
@@ -1380,7 +1380,7 @@ const DEFAULTS = {
   currentStock: 436,
   wasted: 0,
   targetDate: '2026-05-25',
-  targetTime: '10:00',
+  targetTime: '11:55',
   critPct: 20,
   lowPct: 40,
   watchPct: 60,
@@ -1706,7 +1706,7 @@ function renderSyllabus(){
   if(!$('syl-chips')) return;
   const s = sylLoad();
   // days to BMLA exam
-  const examMs = new Date('2026-05-25T10:00:00+05:00').getTime();
+  const examMs = new Date('2026-05-25T11:55:00+05:00').getTime();
   const daysLeft = Math.max(0, Math.ceil((examMs - Date.now())/86400000));
   $('syl-days').textContent = daysLeft;
   // chips
@@ -1759,7 +1759,7 @@ function slTick(){
 setInterval(slTick, 1000);
 function slTarget(){
   // 6h/day in final 3 days, else 4h
-  const examMs = new Date('2026-05-25T10:00:00+05:00').getTime();
+  const examMs = new Date('2026-05-25T11:55:00+05:00').getTime();
   const days = (examMs - Date.now())/86400000;
   return (days<=3 ? 6 : 4) * 3600; // seconds
 }
