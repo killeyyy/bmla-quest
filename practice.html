@@ -672,7 +672,7 @@ function updateProgress(){
   document.getElementById('prog-pct').textContent = Math.round(done/TOTAL_Q*100)+'%';
   // per-block
   for (let b=1;b<=4;b++){
-    const qs = [...document.querySelectorAll(`[data-blk="${b}"]`)];
+    const qs = [...document.querySelectorAll(`.q[data-blk="${b}"]`)];
     const total = qs.length;
     const d = qs.filter(q => state.done[q.id]).length;
     document.getElementById('bp'+b).textContent = `${d}/${total}`;
