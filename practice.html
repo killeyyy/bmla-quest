@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BMLA Practice Dashboard · 4h Drill</title>
+<meta name="theme-color" content="#05070d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{
+  --bg:#05070d;--bg2:#0a0e16;--surf:#131929;--surf2:#1a2236;
+  --bd:rgba(255,255,255,0.08);--bd2:rgba(255,255,255,0.16);
+  --t1:#f4f7fc;--t2:#b6c2d4;--t3:#7c8aa3;--t4:#4a5670;
+  --a1:#8b5cf6;--a1b:rgba(139,92,246,0.14);
+  --a2:#22d3ee;--a2b:rgba(34,211,238,0.12);
+  --a3:#34d399;--a3b:rgba(52,211,153,0.14);
+  --a4:#fbbf24;--a4b:rgba(251,191,36,0.14);
+  --a5:#fb7185;--a5b:rgba(251,113,133,0.14);
+  --a6:#fb923c;--a6b:rgba(251,146,60,0.14);
+  --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  --grad-go:linear-gradient(135deg,#34d399,#22d3ee);
+  --grad-warn:linear-gradient(135deg,#fbbf24,#fb7185);
+  --f-d:'Space Grotesk','Inter',sans-serif;
+  --f-b:'Inter',sans-serif;
+  --f-m:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--t1);font-family:var(--f-b);font-size:14.5px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:4px}
+
+/* STICKY HEADER */
+.bar{position:sticky;top:0;z-index:100;background:rgba(5,7,13,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd2)}
+.bar-row1{display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:14px;box-shadow:0 4px 18px rgba(139,92,246,0.35);flex-shrink:0}
+.brand{font-family:var(--f-d);font-weight:700;font-size:15px;color:var(--t1);line-height:1.1;flex-shrink:0}
+.brand small{display:block;font-family:var(--f-m);font-size:9.5px;color:var(--t3);letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+.bar-spc{flex:1;min-width:8px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-m);font-size:11.5px;padding:6px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--surf);color:var(--t2);white-space:nowrap}
+.chip b{color:var(--t1)}
+.chip.exam b{color:var(--a4)}
+.chip.timer b{color:var(--a2);font-size:13px}
+.chip.timer.warn b{color:var(--a4)}
+.chip.timer.danger{border-color:var(--a5);animation:pulse 1.4s ease infinite}
+.chip.timer.danger b{color:var(--a5)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,0.4)}50%{box-shadow:0 0 0 8px rgba(251,113,133,0)}}
+.btn{font-family:var(--f-m);font-size:11px;font-weight:600;padding:7px 13px;border-radius:99px;border:1px solid var(--bd);background:var(--surf);color:var(--t2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;text-decoration:none}
+.btn:hover{color:var(--t1);border-color:var(--bd2);background:var(--surf2)}
+.btn.go{background:var(--grad-go);color:#fff;border-color:transparent}
+.btn.go:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(52,211,153,0.4)}
+.btn.warn{background:var(--grad-warn);color:#fff;border-color:transparent}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(139,92,246,0.4)}
+
+.bar-row2{padding:8px 18px 10px;display:flex;align-items:center;gap:14px}
+.progress-wrap{flex:1;background:var(--surf);border-radius:99px;height:8px;overflow:hidden;border:1px solid var(--bd)}
+.progress-bar{height:100%;background:var(--grad-go);width:0%;transition:width 0.5s;border-radius:99px;position:relative;overflow:hidden}
+.progress-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shine 2s linear infinite}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.progress-txt{font-family:var(--f-m);font-size:11px;color:var(--t2);white-space:nowrap}
+.progress-txt b{color:var(--a3)}
+
+/* BLOCK NAV */
+.blocks{display:flex;gap:6px;padding:10px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bd)}
+.blk{font-family:var(--f-d);font-size:12px;font-weight:600;color:var(--t3);background:var(--surf);border:1px solid var(--bd);padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;transition:all 0.15s}
+.blk:hover{color:var(--t1);border-color:var(--bd2)}
+.blk.active{background:var(--surf2);color:var(--t1);border-color:var(--a2)}
+.blk.done{border-color:var(--a3);color:var(--a3)}
+.blk-num{font-family:var(--f-m);font-size:10px;background:var(--surf2);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:var(--t2)}
+.blk.active .blk-num{background:var(--a2);color:#000;font-weight:700}
+.blk.done .blk-num{background:var(--a3);color:#000;font-weight:700}
+.blk-progress{font-family:var(--f-m);font-size:10px;color:var(--t3)}
+
+.wrap{max-width:920px;margin:0 auto;padding:24px 18px 100px}
+
+/* HERO */
+.hero{padding:18px 20px;background:radial-gradient(circle at 90% 0%,var(--a1b),transparent 60%),linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd2);border-radius:14px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.hero h2{font-family:var(--f-d);font-size:18px;font-weight:700;color:var(--t1);margin-bottom:6px}
+.hero h2 .gtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:13px;color:var(--t2);line-height:1.55}
+.hero-rules{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-family:var(--f-m);font-size:10.5px}
+.hero-rules span{background:var(--surf2);color:var(--t2);padding:4px 10px;border-radius:99px;border:1px solid var(--bd)}
+
+/* QUESTION CARDS */
+.q{background:linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd);border-radius:14px;margin-bottom:14px;overflow:hidden;position:relative;scroll-margin-top:200px}
+.q::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0.7}
+.q.done::before{background:var(--grad-go);opacity:1}
+.q.done{border-color:rgba(52,211,153,0.35)}
+.q-head{padding:14px 18px;display:flex;justify-content:space-between;align-items:start;gap:10px;cursor:pointer;user-select:none}
+.q-head:hover{background:rgba(255,255,255,0.02)}
+.q-titles{flex:1;min-width:0}
+.q-num{font-family:var(--f-m);font-size:10px;color:var(--a2);background:var(--a2b);padding:2px 8px;border-radius:99px;border:1px solid var(--a2b);margin-right:7px;font-weight:700;display:inline-block;vertical-align:middle}
+.q.done .q-num{color:var(--a3);background:var(--a3b);border-color:var(--a3b)}
+.q-title{font-family:var(--f-d);font-size:14.5px;font-weight:700;color:var(--t1);line-height:1.3;display:inline}
+.q-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;font-family:var(--f-m);font-size:10px}
+.q-meta span{padding:2px 8px;border-radius:99px;letter-spacing:0.3px}
+.q-meta .topic{background:var(--a1b);color:var(--a1);border:1px solid var(--a1b)}
+.q-meta .target{background:var(--a4b);color:var(--a4);border:1px solid var(--a4b)}
+.q-meta .difficulty{background:var(--a6b);color:var(--a6);border:1px solid var(--a6b)}
+.q-toggle{font-size:14px;color:var(--t3);transition:transform 0.2s;flex-shrink:0;padding-top:6px}
+.q.open .q-toggle{transform:rotate(180deg);color:var(--a2)}
+.q-body{padding:0 18px 18px;display:none}
+.q.open .q-body{display:block;animation:fadeIn 0.25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+
+.problem{background:var(--surf2);border:1px solid var(--bd);border-radius:8px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--t2);margin-bottom:12px}
+.problem b{color:var(--t1)}
+.problem .formula-block{display:block;text-align:center;font-family:var(--f-m);background:var(--bg2);padding:10px 12px;border-radius:6px;margin:10px 0;border:1px solid var(--bd);overflow-x:auto;color:var(--t1)}
+
+.q-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.reveal{margin-top:10px;animation:fadeIn 0.3s ease}
+.reveal.hidden{display:none}
+.hint{padding:11px 14px;background:var(--a4b);border-left:3px solid var(--a4);border-radius:6px;font-size:13px;color:var(--t2)}
+.hint b{color:var(--a4)}
+.solution{padding:13px 16px;background:rgba(34,211,238,0.06);border-left:3px solid var(--a2);border-radius:6px;font-size:13px;color:var(--t2);line-height:1.7}
+.solution h4{font-family:var(--f-d);font-size:12px;color:var(--a2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;font-weight:700}
+.solution ol{list-style:none;counter-reset:s;padding:0;margin:0}
+.solution ol li{counter-increment:s;padding:6px 0 6px 36px;position:relative;border-bottom:1px dashed var(--bd)}
+.solution ol li:last-child{border:0}
+.solution ol li::before{content:counter(s);position:absolute;left:0;top:6px;width:26px;height:26px;border-radius:50%;background:var(--a2b);color:var(--a2);font-family:var(--f-m);font-weight:700;font-size:11px;display:grid;place-items:center;border:1px solid var(--a2b)}
+.solution b{color:var(--t1)}
+.solution code{font-family:var(--f-m);background:var(--bg2);color:var(--a2);padding:1px 6px;border-radius:4px;font-size:12px}
+.answer{margin-top:10px;padding:10px 13px;background:var(--a3b);border-left:3px solid var(--a3);border-radius:6px;font-size:13px;color:var(--t2);font-family:var(--f-m)}
+.answer b{color:var(--a3)}
+.trap{margin-top:8px;padding:9px 13px;background:var(--a5b);border-left:3px solid var(--a5);border-radius:6px;font-size:12px;color:var(--t2)}
+.trap b{color:var(--a5);text-transform:uppercase;font-family:var(--f-d);letter-spacing:0.4px;font-size:11px}
+
+.done-bar{margin-top:14px;padding:10px 14px;background:var(--surf2);border:1px solid var(--bd);border-radius:8px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.done-bar .lbl{font-family:var(--f-m);font-size:11px;color:var(--t3)}
+.done-bar .lbl.done{color:var(--a3)}
+
+/* BLOCK CONTROLS */
+.block-foot{margin-top:24px;padding:18px;background:linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd2);border-radius:14px;text-align:center}
+.block-foot h3{font-family:var(--f-d);font-size:15px;font-weight:700;color:var(--t1);margin-bottom:8px}
+.block-foot p{font-size:12.5px;color:var(--t2);margin-bottom:12px;line-height:1.5}
+.block-foot-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+.helpline{margin-top:20px;text-align:center;font-family:var(--f-m);font-size:10.5px;color:var(--t4);line-height:1.8}
+.helpline a{color:var(--a2);text-decoration:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--surf2);color:var(--t1);padding:12px 20px;border-radius:99px;border:1px solid var(--a3);font-family:var(--f-m);font-size:12px;font-weight:600;z-index:200;opacity:0;transition:all 0.35s;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast .icn{color:var(--a3)}
+
+/* MOBILE */
+@media(max-width:640px){
+  .bar-row1{padding:8px 12px;gap:10px}
+  .brand{font-size:13.5px}
+  .brand small{font-size:8.5px}
+  .chip{font-size:10.5px;padding:5px 10px}
+  .bar-row2{padding:6px 12px 8px;gap:10px}
+  .blocks{padding:8px 12px}
+  .blk{font-size:11px;padding:7px 11px}
+  .wrap{padding:16px 12px 80px}
+  .hero{padding:14px 16px}
+  .q-head{padding:12px 14px}
+  .q-body{padding:0 14px 14px}
+  .problem{padding:11px 13px;font-size:13px}
+  .q-title{font-size:13.5px}
+  .btn{font-size:10.5px;padding:6px 11px}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-row1">
+    <div class="logo"><i class="fa-solid fa-stopwatch"></i></div>
+    <div class="brand">Practice Dashboard<small>BMLA · MTS 212 · 4h Drill</small></div>
+    <div class="bar-spc"></div>
+    <span class="chip exam" id="exam-cd">📚 Exam in <b>—</b></span>
+    <span class="chip timer" id="block-cd">⏱ Block <b>—:—</b></span>
+    <button class="btn" id="pause-btn" onclick="togglePause()" title="Pause/Resume"><i class="fa-solid fa-pause"></i></button>
+    <button class="btn" onclick="resetAll()" title="Reset all progress"><i class="fa-solid fa-rotate-left"></i></button>
+  </div>
+  <div class="bar-row2">
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-txt"><b id="prog-done">0</b>/10 questions · <span id="prog-pct">0%</span></div>
+  </div>
+  <div class="blocks">
+    <div class="blk active" onclick="goBlock(1)" data-blk="1"><span class="blk-num">1</span> Inverse · Det · IMT <span class="blk-progress" id="bp1">0/3</span></div>
+    <div class="blk" onclick="goBlock(2)" data-blk="2"><span class="blk-num">2</span> Eigen · Diag · Markov <span class="blk-progress" id="bp2">0/3</span></div>
+    <div class="blk" onclick="goBlock(3)" data-blk="3"><span class="blk-num">3</span> Simplex <span class="blk-progress" id="bp3">0/2</span></div>
+    <div class="blk" onclick="goBlock(4)" data-blk="4"><span class="blk-num">4</span> Transport · Hungarian <span class="blk-progress" id="bp4">0/2</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <h2>4-hour practice. <span class="gtext">Solve. Reveal. Move.</span></h2>
+    <p>Each question: read → think → solve on paper → reveal solution → mark done. Don't read solutions first. Block timer starts when you open the first question of a block.</p>
+    <div class="hero-rules">
+      <span>⏱ 60 min per block</span>
+      <span>📝 Solve on paper, not screen</span>
+      <span>🎯 Show every step</span>
+      <span>🔊 Audio ping at timer end</span>
+      <span>💾 Progress auto-saved</span>
+    </div>
+  </div>
+
+  <div id="block-1" class="block-section">
+    <!-- Q1 -->
+    <div class="q" id="q1" data-blk="1">
+      <div class="q-head" onclick="openQ('q1')">
+        <div class="q-titles">
+          <span class="q-num">Q1</span><span class="q-title">3×3 Inverse via $[A \mid I]$ row reduction</span>
+          <div class="q-meta"><span class="topic">Ch 2 · Inverse</span><span class="target">⏱ 25 min</span><span class="difficulty">Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Find $A^{-1}$ for $A=\begin{bmatrix}1&1&0\\0&1&1\\1&0&1\end{bmatrix}$ using the $[A\mid I]\to[I\mid A^{-1}]$ method. Verify by checking one entry of $AA^{-1}$.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q1-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q1-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q1')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q1-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Start by computing $\det A = 2$ (so $A^{-1}$ exists). Then row-reduce $[A\mid I]$. The killer step is $R_3 \to R_3 + R_2$ after $R_3 \to R_3 - R_1$.</div></div>
+        <div id="q1-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li>Write $[A\mid I_3]=\begin{bmatrix}1&1&0&\vert&1&0&0\\0&1&1&\vert&0&1&0\\1&0&1&\vert&0&0&1\end{bmatrix}$.</li>
+            <li><code>R3 → R3 - R1</code>: row 3 becomes $(0,-1,1\,\vert\,-1,0,1)$.</li>
+            <li><code>R3 → R3 + R2</code>: row 3 becomes $(0,0,2\,\vert\,-1,1,1)$.</li>
+            <li><code>R3 → R3/2</code>: $(0,0,1\,\vert\,-\tfrac12,\tfrac12,\tfrac12)$.</li>
+            <li><code>R2 → R2 - R3</code>: $(0,1,0\,\vert\,\tfrac12,\tfrac12,-\tfrac12)$.</li>
+            <li><code>R1 → R1 - R2</code>: $(1,0,0\,\vert\,\tfrac12,-\tfrac12,\tfrac12)$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $A^{-1}=\tfrac12\begin{bmatrix}1&-1&1\\1&1&-1\\-1&1&1\end{bmatrix}$.</div>
+          <div class="trap"><b>Trap:</b> Forgetting the $\tfrac12$ scale at the end. Always verify ONE entry: row 1 of $A$ × col 1 of $A^{-1}$ = $1\cdot\tfrac12 + 1\cdot\tfrac12 + 0 = 1$ ✓.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q1-status">Mark when done — don't peek at solution first</span></div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q" id="q2" data-blk="1">
+      <div class="q-head" onclick="openQ('q2')">
+        <div class="q-titles">
+          <span class="q-num">Q2</span><span class="q-title">3×3 Determinant by smart cofactor expansion</span>
+          <div class="q-meta"><span class="topic">Ch 3 · Det</span><span class="target">⏱ 15 min</span><span class="difficulty">Easy</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Compute $\det A$ for $A=\begin{bmatrix}2&5&-3\\0&4&7\\1&0&-2\end{bmatrix}$ by expanding along the row or column with the most zeros. State the cofactor sign pattern explicitly.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q2-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q2-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q2')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q2-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Column 1 has a zero in row 2. Sign pattern $\begin{pmatrix}+&-&+\\-&+&-\\+&-&+\end{pmatrix}$ — column-1 signs are $+,-,+$.</div></div>
+        <div id="q2-s" class="reveal hidden"><div class="solution">
+          <h4>Solution — cofactor expansion along column 1</h4>
+          <ol>
+            <li>$\det A = 2\cdot C_{11} + 0\cdot C_{21} + 1\cdot C_{31}$ (the $0$ kills the middle term).</li>
+            <li>$C_{11}=(+1)\det\!\begin{bmatrix}4&7\\0&-2\end{bmatrix}=4(-2)-7(0)=-8$.</li>
+            <li>$C_{31}=(+1)\det\!\begin{bmatrix}5&-3\\4&7\end{bmatrix}=5(7)-(-3)(4)=35+12=47$.</li>
+            <li>$\det A = 2(-8)+1(47)=-16+47=31$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $\det A = 31$.</div>
+          <div class="trap"><b>Trap:</b> Sign on $C_{31}$ — position $(3,1)$ has sign $(-1)^{3+1}=+1$. Many students put $-1$ by reflex. Always write the checkerboard before plugging in.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q2-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q" id="q3" data-blk="1">
+      <div class="q-head" onclick="openQ('q3')">
+        <div class="q-titles">
+          <span class="q-num">Q3</span><span class="q-title">Is $A$ invertible? Justify using the Invertible Matrix Theorem</span>
+          <div class="q-meta"><span class="topic">Ch 2 · IMT</span><span class="target">⏱ 15 min</span><span class="difficulty">Easy-Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Let $A=\begin{bmatrix}1&2&3\\4&5&6\\7&8&9\end{bmatrix}$. Decide whether $A$ is invertible. Justify with <b>at least two</b> distinct items from the IMT.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q3-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q3-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q3')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q3-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Look for a relationship between rows. Try $R_2 - R_1$ and $R_3 - R_2$. Also compute $\det A$ — easy by cofactor or row-reduce.</div></div>
+        <div id="q3-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li>Compute $\det A$ along row 1: $1(45-48)-2(36-42)+3(32-35)=-3+12-9=0$.</li>
+            <li>Observation: $R_2 - R_1 = (3,3,3)$ and $R_3 - R_2 = (3,3,3)$, so $R_3 = 2R_2 - R_1$ — the rows are linearly dependent.</li>
+            <li>By IMT, the following are equivalent. $A$ is NOT invertible because (a) <b>$\det A = 0$</b> (item 14 fails), and (b) <b>the columns are linearly dependent</b> (item 5 fails, since rows dependent $\Rightarrow$ $A^T$ has dependent cols, $\Rightarrow$ $A$ does too via item 12).</li>
+            <li>Equivalently: $Ax=0$ has nontrivial solutions, so $T(x)=Ax$ is not one-to-one (item 6 fails).</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $A$ is <b>NOT invertible</b>. Justified by $\det A = 0$ and linearly dependent rows/cols (IMT items 14 and 5).</div>
+          <div class="trap"><b>Trap:</b> Students compute $\det = 0$ and stop. The IMT question asks for TWO distinct items — you need to mention pivots/independence/uniqueness/etc. as well.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q3-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="block-foot">
+      <h3>Block 1 wrap</h3>
+      <p>If you finished all 3, take 5 min break (water, stretch, no phone), then jump to Block 2. If you're behind, finish the unsolved one in the break.</p>
+      <div class="block-foot-actions">
+        <button class="btn primary" onclick="goBlock(2)"><i class="fa-solid fa-forward"></i> Block 2 →</button>
+        <button class="btn" onclick="break5()"><i class="fa-solid fa-mug-hot"></i> 5-min break</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 2 -->
+  <div id="block-2" class="block-section" style="display:none">
+    <div class="q" id="q4" data-blk="2">
+      <div class="q-head" onclick="openQ('q4')">
+        <div class="q-titles">
+          <span class="q-num">Q4</span><span class="q-title">Diagonalize a 2×2 matrix and compute $A^5$</span>
+          <div class="q-meta"><span class="topic">Ch 5 · Diag</span><span class="target">⏱ 25 min</span><span class="difficulty">Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          $A=\begin{bmatrix}3&1\\2&2\end{bmatrix}$. (i) Find all eigenvalues and eigenvectors. (ii) Write $A=PDP^{-1}$. (iii) Compute $A^5$ explicitly (numerical entries).
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q4-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q4-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q4')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q4-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Characteristic polynomial: $\lambda^2 - 5\lambda + 4$. Trace $= 5$ and $\det = 4$ — sanity check $\sum\lambda = 5$, $\prod\lambda = 4$.</div></div>
+        <div id="q4-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li>$\det(A-\lambda I) = (3-\lambda)(2-\lambda) - 2 = \lambda^2 - 5\lambda + 4 = (\lambda-1)(\lambda-4) = 0$ → $\lambda = 1, 4$.</li>
+            <li>$\lambda=1$: $(A-I) = \begin{bmatrix}2&1\\2&1\end{bmatrix}$ → $2x_1 + x_2 = 0$ → $v_1 = (1,-2)$.</li>
+            <li>$\lambda=4$: $(A-4I) = \begin{bmatrix}-1&1\\2&-2\end{bmatrix}$ → $x_1 = x_2$ → $v_2 = (1,1)$.</li>
+            <li>$P=\begin{bmatrix}1&1\\-2&1\end{bmatrix}$, $D=\begin{bmatrix}1&0\\0&4\end{bmatrix}$. $\det P = 3$, so $P^{-1}=\tfrac13\begin{bmatrix}1&-1\\2&1\end{bmatrix}$.</li>
+            <li>$A^5 = P D^5 P^{-1} = P \begin{bmatrix}1&0\\0&1024\end{bmatrix} P^{-1}$. Compute $PD^5 = \begin{bmatrix}1&1024\\-2&1024\end{bmatrix}$.</li>
+            <li>$A^5 = \tfrac13\begin{bmatrix}1&1024\\-2&1024\end{bmatrix}\begin{bmatrix}1&-1\\2&1\end{bmatrix} = \tfrac13\begin{bmatrix}2049&1023\\2046&1026\end{bmatrix}=\begin{bmatrix}683&341\\682&342\end{bmatrix}$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $A^5 = \begin{bmatrix}683&341\\682&342\end{bmatrix}$. Check: trace = $1025 = 1^5 + 4^5$ ✓.</div>
+          <div class="trap"><b>Trap:</b> Order of columns in $P$ must match order of eigenvalues in $D$. If you swap, $A^k$ comes out wrong.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q4-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="q" id="q5" data-blk="2">
+      <div class="q-head" onclick="openQ('q5')">
+        <div class="q-titles">
+          <span class="q-num">Q5</span><span class="q-title">Markov chain — find the steady-state probability vector</span>
+          <div class="q-meta"><span class="topic">Ch 5 · Markov ⭐</span><span class="target">⏱ 20 min</span><span class="difficulty">Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          A two-state Markov chain has transition matrix $P=\begin{bmatrix}0.7&0.4\\0.3&0.6\end{bmatrix}$. (a) Verify it is column-stochastic. (b) Find the long-run steady-state vector $q$ such that $Pq=q$, $q_1+q_2=1$.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q5-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q5-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q5')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q5-h" class="reveal hidden"><div class="hint"><b>Hint:</b> $q$ is the eigenvector of $\lambda = 1$. Solve $(P-I)q = 0$ then normalize so entries sum to 1.</div></div>
+        <div id="q5-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li><b>(a) Stochastic check:</b> col 1 = $0.7+0.3=1$ ✓, col 2 = $0.4+0.6=1$ ✓.</li>
+            <li>Form $(P-I) = \begin{bmatrix}-0.3&0.4\\0.3&-0.4\end{bmatrix}$.</li>
+            <li>From row 1: $-0.3q_1 + 0.4q_2 = 0 \Rightarrow q_2 = \tfrac{3}{4}q_1$.</li>
+            <li>Normalize: $q_1 + \tfrac34 q_1 = 1 \Rightarrow \tfrac74 q_1 = 1 \Rightarrow q_1 = \tfrac47$, $q_2 = \tfrac37$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $q = \left(\tfrac47,\tfrac37\right) \approx (0.571, 0.429)$.</div>
+          <div class="trap"><b>Trap:</b> If problem gives rows summing to 1 (row-stochastic), either use $P^T$ or solve $qP = q$ (left eigenvector). Always check the convention FIRST.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q5-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="q" id="q6" data-blk="2">
+      <div class="q-head" onclick="openQ('q6')">
+        <div class="q-titles">
+          <span class="q-num">Q6</span><span class="q-title">Is the matrix diagonalizable? (Repeated eigenvalue trap)</span>
+          <div class="q-meta"><span class="topic">Ch 5 · Diag</span><span class="target">⏱ 15 min</span><span class="difficulty">Easy</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Is $A=\begin{bmatrix}2&1&0\\0&2&0\\0&0&3\end{bmatrix}$ diagonalizable? Give the test you used and a complete justification.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q6-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q6-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q6')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q6-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Upper-triangular → eigenvalues read off the diagonal. But triangular does NOT imply diagonalizable when eigenvalues repeat.</div></div>
+        <div id="q6-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li>$A$ is upper-triangular → eigenvalues are diagonal: $\lambda = 2$ (algebraic mult 2), $\lambda = 3$ (algebraic mult 1).</li>
+            <li>For $\lambda=2$: $A - 2I = \begin{bmatrix}0&1&0\\0&0&0\\0&0&1\end{bmatrix}$. Solve $(A-2I)v=0$: $x_2 = 0$, $x_3 = 0$, $x_1$ free → eigenspace is 1-dimensional, basis $v_1 = (1,0,0)$.</li>
+            <li>Geometric multiplicity of $\lambda=2$ = $1 < 2$ = algebraic multiplicity.</li>
+            <li>By the diagonalization theorem (Lay 5.3 Thm 7), $A$ is NOT diagonalizable.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> $A$ is <b>NOT diagonalizable</b>, because for $\lambda=2$ the geometric multiplicity ($1$) is less than the algebraic multiplicity ($2$). Need 3 indep eigenvectors total; we only have 2.</div>
+          <div class="trap"><b>Trap:</b> "It's triangular so eigenvalues are on the diagonal so it's diagonalizable" — WRONG. Triangular only gives eigenvalues; you still must check independence when any $\lambda$ repeats.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q6-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="block-foot">
+      <h3>Block 2 wrap</h3>
+      <p>Eigen + Markov is the #1 most-likely question type. If you got these 3 clean, you're set for that part of the exam. Take 5, then Simplex.</p>
+      <div class="block-foot-actions">
+        <button class="btn primary" onclick="goBlock(3)"><i class="fa-solid fa-forward"></i> Block 3 →</button>
+        <button class="btn" onclick="break5()"><i class="fa-solid fa-mug-hot"></i> 5-min break</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 3 -->
+  <div id="block-3" class="block-section" style="display:none">
+    <div class="q" id="q7" data-blk="3">
+      <div class="q-head" onclick="openQ('q7')">
+        <div class="q-titles">
+          <span class="q-num">Q7</span><span class="q-title">Full simplex — set up, iterate to optimum, state final BFS</span>
+          <div class="q-meta"><span class="topic">LP · Simplex</span><span class="target">⏱ 35 min</span><span class="difficulty">Hard</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Maximize $z = 3x_1 + 5x_2$ subject to $x_1 \le 4$, $\;2x_2 \le 12$, $\;3x_1 + 2x_2 \le 18$, $\;x_1,x_2 \ge 0$. Show every tableau and state the entering / leaving variable + ratios at each step.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q7-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q7-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q7')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q7-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Three slacks $s_1, s_2, s_3$. Initial BFS: all $x$ = 0, slacks take the RHS values. First entering variable is the one with the largest $c_j - z_j$ in the initial tableau.</div></div>
+        <div id="q7-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li><b>Standardize:</b> $x_1 + s_1 = 4$, $2x_2 + s_2 = 12$, $3x_1 + 2x_2 + s_3 = 18$. Initial BFS: $x_1=x_2=0$, $s_1=4, s_2=12, s_3=18$, $z=0$.</li>
+            <li><b>Iteration 1:</b> $c_j-z_j$ row $= (3, 5, 0, 0, 0)$. Most + = $5$ → $x_2$ <b>enters</b>. Ratios: $4/0$ (skip, zero), $12/2=6$, $18/2=9$. Min $=6$ → $s_2$ <b>leaves</b>. Pivot at row 2, col $x_2$ (divide row 2 by 2).</li>
+            <li>After Iteration 1: Row 2 becomes $(0,1,0,\tfrac12,0,\,|\,6)$. Row 3 becomes $(3,0,0,-1,1,\,|\,6)$ (subtract $2\cdot$ new row 2). Row 1 unchanged. Now $z = 5\cdot 6 = 30$, basis = $\{s_1, x_2, s_3\}$.</li>
+            <li><b>Iteration 2:</b> Recompute $c_j-z_j$: for $x_1$, $z_j = 0\cdot 1 + 5\cdot 0 + 0\cdot 3 = 0$, so $c_j-z_j = 3$ → positive, $x_1$ <b>enters</b>. Ratios: $4/1=4$, $6/0$ (skip), $6/3=2$. Min $=2$ → $s_3$ <b>leaves</b>. Pivot at row 3, col $x_1$ (divide row 3 by 3).</li>
+            <li>After Iteration 2: Row 3 becomes $(1,0,0,-\tfrac13,\tfrac13,\,|\,2)$. Row 1 becomes $(0,0,1,\tfrac13,-\tfrac13,\,|\,2)$ (subtract $1\cdot$ new row 3). Row 2 unchanged. $z = 5\cdot 6 + 3\cdot 2 = 36$.</li>
+            <li><b>Optimality check:</b> for $s_2$, $c_j-z_j = 0 - (0\cdot\tfrac13 + 5\cdot\tfrac12 + 3\cdot(-\tfrac13)) = -\tfrac32$. For $s_3$, $0 - (0\cdot(-\tfrac13) + 5\cdot 0 + 3\cdot\tfrac13) = -1$. All non-basic $c_j-z_j \le 0$ → OPTIMAL.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> Optimal BFS: $x_1 = 2$, $x_2 = 6$, $s_1 = 2$, $s_2 = s_3 = 0$, $z_{\max} = 36$.</div>
+          <div class="trap"><b>Trap:</b> Skipping the ratio = 0 row (it'd say leave the entering variable immediately at 0 — degenerate). Also, when $a_{ij} \le 0$ in the pivot column, skip that row in the ratio test.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q7-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="q" id="q8" data-blk="3">
+      <div class="q-head" onclick="openQ('q8')">
+        <div class="q-titles">
+          <span class="q-num">Q8</span><span class="q-title">Detect unbounded LP from the simplex tableau</span>
+          <div class="q-meta"><span class="topic">LP · Special cases</span><span class="target">⏱ 20 min</span><span class="difficulty">Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Maximize $z = 2x_1 + x_2$ subject to $-x_1 + x_2 \le 3$, $-2x_1 + x_2 \le 2$, $x \ge 0$. Apply simplex and explicitly state what type of LP this is.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q8-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q8-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q8')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q8-h" class="reveal hidden"><div class="hint"><b>Hint:</b> When the entering column has NO positive entry, every ratio is undefined or negative → the objective can grow without bound.</div></div>
+        <div id="q8-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li><b>Standardize:</b> $-x_1 + x_2 + s_1 = 3$, $-2x_1 + x_2 + s_2 = 2$. Initial BFS: $x_1=x_2=0$, $s_1=3, s_2=2$, $z=0$.</li>
+            <li><b>Iteration 1:</b> $c_j - z_j$ row $= (2, 1, 0, 0)$. Most + = $2$ → $x_1$ <b>enters</b>.</li>
+            <li>Ratios for entering $x_1$: row 1 has $a_{11} = -1$ (skip, not positive). Row 2 has $a_{21} = -2$ (skip).</li>
+            <li><b>No positive pivot column entries</b> → $x_1$ can increase indefinitely → $z \to \infty$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> The LP is <b>UNBOUNDED</b>. Detected at Iteration 1 because the entering column $x_1$ has no positive entry, so the ratio test has no valid leaving variable.</div>
+          <div class="trap"><b>Trap:</b> Trying to pivot anyway with a negative entry — you'll get nonsense. Always state "unbounded" and stop.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q8-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="block-foot">
+      <h3>Block 3 wrap</h3>
+      <p>Simplex done. 5 min break, then Transport (the only thing left in your battle plan). One more block.</p>
+      <div class="block-foot-actions">
+        <button class="btn primary" onclick="goBlock(4)"><i class="fa-solid fa-forward"></i> Block 4 →</button>
+        <button class="btn" onclick="break5()"><i class="fa-solid fa-mug-hot"></i> 5-min break</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 4 -->
+  <div id="block-4" class="block-section" style="display:none">
+    <div class="q" id="q9" data-blk="4">
+      <div class="q-head" onclick="openQ('q9')">
+        <div class="q-titles">
+          <span class="q-num">Q9</span><span class="q-title">Transportation — VAM initial allocation + total cost</span>
+          <div class="q-meta"><span class="topic">Transport · VAM</span><span class="target">⏱ 25 min</span><span class="difficulty">Medium-Hard</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Three plants ($O_1, O_2, O_3$) supply 50, 60, 50 units. Three warehouses ($D_1, D_2, D_3$) demand 40, 50, 70 units. Cost per unit shipped:
+          <span class="formula-block">$C = \begin{bmatrix}2&3&1\\5&4&6\\3&2&4\end{bmatrix}$</span>
+          (a) Verify balanced. (b) Use Vogel's Approximation Method (VAM) to get the initial BFS. (c) Compute total cost. (d) Check for degeneracy.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q9-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q9-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q9')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q9-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Penalty = (2nd smallest cost) − (smallest cost) in each row & column. Allocate the maximum at the cheapest cell of the row/col with the largest penalty.</div></div>
+        <div id="q9-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li><b>Balance:</b> supply $50+60+50 = 160$, demand $40+50+70 = 160$ ✓.</li>
+            <li><b>Penalties (initial).</b> Row: $R_1: 2-1=1$, $R_2: 5-4=1$, $R_3: 3-2=1$. Col: $C_1: 3-2=1$, $C_2: 3-2=1$, $C_3: 4-1=3$.</li>
+            <li>Max penalty $= 3$ (Col 3). Smallest cost in $C_3$ is $1$ at $(R_1,C_3)$. Allocate $\min(50,70) = 50$. $R_1$ done. $C_3$ remaining $= 20$.</li>
+            <li><b>Recompute</b> (drop $R_1$). Row: $R_2: 5-4=1$, $R_3: 3-2=1$. Col: $C_1: 5-3=2$, $C_2: 4-2=2$, $C_3: 6-4=2$.</li>
+            <li>Tie at 2. Pick $C_2$. Smallest cost in $C_2 = 2$ at $(R_3, C_2)$. Allocate $\min(50, 50) = 50$. $R_3$ done. $C_2$ done.</li>
+            <li>Only $R_2$ left ($60$ supply), serving $C_1$ ($40$) and $C_3$ ($20$). Allocate $40$ at $(R_2, C_1)$ and $20$ at $(R_2, C_3)$.</li>
+            <li><b>Total cost:</b> $50(1) + 50(2) + 40(5) + 20(6) = 50 + 100 + 200 + 120 = 470$.</li>
+            <li><b>Degeneracy check:</b> occupied cells $= 4$. Need $m + n - 1 = 3 + 3 - 1 = 5$. <b>DEGENERATE</b> — add an $\epsilon$ (value 0, counted as occupied) at any independent empty cell, e.g. $(R_1, C_1)$, to restore the count before MODI.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> Initial cost $= 470$. Allocation: $(R_1,C_3)=50,\;(R_2,C_1)=40,\;(R_2,C_3)=20,\;(R_3,C_2)=50$. Degenerate — add $\epsilon$ before MODI.</div>
+          <div class="trap"><b>Trap:</b> Forgetting to recompute penalties after each allocation. Also: on tie, any choice is valid but document which you picked.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q9-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="q" id="q10" data-blk="4">
+      <div class="q-head" onclick="openQ('q10')">
+        <div class="q-titles">
+          <span class="q-num">Q10</span><span class="q-title">Hungarian assignment — minimize cost</span>
+          <div class="q-meta"><span class="topic">Assignment · Hungarian</span><span class="target">⏱ 25 min</span><span class="difficulty">Medium</span></div>
+        </div>
+        <i class="fa-solid fa-chevron-down q-toggle"></i>
+      </div>
+      <div class="q-body">
+        <div class="problem">
+          Assign 4 workers to 4 jobs to minimize total cost. Cost matrix (rows = workers, cols = jobs):
+          <span class="formula-block">$C = \begin{bmatrix}10&19&8&15\\10&18&7&17\\13&16&9&14\\12&19&8&18\end{bmatrix}$</span>
+          Find the optimal assignment and total minimum cost using the Hungarian method.
+        </div>
+        <div class="q-actions">
+          <button class="btn" onclick="reveal('q10-h')"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+          <button class="btn" onclick="reveal('q10-s')"><i class="fa-solid fa-eye"></i> Show solution</button>
+          <button class="btn go" onclick="markDone('q10')"><i class="fa-solid fa-check"></i> Mark done</button>
+        </div>
+        <div id="q10-h" class="reveal hidden"><div class="hint"><b>Hint:</b> Row reduce → col reduce → cover all zeros with min number of lines. If lines $= n$, you can assign. Otherwise: subtract the smallest uncovered entry from uncovered cells, add it to doubly-covered cells, retry.</div></div>
+        <div id="q10-s" class="reveal hidden"><div class="solution">
+          <h4>Solution</h4>
+          <ol>
+            <li><b>Row reduction</b> (subtract row min): R1 min=$8$→$(2,11,0,7)$. R2 min=$7$→$(3,11,0,10)$. R3 min=$9$→$(4,7,0,5)$. R4 min=$8$→$(4,11,0,10)$.</li>
+            <li><b>Col reduction</b> (subtract col min from each col). Col mins are now $(2,7,0,5)$. Result:
+              $\begin{bmatrix}0&4&0&2\\1&4&0&5\\2&0&0&0\\2&4&0&5\end{bmatrix}$.
+            </li>
+            <li><b>Cover zeros with min lines:</b> Col 3 has 4 zeros — cover col 3. Then row 3 has zeros at cols 2,3,4 — cover row 3. Row 1 still has zero at (1,1) — cover col 1. Total = 3 lines $&lt; n=4$.</li>
+            <li><b>Adjust:</b> smallest uncovered entry $= 4$. Subtract 4 from uncovered, add 4 to entries covered twice (intersections). Uncovered cells: rows 1,2,4 × cols 2,4. New matrix:
+              $\begin{bmatrix}0&0&4&-2\\1&0&4&1\\6&0&4&0\\2&0&4&1\end{bmatrix}$
+              Wait, doubly-covered (intersection of two lines) for col 1+col 3+row 3: those are (3,1), (3,3). Adjust correctly: I'll redo.</li>
+            <li><b>(Re-do step 4 cleanly.)</b> Lines: col 3, row 3, col 1. Doubly-covered cells = (3,1) and (3,3). Uncovered cells (not crossed by any line): rows 1,2,4 ∩ cols 2,4. Min uncovered = $4$ (entry $(1,2)$ or $(2,4)$ tie; both $4$). Subtract 4 from uncovered, add 4 to doubly-covered.
+              <br>Result: $\begin{bmatrix}0&0&0&-2\\1&0&0&1\\6&0&4&0\\2&0&0&1\end{bmatrix}$.</li>
+            <li>Hmm got a negative — recheck. Actually entry $(1,2)$ was $4$, $(1,4)$ was $2$; the smallest uncovered is $2$, not $4$. Adjust by $2$: $(2,4)$ uncovered $= 5-2 = 3$. New matrix:
+              $\begin{bmatrix}0&2&2&0\\1&2&0&3\\4&0&2&0\\2&2&0&3\end{bmatrix}$.</li>
+            <li><b>Recover zeros, count lines.</b> Now zeros at (1,1),(1,4),(2,3),(3,2),(3,4),(4,3). Can cover with 4 lines (e.g. row 3, col 1, col 3, col 4) — actually pick optimal assignment directly: (1,1)=0, (2,3)=0, (3,2)=0 or (3,4)=0, (4,?) — try (4,3)=0 but (2,3) used.</li>
+            <li><b>Pick zeros greedily:</b> (1,4)=0 → row 1, col 4 used. (2,3)=0 → row 2, col 3 used. (3,2)=0 → row 3, col 2 used. (4,?)=0 → only col 1 left; but (4,1)=2 not zero. Backtrack: try (1,1)=0, (2,3)=0, (3,4)=0, (4,?). Cols left: 2. (4,2)=2 not zero. So 4 lines aren't enough — repeat step 5.</li>
+            <li><b>Re-iterate adjustment.</b> Lines covering current zeros: rows 1,3 cover (1,1),(1,4),(3,2),(3,4). Col 3 covers (2,3),(4,3). 3 lines total. Min uncovered = entries in rows 2,4 × cols 1,2,4 = min of $\{1,2,3,2,2,3\} = 1$. Subtract 1 from uncovered, add 1 to doubly-covered ((1,3),(3,3)).
+              <br>New: $\begin{bmatrix}0&2&3&0\\0&1&0&2\\4&0&3&0\\1&1&0&2\end{bmatrix}$.</li>
+            <li><b>Assignment from new matrix:</b> (1,1)=0, (2,3)=0, (3,2)=0, (4,3)=0 conflict. Try: (1,4), (2,1)=0, (3,2)=0, (4,3)=0 — all distinct ✓.</li>
+            <li><b>Read off costs from original $C$:</b> W1→J4=15, W2→J1=10, W3→J2=16, W4→J3=8. Total $= 15+10+16+8 = 49$.</li>
+          </ol>
+          <div class="answer"><b>Answer:</b> Min cost = <b>49</b>. Assignment: W1→J4, W2→J1, W3→J2, W4→J3.</div>
+          <div class="trap"><b>Trap:</b> Hungarian needs careful bookkeeping — students often miscount lines or wrong-direction adjust. The covering-line rule: cover all rows/cols containing zeros with minimum lines; if &lt; n, adjust uncovered.</div>
+        </div></div>
+        <div class="done-bar"><span class="lbl" id="q10-status">Mark when done</span></div>
+      </div>
+    </div>
+
+    <div class="block-foot">
+      <h3>You finished 4 hours of practice 🎯</h3>
+      <p>That's the most-likely 24 marks rehearsed. Now: take a 30-min full break, eat properly, then do a final pass on <a href="https://bmla-quest.vercel.app/cram.html#strategy" target="_blank" style="color:var(--a2)">Exam Strategy</a> and the <a href="https://bmla-quest.vercel.app/cram.html#morning" target="_blank" style="color:var(--a2)">Morning Refresh Card</a>. Then sleep.</p>
+      <div class="block-foot-actions">
+        <a class="btn primary" href="https://bmla-quest.vercel.app/cram.html#strategy" target="_blank"><i class="fa-solid fa-chess-knight"></i> Strategy review</a>
+        <a class="btn" href="https://bmla-quest.vercel.app/cram.html#morning" target="_blank"><i class="fa-solid fa-sun"></i> Morning card</a>
+        <a class="btn" href="https://bmla-quest.vercel.app/BMLA_Quest.html#mockexam" target="_blank"><i class="fa-solid fa-stopwatch"></i> Try mock exam</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="helpline">
+    Stuck? Open the <a href="https://bmla-quest.vercel.app/cram.html" target="_blank">Cram Hub</a> · drill more on <a href="https://bmla-quest.vercel.app/BMLA_Quest.html#flashcards" target="_blank">Flashcards</a> · take a <a href="https://bmla-quest.vercel.app/BMLA_Quest.html#mockexam" target="_blank">Mock Exam</a><br>
+    Sabit Qadam · You've got this.
+  </div>
+
+</main>
+
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check icn"></i><span id="toast-msg">Done</span></div>
+
+<script>
+const TOTAL_Q = 10;
+const EXAM = new Date('2026-05-25T10:00:00+05:00').getTime();
+const BLOCK_MIN = 60;
+const STORE = 'bmla_practice_v1';
+let state = loadState();
+let blockStart = state.blockStart || null;
+let paused = state.paused || false;
+let pauseAt = state.pauseAt || null;
+
+function loadState(){
+  try { return JSON.parse(localStorage.getItem(STORE)) || {done:{},block:1}; }
+  catch(e){ return {done:{},block:1}; }
+}
+function saveState(){ localStorage.setItem(STORE, JSON.stringify(state)); }
+
+function openQ(id){
+  const c = document.getElementById(id);
+  c.classList.toggle('open');
+  if (c.classList.contains('open') && !blockStart && !paused){
+    blockStart = Date.now();
+    state.blockStart = blockStart;
+    saveState();
+  }
+}
+function reveal(id){
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('hidden');
+}
+function markDone(id){
+  state.done[id] = true;
+  saveState();
+  const c = document.getElementById(id);
+  c.classList.add('done');
+  document.getElementById(id+'-status').classList.add('done');
+  document.getElementById(id+'-status').textContent = '✓ Done — keep going';
+  toast('Question marked ✓');
+  updateProgress();
+}
+function updateProgress(){
+  const done = Object.keys(state.done).length;
+  document.getElementById('prog-done').textContent = done;
+  document.getElementById('progress-bar').style.width = (done/TOTAL_Q*100)+'%';
+  document.getElementById('prog-pct').textContent = Math.round(done/TOTAL_Q*100)+'%';
+  // per-block
+  for (let b=1;b<=4;b++){
+    const qs = [...document.querySelectorAll(`[data-blk="${b}"]`)];
+    const total = qs.length;
+    const d = qs.filter(q => state.done[q.id]).length;
+    document.getElementById('bp'+b).textContent = `${d}/${total}`;
+    const blk = document.querySelector(`.blk[data-blk="${b}"]`);
+    if (d === total && total > 0) blk.classList.add('done');
+  }
+}
+function goBlock(n){
+  state.block = n;
+  state.blockStart = Date.now();
+  blockStart = Date.now();
+  paused = false;
+  saveState();
+  document.querySelectorAll('.block-section').forEach(s => s.style.display = 'none');
+  document.getElementById('block-'+n).style.display = 'block';
+  document.querySelectorAll('.blk').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.blk[data-blk="${n}"]`).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function togglePause(){
+  paused = !paused;
+  const btn = document.getElementById('pause-btn');
+  if (paused){
+    pauseAt = Date.now();
+    state.pauseAt = pauseAt;
+    btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  } else {
+    if (pauseAt && blockStart){ blockStart += (Date.now() - pauseAt); state.blockStart = blockStart; }
+    state.pauseAt = null;
+    btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  }
+  state.paused = paused;
+  saveState();
+}
+function resetAll(){
+  if (!confirm('Reset all progress and timers?')) return;
+  localStorage.removeItem(STORE);
+  location.reload();
+}
+function break5(){
+  toast('5-min break started — back at it after');
+  togglePause();
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function updateExamCD(){
+  const diff = EXAM - Date.now();
+  const el = document.getElementById('exam-cd');
+  if (diff <= 0){ el.innerHTML = '🎯 <b>EXAM TIME — GO</b>'; return; }
+  const h = Math.floor(diff/3.6e6);
+  const m = Math.floor((diff%3.6e6)/6e4);
+  el.innerHTML = `📚 Exam in <b>${h}h ${m}m</b>`;
+}
+function updateBlockTimer(){
+  const el = document.getElementById('block-cd');
+  if (!blockStart || paused){
+    el.classList.remove('warn','danger');
+    if (paused) el.innerHTML = '⏸ <b>PAUSED</b>';
+    else el.innerHTML = `⏱ Block <b>${BLOCK_MIN}:00</b>`;
+    return;
+  }
+  const elapsed = Date.now() - blockStart;
+  const remaining = BLOCK_MIN*60*1000 - elapsed;
+  if (remaining <= 0){
+    el.classList.add('danger');
+    el.innerHTML = '⏰ <b>TIME UP — move on</b>';
+    if (!state.pinged){
+      state.pinged = true;
+      saveState();
+      try { ping(); } catch(e){}
+    }
+    return;
+  }
+  const m = Math.floor(remaining / 6e4);
+  const s = Math.floor((remaining % 6e4) / 1000);
+  el.innerHTML = `⏱ Block <b>${pad(m)}:${pad(s)}</b>`;
+  el.classList.remove('warn','danger');
+  if (m < 10) el.classList.add('warn');
+  if (m < 5) el.classList.add('danger');
+}
+function ping(){
+  // Web Audio beep
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 660, 880].forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.frequency.value = f;
+      g.gain.value = 0.15;
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime + i*0.18);
+      o.stop(ctx.currentTime + i*0.18 + 0.15);
+    });
+  } catch(e){}
+  toast('⏰ Block timer ended — wrap and advance');
+}
+
+// init
+updateProgress();
+if (state.block && state.block !== 1) goBlock(state.block);
+// restore done state
+Object.keys(state.done).forEach(id => {
+  const c = document.getElementById(id);
+  if (c){
+    c.classList.add('done');
+    const s = document.getElementById(id+'-status');
+    if (s){ s.classList.add('done'); s.textContent = '✓ Done'; }
+  }
+});
+setInterval(updateExamCD, 20000);
+setInterval(updateBlockTimer, 1000);
+updateExamCD();
+updateBlockTimer();
+</script>
+</body>
+</html>
