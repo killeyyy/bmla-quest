@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo-dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BMLA Final Cram Hub · MTS 212 · May 25 2026</title>
+<meta name="theme-color" content="#05070d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{
+  --bg:#05070d; --bg2:#0a0e16; --surf:#131929; --surf2:#1a2236;
+  --bd:rgba(255,255,255,0.08); --bd2:rgba(255,255,255,0.16);
+  --t1:#f4f7fc; --t2:#b6c2d4; --t3:#7c8aa3; --t4:#4a5670;
+  --a1:#8b5cf6; --a1b:rgba(139,92,246,0.14);
+  --a2:#22d3ee; --a2b:rgba(34,211,238,0.12);
+  --a3:#34d399; --a3b:rgba(52,211,153,0.12);
+  --a4:#fbbf24; --a4b:rgba(251,191,36,0.12);
+  --a5:#fb7185; --a5b:rgba(251,113,133,0.12);
+  --a6:#fb923c; --a6b:rgba(251,146,60,0.12);
+  --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  --grad2:linear-gradient(135deg,#fb7185,#fbbf24);
+  --grad3:linear-gradient(135deg,#34d399,#22d3ee);
+  --blob:#6366f1;
+  --f-d:'Space Grotesk','Inter',sans-serif;
+  --f-b:'Inter',sans-serif;
+  --f-m:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--t1);font-family:var(--f-b);font-size:14.5px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;scroll-behavior:smooth}
+body{overflow-x:hidden}
+a{color:var(--a2);text-decoration:none}
+a:hover{text-decoration:underline}
+.bg-blob{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.bg-blob::before{content:'';position:absolute;top:-15%;left:-10%;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,var(--blob),transparent 70%);filter:blur(120px);opacity:0.32;animation:drift 22s ease-in-out infinite}
+.bg-blob::after{content:'';position:absolute;bottom:-15%;right:-10%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,var(--a5),transparent 70%);filter:blur(140px);opacity:0.18;animation:drift 28s ease-in-out infinite reverse}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(50px,-30px) scale(1.08)}}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--bd2)}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(5,7,13,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:12px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tb-l{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.tb-logo{width:34px;height:34px;border-radius:9px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:14px;box-shadow:0 4px 18px rgba(139,92,246,0.35)}
+.tb-name{font-family:var(--f-d);font-weight:700;font-size:15px;color:var(--t1);line-height:1.1}
+.tb-name small{font-family:var(--f-m);font-size:9.5px;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-top:2px}
+.tb-cd{font-family:var(--f-m);font-size:12px;color:var(--t2);background:var(--surf);padding:6px 13px;border-radius:99px;border:1px solid var(--bd);white-space:nowrap}
+.tb-cd b{color:var(--a4);font-weight:700}
+.tb-sp{flex:1;min-width:8px}
+.tb-print{background:var(--grad);color:#fff;border:0;font-family:var(--f-m);font-size:11.5px;font-weight:600;padding:7px 14px;border-radius:99px;cursor:pointer;letter-spacing:0.3px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(139,92,246,0.3)}
+.tb-print:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(139,92,246,0.4)}
+
+/* NAV TABS */
+.navbar{position:sticky;top:60px;z-index:49;background:rgba(5,7,13,0.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--bd);padding:10px 22px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.navbar-inner{display:flex;gap:6px;min-width:max-content}
+.nav-link{font-family:var(--f-d);font-size:12.5px;font-weight:600;color:var(--t3);background:transparent;border:1px solid transparent;padding:7px 14px;border-radius:99px;cursor:pointer;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-link:hover{color:var(--t1);background:var(--surf);text-decoration:none}
+.nav-link.active{color:var(--t1);background:var(--surf2);border-color:var(--bd2);box-shadow:0 0 0 1px var(--a1b)}
+.nav-link i{font-size:11px;opacity:0.85}
+
+.wrap{max-width:1180px;margin:0 auto;padding:24px 22px 100px}
+
+/* HERO */
+.hero{padding:26px 28px;border-radius:18px;background:radial-gradient(circle at 80% 0%,var(--a1b),transparent 60%),linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd2);margin-bottom:24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+.hero-eb{font-family:var(--f-m);font-size:10.5px;color:var(--a2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.hero-h{font-family:var(--f-d);font-size:clamp(26px,4.5vw,40px);font-weight:800;letter-spacing:-1px;color:var(--t1);line-height:1.05}
+.hero-h .gtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:13.5px;color:var(--t2);margin-top:10px;max-width:680px;line-height:1.6}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.hero-tag{font-family:var(--f-m);font-size:10.5px;color:var(--t2);background:var(--surf2);padding:5px 11px;border-radius:99px;border:1px solid var(--bd);display:inline-flex;align-items:center;gap:6px}
+.hero-tag b{color:var(--a4)}
+.hero-tag i{font-size:9px;opacity:0.7}
+
+/* SECTIONS */
+.section{margin-bottom:28px;scroll-margin-top:130px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.section-h{font-family:var(--f-d);font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
+.section-h .ico{width:32px;height:32px;border-radius:8px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:14px}
+.section-h.h-formulas .ico{background:var(--grad2)}
+.section-h.h-topics .ico{background:var(--grad3)}
+.section-h.h-walks .ico{background:linear-gradient(135deg,#fb923c,#f43f5e)}
+.section-h.h-strat .ico{background:linear-gradient(135deg,#fbbf24,#fb7185)}
+.section-sub{font-family:var(--f-m);font-size:11px;color:var(--t3);letter-spacing:0.5px}
+
+/* GRID OF CARDS */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.card{background:linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd);border-radius:14px;overflow:hidden;position:relative;transition:border-color 0.2s,transform 0.2s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0.7}
+.card:hover{border-color:var(--bd2)}
+.card-head{padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:start;gap:10px;user-select:none}
+.card-head:hover{background:rgba(255,255,255,0.02)}
+.card-titles{flex:1;min-width:0}
+.card-h{font-family:var(--f-d);font-size:15.5px;font-weight:700;color:var(--t1);letter-spacing:-0.2px;line-height:1.25}
+.card-h .ch{display:inline-block;font-family:var(--f-m);font-size:9.5px;color:var(--a1);background:var(--a1b);padding:2px 7px;border-radius:99px;border:1px solid var(--a1b);margin-right:7px;font-weight:700;vertical-align:middle}
+.card-sub{font-family:var(--f-m);font-size:10.5px;color:var(--t3);margin-top:4px;letter-spacing:0.3px}
+.card-toggle{font-size:14px;color:var(--t3);transition:transform 0.2s;flex-shrink:0;padding-top:2px}
+.card.open .card-toggle{transform:rotate(180deg);color:var(--a2)}
+.card-body{padding:0 18px 18px;font-size:13.5px;color:var(--t2);line-height:1.65;display:none}
+.card.open .card-body{display:block;animation:fadeIn 0.25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.card-body p{margin-bottom:10px}
+.card-body ul{list-style:none;padding:0;margin-bottom:10px}
+.card-body li{padding:4px 0 4px 22px;position:relative}
+.card-body li::before{content:'▸';position:absolute;left:8px;color:var(--a2);font-size:10px;top:6px}
+.card-body ol{padding-left:22px;margin-bottom:10px}
+.card-body ol li{padding:3px 0}
+.card-body ol li::before{display:none}
+.card-body code,.fm{font-family:var(--f-m);background:var(--surf2);color:var(--a2);padding:1px 6px;border-radius:4px;font-size:12px;font-weight:500}
+.card-body b,.card-body strong{color:var(--t1);font-weight:600}
+
+.formula{display:block;text-align:center;font-family:var(--f-m);font-size:14px;color:var(--t1);background:var(--surf2);padding:10px 14px;border-radius:6px;margin:10px 0;border:1px solid var(--bd);overflow-x:auto}
+.note{padding:10px 13px;background:rgba(0,0,0,0.18);border-left:2px solid var(--a4);border-radius:4px;margin-top:10px;font-family:var(--f-m);font-size:11.5px;color:var(--t2)}
+.note b{color:var(--a4)}
+.recipe{padding:11px 13px;background:var(--a3b);border-left:2px solid var(--a3);border-radius:4px;margin-top:10px;font-size:12.5px}
+.recipe-title{font-family:var(--f-d);font-weight:700;color:var(--a3);font-size:12px;margin-bottom:6px;letter-spacing:0.3px;text-transform:uppercase}
+.recipe ol{margin-left:18px;line-height:1.75;padding-left:0}
+.recipe ol li{padding:1px 0;margin:2px 0}
+.recipe ol li::before{display:none}
+.imt{padding:11px 13px;background:var(--a1b);border-left:2px solid var(--a1);border-radius:4px;margin-top:10px;font-family:var(--f-m);font-size:11.5px;color:var(--t2);line-height:1.75}
+.imt b{color:var(--a1)}
+.warn{padding:10px 13px;background:var(--a5b);border-left:2px solid var(--a5);border-radius:4px;margin-top:10px;font-size:12.5px;color:var(--t2)}
+.warn b{color:var(--a5)}
+
+.tag{display:inline-block;font-family:var(--f-m);font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px;letter-spacing:0.4px;text-transform:uppercase;margin-right:5px;vertical-align:middle}
+.tag-hi{background:var(--a5b);color:var(--a5);border:1px solid var(--a5b)}
+.tag-md{background:var(--a4b);color:var(--a4);border:1px solid var(--a4b)}
+.tag-lo{background:var(--a3b);color:var(--a3);border:1px solid var(--a3b)}
+
+/* TODAY PLAN */
+.timeline{margin-top:8px}
+.slot{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--bd)}
+.slot:last-child{border-bottom:0}
+.slot-time{font-family:var(--f-m);font-size:11.5px;color:var(--a4);font-weight:600;flex-shrink:0;width:120px;line-height:1.4}
+.slot-time small{display:block;color:var(--t3);font-weight:400;margin-top:2px;font-size:10px}
+.slot-task{flex:1;font-size:13.5px;color:var(--t2);line-height:1.55}
+.slot-task b{color:var(--t1)}
+.slot-task .why{display:block;font-family:var(--f-m);font-size:10.5px;color:var(--t3);margin-top:3px}
+
+/* MINI ACTIONS BAR */
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 20px}
+.action{font-family:var(--f-m);font-size:11.5px;color:var(--t2);background:var(--surf);padding:8px 14px;border-radius:99px;border:1px solid var(--bd);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;text-decoration:none}
+.action:hover{color:var(--t1);border-color:var(--bd2);background:var(--surf2);transform:translateY(-1px);text-decoration:none}
+.action.primary{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(139,92,246,0.3)}
+.action.primary:hover{box-shadow:0 6px 18px rgba(139,92,246,0.4);color:#fff}
+.action i{font-size:10px}
+
+/* WALKTHROUGH BLOCKS */
+.walk{background:linear-gradient(180deg,var(--surf),var(--bg2));border:1px solid var(--bd);border-radius:14px;padding:18px 20px;margin-bottom:14px;position:relative;overflow:hidden}
+.walk::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(135deg,#fb923c,#f43f5e)}
+.walk-q{font-family:var(--f-d);font-weight:700;font-size:14.5px;color:var(--t1);margin-bottom:6px}
+.walk-q .qmark{display:inline-block;font-family:var(--f-m);font-size:10px;color:var(--a6);background:var(--a6b);padding:2px 8px;border-radius:99px;border:1px solid var(--a6b);margin-right:8px;font-weight:700}
+.walk-prob{font-size:13px;color:var(--t2);background:var(--surf2);padding:10px 12px;border-radius:6px;margin:8px 0 10px;border:1px solid var(--bd);font-family:var(--f-m);line-height:1.55}
+.walk-steps{counter-reset:step;list-style:none;padding:0;margin:8px 0 0}
+.walk-steps li{counter-increment:step;padding:8px 0 8px 38px;position:relative;font-size:13px;color:var(--t2);line-height:1.6;border-bottom:1px dashed var(--bd)}
+.walk-steps li:last-child{border-bottom:0}
+.walk-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:26px;height:26px;border-radius:50%;background:var(--a6b);color:var(--a6);font-family:var(--f-m);font-weight:700;font-size:11px;display:grid;place-items:center;border:1px solid var(--a6b)}
+.walk-steps li b{color:var(--t1)}
+.walk-ans{margin-top:12px;padding:11px 13px;background:var(--a3b);border-left:2px solid var(--a3);border-radius:4px;font-size:12.5px;color:var(--t2);font-family:var(--f-m)}
+.walk-ans b{color:var(--a3)}
+.walk-trap{margin-top:8px;padding:9px 13px;background:var(--a5b);border-left:2px solid var(--a5);border-radius:4px;font-size:12px;color:var(--t2)}
+.walk-trap b{color:var(--a5)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+.tbl th,.tbl td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl th{font-family:var(--f-d);font-weight:700;color:var(--t1);background:var(--surf2);font-size:11.5px;letter-spacing:0.3px}
+.tbl td{color:var(--t2);font-family:var(--f-m)}
+.tbl tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* PRINT */
+@media print{
+  .topbar,.navbar,.bg-blob,.tb-print,.actions,.foot,.card-toggle{display:none !important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .wrap{padding:8px}
+  .hero,.card,.walk{background:#fff !important;border:1px solid #ccc !important;page-break-inside:avoid;color:#000}
+  .card-body{display:block !important}
+  .hero-h,.section-h,.card-h,.walk-q{color:#000}
+  .hero-sub,.hero-tag,.card-sub,.card-body,.walk-prob,.walk-steps li{color:#222}
+  .formula{background:#f5f5f5;color:#000;border:1px solid #ccc}
+  .recipe,.note,.imt,.warn,.walk-ans,.walk-trap{background:#f9f9f9 !important;color:#000;border-left-width:2px}
+  .recipe-title,.note b,.imt b,.warn b,.walk-ans b,.walk-trap b{color:#000}
+  .tag,.qmark,.ch{border:1px solid #999 !important;background:#eee !important;color:#000 !important}
+  a{color:#000;text-decoration:underline}
+  .section{page-break-inside:auto}
+  .card{margin-bottom:8px}
+  .card-head{cursor:default;padding:8px 12px}
+  .card-body{padding:0 12px 8px}
+  .section-head{border-bottom:2px solid #000}
+}
+
+.foot{font-family:var(--f-m);font-size:10.5px;color:var(--t4);text-align:center;margin-top:40px;line-height:1.9;padding-top:20px;border-top:1px solid var(--bd)}
+.foot b{color:var(--a4)}
+
+/* MOBILE TWEAKS */
+@media(max-width:640px){
+  .topbar{padding:10px 14px;gap:10px}
+  .navbar{padding:8px 14px;top:54px}
+  .wrap{padding:18px 14px 80px}
+  .hero{padding:20px}
+  .hero-meta{gap:6px}
+  .hero-tag{font-size:9.5px;padding:4px 9px}
+  .section-h{font-size:18px}
+  .card-head{padding:14px 14px}
+  .card-body{padding:0 14px 14px}
+  .walk{padding:14px}
+  .slot-time{width:90px;font-size:10.5px}
+  .slot-task{font-size:12.5px}
+  .tb-cd{font-size:10.5px;padding:5px 10px}
+  .tb-print{font-size:10.5px;padding:6px 12px}
+  .tb-logo{width:30px;height:30px}
+  .tb-name{font-size:13.5px}
+}
+</style>
+</head>
+<body>
+<div class="bg-blob"></div>
+
+<header class="topbar">
+  <div class="tb-l">
+    <div class="tb-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+    <div class="tb-name">BMLA Final Cram Hub<small>MTS 212 · Hassan</small></div>
+  </div>
+  <div class="tb-cd" id="cdown">⏱ <b>—</b> to exam</div>
+  <div class="tb-sp"></div>
+  <button class="tb-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / PDF</button>
+</header>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="nav-link active" href="#today"><i class="fa-solid fa-bullseye"></i> Today</a>
+    <a class="nav-link" href="#formulas"><i class="fa-solid fa-square-root-variable"></i> Formulas</a>
+    <a class="nav-link" href="#topics"><i class="fa-solid fa-layer-group"></i> Topics</a>
+    <a class="nav-link" href="#walkthroughs"><i class="fa-solid fa-route"></i> Walkthroughs</a>
+    <a class="nav-link" href="#strategy"><i class="fa-solid fa-chess-knight"></i> Strategy</a>
+    <a class="nav-link" href="#morning"><i class="fa-solid fa-sun"></i> Morning</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eb">MTS 212 · Business Math & Linear Algebra · Final 54%</div>
+    <h1 class="hero-h">Last <span class="gtext">22 hours.</span> One hub. Built to ship marks.</h1>
+    <p class="hero-sub">Every formula. Every must-know theorem. Every likely question type — solved step-by-step. No fluff. Open the section you need, collapse the rest. Hit Print → save as PDF for offline mobile review tonight. Sabit Qadam.</p>
+    <div class="hero-meta">
+      <span class="hero-tag"><i class="fa-regular fa-calendar"></i> Mon <b>May 25</b></span>
+      <span class="hero-tag"><i class="fa-regular fa-clock"></i> <b>10 AM – 1 PM</b></span>
+      <span class="hero-tag"><i class="fa-solid fa-location-dot"></i> MTC-19 · Tabba Hall 8</span>
+      <span class="hero-tag"><i class="fa-solid fa-pen-to-square"></i> Solve <b>6 of 7</b> × 4 marks</span>
+      <span class="hero-tag"><i class="fa-solid fa-stopwatch"></i> ~<b>30 min</b>/Q</span>
+    </div>
+    <div class="actions">
+      <a class="action primary" href="#today"><i class="fa-solid fa-rocket"></i> Start tonight's plan</a>
+      <a class="action" href="#formulas"><i class="fa-solid fa-bolt"></i> Jump to formulas</a>
+      <a class="action" href="#walkthroughs"><i class="fa-solid fa-list-check"></i> Solved questions</a>
+      <a class="action" href="https://bmla-quest.vercel.app" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Quest app</a>
+    </div>
+  </div>
+
+  <!-- TODAY -->
+  <section class="section" id="today">
+    <div class="section-head">
+      <div class="section-h"><span class="ico"><i class="fa-solid fa-bullseye"></i></span> Today · Tonight · Tomorrow</div>
+      <div class="section-sub">22 hours / hour-by-hour</div>
+    </div>
+    <div class="grid">
+      <div class="card open">
+        <div class="card-head" onclick="toggle(this)">
+          <div class="card-titles">
+            <div class="card-h"><span class="ch">EVE</span>Sunday May 24 · 18:00–24:00 (6h)</div>
+            <div class="card-sub">High-yield grind · no new theory</div>
+          </div>
+          <i class="fa-solid fa-chevron-down card-toggle"></i>
+        </div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="slot"><div class="slot-time">18:00 – 19:00<small>FORMULAS</small></div><div class="slot-task"><b>Memorize the formula cheat (Section: Formulas).</b> Read it twice cover-to-cover. Re-write each formula once on a rough sheet.<span class="why">Why: highest leverage. 1 forgotten formula = 1 lost question.</span></div></div>
+            <div class="slot"><div class="slot-time">19:00 – 20:30<small>EIGEN + MARKOV</small></div><div class="slot-task"><b>Walkthrough 5 + 6</b> (Diagonalize 2×2 and Markov steady state). Re-do without looking.<span class="why">Why: highest-probability question. Markov tie-in is a class-added topic — examiner LOVES it.</span></div></div>
+            <div class="slot"><div class="slot-time">20:30 – 21:30<small>LP SIMPLEX</small></div><div class="slot-task"><b>Walkthrough 9 (Simplex maximize).</b> One full tableau iteration on a 2-var problem. Hand-write it.<span class="why">Why: Simplex shows up nearly every final. Hand-speed matters — practice now.</span></div></div>
+            <div class="slot"><div class="slot-time">21:30 – 22:30<small>TRANSPORT</small></div><div class="slot-task"><b>Walkthrough 11 (VAM + MODI).</b> Set up table, do VAM init, one MODI iteration.<span class="why">Why: Day-6 plan focus. Examiner asks balance/dummy. Don't forget Σsupply = Σdemand.</span></div></div>
+            <div class="slot"><div class="slot-time">22:30 – 23:15<small>DET + INVERSE</small></div><div class="slot-task"><b>Cheat sheet recipes 3, 4, 5.</b> One 3×3 cofactor expand from past papers.<span class="why">Why: easy 4 marks if you're crisp — easy to lose if you're sloppy with signs.</span></div></div>
+            <div class="slot"><div class="slot-time">23:15 – 24:00<small>STRATEGY</small></div><div class="slot-task"><b>Read Exam Strategy section twice.</b> Decide your skip order before bed.<span class="why">Why: 5 min of pre-game = 30+ min saved in hall.</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card open">
+        <div class="card-head" onclick="toggle(this)">
+          <div class="card-titles">
+            <div class="card-h"><span class="ch">SLP</span>00:00 – 07:00 (7h sleep)</div>
+            <div class="card-sub">Non-negotiable · brain wins</div>
+          </div>
+          <i class="fa-solid fa-chevron-down card-toggle"></i>
+        </div>
+        <div class="card-body">
+          <p><b>You will NOT pull an all-nighter.</b> 7h sleep adds ~15% recall and ~30% problem-solving speed. Going in tired = silly arithmetic mistakes = lost marks on questions you actually know.</p>
+          <div class="note"><b>Rule:</b> Phone airplane mode at 23:50. Lights out 00:00. Alarms at 06:30 and 06:45.</div>
+        </div>
+      </div>
+
+      <div class="card open">
+        <div class="card-head" onclick="toggle(this)">
+          <div class="card-titles">
+            <div class="card-h"><span class="ch">AM</span>Monday May 25 · 07:00 – 09:30</div>
+            <div class="card-sub">Light review only · NO new content</div>
+          </div>
+          <i class="fa-solid fa-chevron-down card-toggle"></i>
+        </div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="slot"><div class="slot-time">07:00 – 07:30<small>FUEL</small></div><div class="slot-task">Breakfast (protein + slow carbs). Hydrate. No heavy coffee — moderate dose only.</div></div>
+            <div class="slot"><div class="slot-time">07:30 – 08:15<small>MORNING CARD</small></div><div class="slot-task">Read the <b>Morning Refresh Card</b> (last section) 3 times slowly. Write it on rough paper from memory.</div></div>
+            <div class="slot"><div class="slot-time">08:15 – 09:00<small>FORMULAS</small></div><div class="slot-task">Skim Formulas section. Star anything you blank on → quickly re-read that one.</div></div>
+            <div class="slot"><div class="slot-time">09:00 – 09:30<small>STRATEGY</small></div><div class="slot-task">Re-read Exam Strategy. Eat a quick snack (banana). Leave for campus.</div></div>
+            <div class="slot"><div class="slot-time">09:45<small>ARRIVE</small></div><div class="slot-task">At MTC-19, Tabba Hall 8. Bathroom. Settle. Breathe 4-7-8 × 3 cycles.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULAS -->
+  <section class="section" id="formulas">
+    <div class="section-head">
+      <div class="section-h h-formulas"><span class="ico"><i class="fa-solid fa-square-root-variable"></i></span> Formulas · Theorems · Recipes</div>
+      <div class="section-sub">Every must-know · click cards to expand</div>
+    </div>
+    <div class="grid">
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 1</span>Row Reduction · REF / RREF <span class="tag tag-hi">High</span></div><div class="card-sub">Lay 1.1–1.5 · solve any Ax=b</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>3 elementary row operations</b> (preserve solution set):</p>
+        <ul><li><b>Replace:</b> $R_i \to R_i + cR_j$</li><li><b>Swap:</b> $R_i \leftrightarrow R_j$</li><li><b>Scale:</b> $R_i \to cR_i$, $c\ne 0$</li></ul>
+        <p><b>Echelon form (REF):</b> zero rows at bottom · each leading entry is right of the one above · entries below pivots = 0.<br><b>RREF:</b> leading 1s · only nonzero in their column.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Gauss-Jordan</div><ol><li>Get leading 1 in row 1, col 1 (swap/scale).</li><li>Zero out below the pivot using <i>replace</i>.</li><li>Move to next pivot (down-right). Repeat.</li><li>Back-substitute upward to clear above pivots.</li></ol></div>
+        <div class="note"><b>Pivot column</b> = column with a pivot. <b>Free var</b> = non-pivot column. Solutions exist ⇔ no row $[0\,0\,\dots\,0\,|\,b]$ with $b\ne 0$.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 1</span>Span · Independence · Transformations <span class="tag tag-md">Med</span></div><div class="card-sub">Lay 1.3 / 1.7 / 1.8 / 1.9</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Span:</b> $\text{Span}\{v_1,\dots,v_p\}=\{c_1v_1+\dots+c_pv_p\}$. To test if $b\in\text{Span}$: row-reduce $[v_1\,\dots\,v_p\,|\,b]$ — consistent ⇔ yes.</p>
+        <p><b>Linear independence:</b> $\{v_1,\dots,v_p\}$ indep ⇔ $Ax=0$ has only the trivial sol ⇔ every col is a pivot col.</p>
+        <ul><li>More vectors than entries (p &gt; n) → always dependent.</li><li>Any set with $\vec 0$ → dependent.</li></ul>
+        <p><b>Linear Transformation $T:\mathbb R^n\to\mathbb R^m$:</b> $T(u+v)=T(u)+T(v)$, $T(cu)=cT(u)$. <b>Standard matrix</b>: $A=[T(e_1)\,T(e_2)\,\dots\,T(e_n)]$.</p>
+        <div class="imt"><b>One-to-one</b> ⇔ columns of $A$ are linearly indep · ⇔ $Ax=0$ has only trivial sol.<br><b>Onto</b> ⇔ columns span $\mathbb R^m$ · ⇔ $A$ has a pivot in <b>every row</b>.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 2</span>Matrix Inverse · IMT <span class="tag tag-hi">High</span></div><div class="card-sub">Lay 2.2–2.3 · know all 14 equivs</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>2×2 quick:</b> $\displaystyle A=\begin{bmatrix}a&b\\c&d\end{bmatrix}\Rightarrow A^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$, requires $ad-bc\ne 0$.</p>
+        <p><b>General method:</b> row-reduce $[A\,|\,I]\to [I\,|\,A^{-1}]$. If left side ≠ $I$ → $A$ is singular.</p>
+        <p><b>Properties:</b> $(AB)^{-1}=B^{-1}A^{-1}$ · $(A^T)^{-1}=(A^{-1})^T$ · $(A^{-1})^{-1}=A$.</p>
+        <div class="imt"><b>Invertible Matrix Theorem</b> — for $A$ ($n\times n$), TFAE: (1) $A$ invertible · (2) $A$ row-equiv to $I_n$ · (3) $n$ pivots · (4) $Ax=0$ only trivial · (5) cols linearly indep · (6) $T(x)=Ax$ one-to-one · (7) $Ax=b$ has unique sol $\forall b$ · (8) cols span $\mathbb R^n$ · (9) $T$ onto · (10) $\exists C$ with $CA=I$ · (11) $\exists D$ with $AD=I$ · (12) $A^T$ invertible · (13) cols of $A$ are a basis of $\mathbb R^n$ · (14) $\det A\ne 0$.</div>
+        <div class="note"><b>Solve $Ax=b$ via inverse:</b> $x = A^{-1}b$.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 3</span>Determinants · Cofactor · Cramer <span class="tag tag-hi">High</span></div><div class="card-sub">Lay 3.1–3.3 · easy marks if crisp</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>2×2:</b> $\det\!\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$.<br><b>3×3 (Sarrus):</b> diag products – anti-diag products.</p>
+        <p><b>Cofactor expansion</b> along row $i$: $\det A = \sum_j (-1)^{i+j} a_{ij}\,M_{ij}$, where $M_{ij}$ = minor (det of submatrix). Pick the row/col with most zeros.</p>
+        <p><b>Sign pattern:</b> $\begin{bmatrix}+&-&+\\-&+&-\\+&-&+\end{bmatrix}$</p>
+        <div class="imt"><b>Row-op effects on $\det$:</b> Replace = unchanged · Swap = ×(−1) · Scale row by $k$ = ×$k$.<br><b>Properties:</b> $\det(AB)=\det A\det B$ · $\det A^T=\det A$ · $\det A^{-1}=1/\det A$ · Triangular: $\det = $ product of diagonal.</div>
+        <p><b>Cramer's Rule</b> ($A$ invertible, $Ax=b$): $x_i=\dfrac{\det A_i(b)}{\det A}$ where $A_i(b)$ = $A$ with column $i$ replaced by $b$.</p>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 5</span>Eigenvalues · Eigenvectors <span class="tag tag-hi">High</span></div><div class="card-sub">Lay 5.1–5.2 · core of Markov + diag</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Definition:</b> $\lambda$ is an eigenvalue of $A$ if $\exists\,v\ne 0$ with $Av=\lambda v$. $v$ = eigenvector for $\lambda$.</p>
+        <p><b>Characteristic equation:</b> $\det(A-\lambda I)=0$ → gives the eigenvalues.</p>
+        <p><b>Eigenvector:</b> solve $(A-\lambda I)v = 0$ → null space.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Find eigenvalues + eigenvectors</div><ol><li>Form $A-\lambda I$, take det, set = 0.</li><li>Solve polynomial for $\lambda_1,\lambda_2,\dots$.</li><li>For each $\lambda$: row-reduce $(A-\lambda I)$ and read off the null space.</li><li>Pick any nonzero vector from each null space.</li></ol></div>
+        <div class="note"><b>Easy wins:</b> Triangular $A$ → eigenvalues = diagonal entries. <b>Trace $=\sum\lambda$</b>, <b>$\det = \prod\lambda$</b> — sanity-check your answer.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 5</span>Diagonalization $A=PDP^{-1}$ <span class="tag tag-hi">High</span></div><div class="card-sub">Lay 5.3 · powers + Markov</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Theorem (Diag):</b> $A$ ($n\times n$) is diagonalizable ⇔ $A$ has $n$ linearly independent eigenvectors.</p>
+        <p><b>Sufficient:</b> $n$ distinct eigenvalues ⇒ diagonalizable.<br><b>Iff:</b> for every eigenvalue $\lambda$, $\dim(\text{eigenspace}) = $ algebraic multiplicity.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Diagonalize</div><ol><li>Find all eigenvalues (char eq).</li><li>For each $\lambda$ find a basis of its eigenspace.</li><li>If total = $n$ indep vectors → build $P=[v_1\,\dots\,v_n]$, $D=\text{diag}(\lambda_1,\dots,\lambda_n)$ in matching order.</li><li>Otherwise: state <b>NOT diagonalizable</b>.</li></ol></div>
+        <div class="note"><b>Powers cheap:</b> $A^k = PD^kP^{-1}$, where $D^k = \text{diag}(\lambda_1^k,\dots,\lambda_n^k)$.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">CH 5⭐</span>Markov Chains · Steady State <span class="tag tag-hi">High</span></div><div class="card-sub">Class addition · examiner favourite</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Stochastic matrix $P$:</b> each column sums to 1 and all entries $\ge 0$.</p>
+        <p><b>Steady-state vector $q$:</b> probability vector ($q_i\ge 0$, $\sum q_i = 1$) with $Pq=q$, i.e. eigenvector of $\lambda=1$.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Steady state (2 ways)</div><ol><li><b>Direct:</b> solve $(P-I)q=0$ subject to $\sum q_i=1$.</li><li><b>Eigen:</b> find eigenvector for $\lambda=1$, then normalize so entries sum to 1.</li></ol></div>
+        <div class="note"><b>If $P$ is regular</b> (some power has all positive entries) → unique steady state, and $P^k x_0 \to q$ from any start.</div>
+        <div class="warn"><b>Trap:</b> always check columns sum to 1 BEFORE proceeding. If rows sum to 1 (row-stochastic), use $P^T$ instead.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">LP</span>Linear Programming · Graphical <span class="tag tag-hi">High</span></div><div class="card-sub">Budnick · Lectures 17–18</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Standard form (max):</b> maximize $z=c^Tx$ s.t. $Ax\le b$, $x\ge 0$.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Graphical (2 vars)</div><ol><li>Plot each constraint line (intercepts: set the other = 0).</li><li>Shade feasible region (test the origin).</li><li>Identify <b>corner points</b> (intersections + axis intercepts on boundary).</li><li>Evaluate $z$ at every corner.</li><li>Pick max (or min) — that's the optimal.</li></ol></div>
+        <div class="note"><b>Special cases:</b> unbounded (objective grows forever in feasible region) · infeasible (region empty) · alternate optima (entire edge max).</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">LP</span>Simplex Method <span class="tag tag-hi">High</span></div><div class="card-sub">Budnick · Lec 20–21</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Convert to standard:</b> add slack $s_i\ge 0$ to each ≤, surplus & artificial to each ≥/=.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Maximize simplex (Big-M if needed)</div><ol><li>Write initial tableau with $c_j$ row, $z_j$ row, $c_j-z_j$ row.</li><li><b>Entering var:</b> most positive $c_j - z_j$ (for max).</li><li><b>Leaving var:</b> smallest non-negative ratio $b_i / a_{ij}$ (positive $a_{ij}$ only).</li><li>Pivot: make pivot = 1, zero out rest of column.</li><li>Repeat until all $c_j - z_j \le 0$ → optimal.</li></ol></div>
+        <div class="note"><b>For min:</b> use $z_j - c_j$, or convert (min $z$ = − max $-z$).</div>
+        <div class="warn"><b>Trap:</b> if a tie on entering, pick any. If tie on leaving — degeneracy possible. If pivot column has no positive entry → unbounded.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">LP</span>Dual Problem <span class="tag tag-md">Med</span></div><div class="card-sub">Budnick · Lec 23–24</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Primal (max):</b> max $c^Tx$ s.t. $Ax\le b$, $x\ge 0$. <b>Dual (min):</b> min $b^Ty$ s.t. $A^Ty\ge c$, $y\ge 0$.</p>
+        <ul><li>$\#$ primal vars = $\#$ dual constraints, and vice-versa.</li><li>If primal feasible bounded, both have same optimal value (Strong duality).</li><li>Use dual when fewer constraints than vars — easier simplex.</li></ul>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">TX</span>Transportation · NWCM / Least Cost / VAM / MODI <span class="tag tag-hi">High</span></div><div class="card-sub">Budnick · Lec 25–26</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Step 0 — Balance:</b> if $\sum\text{supply}\ne\sum\text{demand}$, add a <b>dummy</b> row/col with cost 0.</p>
+        <div class="recipe"><div class="recipe-title">Initial BFS — VAM (best)</div><ol><li>For each row & col, compute <b>penalty</b> = (2nd lowest cost − lowest cost).</li><li>Pick row/col with <b>largest penalty</b>; in it, allocate the max to the lowest-cost cell.</li><li>Cross out the satisfied row/col; recompute penalties; repeat.</li></ol></div>
+        <div class="recipe"><div class="recipe-title">Optimality — MODI / u–v</div><ol><li>For each occupied cell: $u_i + v_j = c_{ij}$. Set $u_1=0$, solve for the rest.</li><li>For each empty cell, compute $d_{ij} = c_{ij} - (u_i + v_j)$.</li><li>If all $d_{ij}\ge 0$ → optimal. Else pick most-negative $d_{ij}$ as entering cell.</li><li>Draw a closed loop (+/−) starting at entering cell; reallocate min of (−) cells.</li><li>Repeat MODI.</li></ol></div>
+        <div class="warn"><b>Degeneracy</b> (occupied cells &lt; $m+n-1$): add an <b>$\epsilon$</b> (a 0) to an empty independent cell to restore count. Treat as occupied for MODI but value = 0.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h"><span class="ch">AS</span>Assignment · Hungarian Method <span class="tag tag-hi">High</span></div><div class="card-sub">Budnick · Lec 27–28</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Setup:</b> square cost matrix ($n$ workers × $n$ jobs). If not square → add dummy row/col with 0 cost.</p>
+        <div class="recipe"><div class="recipe-title">Recipe · Hungarian (minimize)</div><ol><li><b>Row reduction:</b> subtract row min from every entry in that row.</li><li><b>Col reduction:</b> subtract col min from every entry in that col.</li><li><b>Cover all zeros</b> with the minimum number of lines.</li><li>If # lines = $n$ → optimal: pick zero-assignment. Else go to step 5.</li><li>Find smallest uncovered entry $k$. Subtract $k$ from all uncovered. Add $k$ to entries covered twice. Repeat from step 3.</li></ol></div>
+        <div class="note"><b>For maximization:</b> first convert to min by subtracting every entry from the largest entry, then run Hungarian.</div>
+      </div></div>
+
+    </div>
+  </section>
+
+  <!-- TOPICS / SUMMARIES -->
+  <section class="section" id="topics">
+    <div class="section-head">
+      <div class="section-h h-topics"><span class="ico"><i class="fa-solid fa-layer-group"></i></span> Topics · 1-page summaries</div>
+      <div class="section-sub">7 chapters · what · when · what to watch out for</div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Ch 1 · Linear Systems &amp; Vectors</div><div class="card-sub">REF/RREF · Span · Ax=b</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> a system $Ax=b$ has 0, 1, or ∞ solutions. Row-reduce $[A|b]$ to find which.</p>
+        <p><b>Must-do:</b> Be fluent with row ops. Always state pivot vs free vars. Write solution in <b>parametric vector form</b> if infinite.</p>
+        <div class="note"><b>Watch:</b> consistency check — if RREF has a row $[0\,0\,\dots\,0\,|\,c]$ with $c\ne 0$ → <b>inconsistent</b>, no solution. State this explicitly.</div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Ch 1.7–1.9 · Independence + LT</div><div class="card-sub">When are vectors free?</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> Linear independence ↔ unique combinations. LT ↔ matrix multiplication.</p>
+        <p><b>Must-do:</b> Find standard matrix via $A=[T(e_1),\dots]$. Check one-to-one (cols indep) and onto (pivot in every row).</p>
+        <div class="warn"><b>Trap:</b> $p > n$ vectors in $\mathbb R^n$ are always dependent — examiners love this freebie. State it as a one-liner.</div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Ch 2 · Matrix Algebra + Inverse</div><div class="card-sub">2×2 formula · IMT recital</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> matrices represent linear maps. Invertible = bijective on $\mathbb R^n$.</p>
+        <p><b>Must-do:</b> Recite IMT mid-answer when asked "is A invertible / does Ax=b have unique sol / are cols indep" — they're the <i>same question</i>.</p>
+        <div class="recipe"><div class="recipe-title">3 ways to invert</div><ol><li>2×2: $\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$.</li><li>General: row-reduce $[A|I]$.</li><li>Via $\det$: $A^{-1}=\frac{1}{\det A}\,\text{adj}(A)$ (cofactor transpose).</li></ol></div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Ch 3 · Determinants</div><div class="card-sub">Cofactor · Cramer · row-op rules</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> $\det A$ measures invertibility (= 0 ⇔ singular) and oriented volume.</p>
+        <p><b>Must-do:</b> Cofactor expand along whichever row/col has the most zeros. Use row-op effects to simplify big matrices first.</p>
+        <div class="note"><b>Cramer's Rule</b> = formula answer for $x_i$ when $A$ invertible: $x_i = \det A_i(b)/\det A$.</div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Ch 5 · Eigenvalues + Diagonalization ⭐</div><div class="card-sub">PDP⁻¹ · powers · Markov</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> if $Av=\lambda v$, action of $A$ on $v$ = scaling. Diagonalize → easy powers, easy steady-state.</p>
+        <p><b>Must-do:</b> Char equation $\det(A-\lambda I)=0$ → solve for $\lambda$. Null-space of $(A-\lambda I)$ → eigenvectors. Need $n$ indep eigenvectors to diagonalize.</p>
+        <div class="note"><b>Triangular shortcut:</b> eigenvalues = diagonal entries — write that down immediately if matrix is triangular.</div>
+        <div class="warn"><b>Sanity check:</b> $\text{trace} = \sum\lambda$ and $\det = \prod\lambda$. If they don't match, recompute.</div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">LP · Graphical + Simplex + Dual</div><div class="card-sub">Pick the right tool</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> optimum of a linear objective over a polytope sits at a corner. Simplex walks the corners.</p>
+        <p><b>Must-do:</b> Always start with standard form (slacks). Read the tableau carefully — entering = most + $c_j-z_j$ for max, leaving = min ratio.</p>
+        <div class="warn"><b>Trap:</b> sign conventions differ in slides — confirm if you're using $c_j-z_j$ (most +ve enters) or $z_j-c_j$. Stay consistent within a question.</div>
+      </div></div>
+
+      <div class="card"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Transportation + Assignment</div><div class="card-sub">VAM → MODI → done · Hungarian</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <p><b>Big idea:</b> ship $x_{ij}$ from source $i$ to dest $j$ to minimize $\sum c_{ij}x_{ij}$. Always balance first.</p>
+        <p><b>Transportation flow:</b> Balance → VAM (init) → MODI (optimal) → reallocate via closed loop if any $d_{ij}<0$ → re-check.</p>
+        <p><b>Assignment flow:</b> Pad to square → row min → col min → cover zeros with min lines → if &lt; $n$ lines, adjust uncovered/double-covered → repeat.</p>
+        <div class="warn"><b>Trap:</b> degeneracy in transport (occupied &lt; $m+n-1$) — add $\epsilon$ and continue. Don't get stuck.</div>
+      </div></div>
+
+    </div>
+  </section>
+
+  <!-- WALKTHROUGHS -->
+  <section class="section" id="walkthroughs">
+    <div class="section-head">
+      <div class="section-h h-walks"><span class="ico"><i class="fa-solid fa-route"></i></span> Solved Walkthroughs · 12 question types</div>
+      <div class="section-sub">Cover the most-likely Q-1 to Q-7 patterns</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W1</span>Row-reduce + classify a system</div>
+      <div class="walk-prob">Solve $\;\begin{cases}x_1 + 2x_2 - x_3 = 4 \\ 2x_1 + 3x_2 + x_3 = 5 \\ 3x_1 + 5x_2 = 9\end{cases}$ — write the solution set.</div>
+      <ol class="walk-steps">
+        <li><b>Augmented:</b> $[A|b]=\begin{bmatrix}1&2&-1&|&4\\2&3&1&|&5\\3&5&0&|&9\end{bmatrix}$.</li>
+        <li><b>$R_2\to R_2-2R_1$:</b> $[0,-1,3,|-3]$. <b>$R_3\to R_3-3R_1$:</b> $[0,-1,3,|-3]$.</li>
+        <li>$R_2=R_3$ identical → row 3 becomes zero after $R_3\to R_3-R_2$. RREF gives one pivot in col 1, one in col 2, col 3 is <b>free</b>.</li>
+        <li>Let $x_3 = t$. Back-sub: $-x_2 + 3t = -3 \Rightarrow x_2 = 3 + 3t$. Then $x_1 = 4 - 2(3+3t) + t = -2 - 5t$.</li>
+        <li><b>Parametric vector form:</b> $\mathbf{x} = \begin{bmatrix}-2\\3\\0\end{bmatrix} + t\begin{bmatrix}-5\\3\\1\end{bmatrix}$.</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> infinitely many solutions, parameterized by $t\in\mathbb R$.</div>
+      <div class="walk-trap"><b>Trap:</b> students forget to <i>state</i> "infinite solutions" or write parametric form. Always do both.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W2</span>Linear independence of 3 vectors</div>
+      <div class="walk-prob">Are $v_1=(1,2,3)$, $v_2=(2,5,7)$, $v_3=(1,3,4)$ linearly independent?</div>
+      <ol class="walk-steps">
+        <li>Form $A=[v_1\,v_2\,v_3]=\begin{bmatrix}1&2&1\\2&5&3\\3&7&4\end{bmatrix}$. Row-reduce.</li>
+        <li>$R_2\to R_2-2R_1$: $(0,1,1)$. $R_3\to R_3-3R_1$: $(0,1,1)$. Then $R_3-R_2$: row of zeros.</li>
+        <li>Only 2 pivots in 3 columns → column 3 is non-pivot → <b>dependent</b>.</li>
+        <li><b>Find the relation:</b> from $R_2$ row, $x_2 + x_3 = 0 \Rightarrow x_2 = -x_3$. From $R_1$: $x_1 + 2x_2 + x_3 = 0 \Rightarrow x_1 = -2(-x_3) - x_3 = x_3$.</li>
+        <li>Take $x_3=1$: $x_1=1$, $x_2=-1$. So $v_1 - v_2 + v_3 = 0$ ✓ (check componentwise).</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> linearly <b>dependent</b>; $v_1 - v_2 + v_3 = 0$.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W3</span>3×3 Inverse via $[A|I]$</div>
+      <div class="walk-prob">Find $A^{-1}$ for $A=\begin{bmatrix}1&0&2\\2&1&3\\1&0&3\end{bmatrix}$.</div>
+      <ol class="walk-steps">
+        <li>Augment: $[A|I_3]$. $R_2\to R_2-2R_1$, $R_3\to R_3-R_1$ → $\begin{bmatrix}1&0&2&|&1&0&0\\0&1&-1&|&-2&1&0\\0&0&1&|&-1&0&1\end{bmatrix}$.</li>
+        <li>$R_2\to R_2+R_3$: row 2 becomes $(0,1,0\,|\,-3,1,1)$. $R_1\to R_1-2R_3$: row 1 = $(1,0,0\,|\,3,0,-2)$.</li>
+        <li><b>Result:</b> $A^{-1} = \begin{bmatrix}3&0&-2\\-3&1&1\\-1&0&1\end{bmatrix}$.</li>
+        <li><b>Verify:</b> compute $AA^{-1}$ — must equal $I_3$ (check just diagonal + one off-diag entry to save time).</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $A^{-1}=\begin{bmatrix}3&0&-2\\-3&1&1\\-1&0&1\end{bmatrix}$.</div>
+      <div class="walk-trap"><b>Trap:</b> arithmetic — re-add a row twice and you'll be off by signs. Slow down on row 2.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W4</span>3×3 Determinant by cofactor expansion</div>
+      <div class="walk-prob">$\det\begin{bmatrix}2&-3&1\\0&4&-2\\1&-1&5\end{bmatrix}=?$ Expand along column 1 (has a 0).</div>
+      <ol class="walk-steps">
+        <li>Cofactor expansion along col 1: $\det = 2\cdot C_{11} + 0\cdot C_{21} + 1\cdot C_{31}$.</li>
+        <li>$C_{11} = (+1)\det\!\begin{bmatrix}4&-2\\-1&5\end{bmatrix} = 4\cdot 5 - (-2)(-1) = 20 - 2 = 18$.</li>
+        <li>$C_{31} = (+1)\det\!\begin{bmatrix}-3&1\\4&-2\end{bmatrix} = (-3)(-2) - 1\cdot 4 = 6 - 4 = 2$.</li>
+        <li>(Sign for $C_{31}$ is $(-1)^{3+1}=+1$.)</li>
+        <li>$\det = 2(18) + 1(2) = 36 + 2 = 38$.</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $\det = 38$.</div>
+      <div class="walk-trap"><b>Trap:</b> sign on cofactor — always write the checkerboard $(+,-,+)$ pattern before plugging in.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W5</span>Diagonalize 2×2 + compute $A^k$</div>
+      <div class="walk-prob">$A=\begin{bmatrix}7&2\\-4&1\end{bmatrix}$. Diagonalize and write $A^{10}$ as $PD^{10}P^{-1}$.</div>
+      <ol class="walk-steps">
+        <li><b>Char eq:</b> $(7-\lambda)(1-\lambda) - (2)(-4) = \lambda^2 - 8\lambda + 7 + 8 = \lambda^2 - 8\lambda + 15 = 0 \Rightarrow \lambda = 3, 5$.</li>
+        <li><b>$\lambda=3$:</b> $(A-3I)=\begin{bmatrix}4&2\\-4&-2\end{bmatrix}\Rightarrow 2x_1+x_2=0\Rightarrow v_1=(1,-2)$.</li>
+        <li><b>$\lambda=5$:</b> $(A-5I)=\begin{bmatrix}2&2\\-4&-4\end{bmatrix}\Rightarrow x_1+x_2=0\Rightarrow v_2=(1,-1)$.</li>
+        <li>$P=\begin{bmatrix}1&1\\-2&-1\end{bmatrix}$, $D=\begin{bmatrix}3&0\\0&5\end{bmatrix}$.</li>
+        <li>$A^{10}=PD^{10}P^{-1}$ where $D^{10}=\text{diag}(3^{10},5^{10})=\text{diag}(59049,\,9765625)$.</li>
+        <li>$P^{-1}=\dfrac{1}{(1)(-1)-(1)(-2)}\begin{bmatrix}-1&-1\\2&1\end{bmatrix}=\begin{bmatrix}-1&-1\\2&1\end{bmatrix}$ (since $\det P = 1$).</li>
+      </ol>
+      <div class="walk-ans"><b>Sanity:</b> trace $A = 8 = 3+5$ ✓. $\det A = 7 - (-8) = 15 = 3 \cdot 5$ ✓.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W6</span>Markov chain steady state</div>
+      <div class="walk-prob">$P=\begin{bmatrix}0.6&0.3\\0.4&0.7\end{bmatrix}$ (columns sum to 1). Find the long-run steady state.</div>
+      <ol class="walk-steps">
+        <li><b>Check stochastic:</b> col 1 = 0.6+0.4 = 1 ✓, col 2 = 0.3+0.7 = 1 ✓.</li>
+        <li>Want $Pq=q \Rightarrow (P-I)q=0$. $P-I=\begin{bmatrix}-0.4&0.3\\0.4&-0.3\end{bmatrix}$. (Rows are dependent — expected, since $\lambda=1$.)</li>
+        <li>From row 1: $-0.4 q_1 + 0.3 q_2 = 0 \Rightarrow q_2 = \tfrac{4}{3} q_1$.</li>
+        <li>Normalize: $q_1 + q_2 = 1 \Rightarrow q_1(1 + \tfrac{4}{3}) = 1 \Rightarrow q_1 = \tfrac{3}{7}$, $q_2 = \tfrac{4}{7}$.</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $q = (\tfrac{3}{7},\tfrac{4}{7}) \approx (0.429,\,0.571)$.</div>
+      <div class="walk-trap"><b>Trap:</b> if matrix is row-stochastic (rows sum to 1), transpose first or solve $qP=q$ instead.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W7</span>Is $A$ diagonalizable? (Justify)</div>
+      <div class="walk-prob">Is $A=\begin{bmatrix}3&1\\0&3\end{bmatrix}$ diagonalizable?</div>
+      <ol class="walk-steps">
+        <li>Triangular → eigenvalues = diagonal: $\lambda=3$ (algebraic multiplicity 2).</li>
+        <li>$(A-3I)=\begin{bmatrix}0&1\\0&0\end{bmatrix}$. Solve: $x_2 = 0$, $x_1$ free → $v=(1,0)$.</li>
+        <li>Only <b>1</b> independent eigenvector but matrix is $2\times 2$ → can't form $P$ with 2 indep cols.</li>
+        <li>Geometric multiplicity (1) $<$ algebraic multiplicity (2).</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $A$ is <b>NOT diagonalizable</b>.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W8</span>LP — Graphical max</div>
+      <div class="walk-prob">Maximize $z = 3x_1 + 5x_2$ s.t. $x_1 \le 4$, $2x_2 \le 12$, $3x_1+2x_2 \le 18$, $x\ge 0$.</div>
+      <ol class="walk-steps">
+        <li><b>Boundary lines:</b> $x_1=4$, $x_2=6$, $3x_1+2x_2=18$. Sketch in first quadrant.</li>
+        <li><b>Corner points</b> of feasible region: $(0,0)$, $(4,0)$, $(4,3)$ (from $3(4)+2x_2=18$), $(2,6)$ (from $3x_1+2(6)=18$), $(0,6)$.</li>
+        <li>Evaluate $z=3x_1+5x_2$: $z(0,0)=0$, $z(4,0)=12$, $z(4,3)=27$, $z(2,6)=36$, $z(0,6)=30$.</li>
+        <li>Max at $(2,6)$ with $z=36$.</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $x_1=2$, $x_2=6$, $z_{\max}=36$.</div>
+      <div class="walk-trap"><b>Trap:</b> forgetting a corner point. Always check the intersection of every pair of binding constraints inside the feasible region.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W9</span>Simplex — one full iteration</div>
+      <div class="walk-prob">Max $z=5x_1+4x_2$ s.t. $6x_1+4x_2 \le 24$, $x_1+2x_2 \le 6$, $x\ge 0$.</div>
+      <ol class="walk-steps">
+        <li><b>Standardize:</b> add slacks $s_1, s_2$: $6x_1+4x_2+s_1=24$, $x_1+2x_2+s_2=6$. Initial BFS: $x_1=x_2=0$, $s_1=24$, $s_2=6$. $z=0$.</li>
+        <li><b>Initial tableau</b> — $c_j-z_j$ row: $[5, 4, 0, 0]$. Most positive = 5 → $x_1$ <b>enters</b>.</li>
+        <li><b>Ratios:</b> $24/6=4$, $6/1=6$. Smallest = 4 → row 1 ($s_1$) <b>leaves</b>. Pivot at row 1, col $x_1$.</li>
+        <li><b>Pivot:</b> $R_1\to R_1/6$ → $(1, 2/3, 1/6, 0, |, 4)$. $R_2\to R_2 - R_1$ → $(0, 4/3, -1/6, 1, |, 2)$.</li>
+        <li><b>New $z$ row:</b> $z = 5(4) + 0 = 20$. New $c_j-z_j = [0, 4/3, -5/6, 0]$. Positive entry in $x_2$ col → not optimal yet.</li>
+        <li><b>$x_2$ enters.</b> Ratios: $4/(2/3)=6$, $2/(4/3)=3/2$. $s_2$ leaves. Pivot, then check — $c_j-z_j$ all $\le 0$ → optimal.</li>
+        <li><b>Final BFS:</b> $x_1=3$, $x_2=3/2$, $z=21$.</li>
+      </ol>
+      <div class="walk-ans"><b>Answer:</b> $x_1=3$, $x_2=3/2$, $z_{\max}=21$.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W10</span>Transportation — VAM initial allocation</div>
+      <div class="walk-prob">3 sources × 3 destinations. Costs $C=\begin{bmatrix}8&6&10\\9&12&13\\14&9&16\end{bmatrix}$, supplies $(20,30,25)$, demands $(15,20,40)$.</div>
+      <ol class="walk-steps">
+        <li><b>Balance check:</b> $20+30+25=75$, $15+20+40=75$ ✓.</li>
+        <li><b>Row penalties</b> (2nd-min − min): R1: $8-6=2$, R2: $12-9=3$, R3: $14-9=5$. <b>Col penalties:</b> C1: $9-8=1$, C2: $9-6=3$, C3: $13-10=3$.</li>
+        <li>Max penalty = 5 (R3). In R3, smallest cost = 9 (col 2). <b>Allocate</b> $\min(25, 20)=20$ to $(3,2)$. Col 2 done. Remaining R3 supply = 5.</li>
+        <li><b>Recompute penalties</b> without col 2. R1: $10-8=2$, R2: $13-9=4$, R3: $16-14=2$. Cols: C1: $9-8=1$, C3: $13-10=3$.</li>
+        <li>Max = 4 (R2). Smallest cost in R2 = 9 (col 1). Allocate $\min(30,15)=15$ to $(2,1)$. Col 1 done. R2 remaining = 15.</li>
+        <li>Only col 3 left. Allocate: R1 → 20, R2 → 15, R3 → 5 (total 40 ✓).</li>
+      </ol>
+      <div class="walk-ans"><b>Initial cost:</b> $20\cdot 9 + 15\cdot 9 + 20\cdot 10 + 15\cdot 13 + 5\cdot 16 = 180+135+200+195+80 = 790$. Then run MODI for optimality.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W11</span>MODI optimality check</div>
+      <div class="walk-prob">Using the BFS from W10, run one MODI step: compute $u_i, v_j$, find $d_{ij}$ for empty cells.</div>
+      <ol class="walk-steps">
+        <li>Occupied: (1,3), (2,1), (2,3), (3,2), (3,3). Set $u_1=0$.</li>
+        <li>(1,3): $u_1+v_3 = 10 \Rightarrow v_3 = 10$. (2,3): $u_2+v_3=13 \Rightarrow u_2=3$. (2,1): $u_2+v_1=9 \Rightarrow v_1=6$. (3,3): $u_3+v_3=16 \Rightarrow u_3=6$. (3,2): $u_3+v_2=9 \Rightarrow v_2=3$.</li>
+        <li><b>Empty $d_{ij}=c_{ij}-(u_i+v_j)$:</b> (1,1): $8-(0+6)=2$. (1,2): $6-(0+3)=3$. (2,2): $12-(3+3)=6$. (3,1): $14-(6+6)=2$.</li>
+        <li>All $d_{ij}\ge 0$ → <b>optimal</b>! Stop. Min cost = 790.</li>
+      </ol>
+      <div class="walk-ans"><b>Optimal cost:</b> 790.</div>
+      <div class="walk-trap"><b>Trap:</b> sign of $d_{ij}$. If <i>any</i> negative → not optimal, need closed-loop reallocation.</div>
+    </div>
+
+    <div class="walk">
+      <div class="walk-q"><span class="qmark">W12</span>Hungarian assignment</div>
+      <div class="walk-prob">Assign 3 workers to 3 jobs to minimize cost: $C=\begin{bmatrix}9&2&7\\6&4&3\\5&8&1\end{bmatrix}$.</div>
+      <ol class="walk-steps">
+        <li><b>Row reduce</b> (subtract row min): R1 min=2 → $(7,0,5)$. R2 min=3 → $(3,1,0)$. R3 min=1 → $(4,7,0)$.</li>
+        <li><b>Col reduce</b>: col mins now = (3,0,0) → C1 subtract 3: $(4,0,5)\;(0,1,0)\;(1,7,0)$.</li>
+        <li>Final reduced: $\begin{bmatrix}4&0&5\\0&1&0\\1&7&0\end{bmatrix}$. Cover all zeros: row 2 has 2 zeros — cover row 2; col 2 covers (1,2); col 3 covers (3,3). That's 3 lines = $n$ → <b>optimal</b>.</li>
+        <li>Assignment: pick zeros — (1,2), (2,1), (3,3). Each row & col used once.</li>
+      </ol>
+      <div class="walk-ans"><b>Assignment:</b> W1→J2 (cost 2), W2→J1 (cost 6), W3→J3 (cost 1). Total min cost = <b>9</b>.</div>
+    </div>
+
+  </section>
+
+  <!-- STRATEGY -->
+  <section class="section" id="strategy">
+    <div class="section-head">
+      <div class="section-h h-strat"><span class="ico"><i class="fa-solid fa-chess-knight"></i></span> Exam Strategy · do this in the hall</div>
+      <div class="section-sub">5 minutes of prep saves 30 minutes of regret</div>
+    </div>
+    <div class="grid">
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">First 5 minutes — Triage</div><div class="card-sub">Read all 7. Pick your skip.</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <ol><li>Read <b>ALL 7</b> questions front to back. Don't write yet.</li><li>Mark each: 🟢 confident · 🟡 know roughly · 🔴 weak.</li><li>Skip the <b>worst</b> 🔴. You only need 6.</li><li>Solve in <b>order of confidence</b> — bank the easy marks first, build momentum.</li></ol>
+        <div class="note">If two are 🔴 — pick the one with a definite "method" you remember, even if shaky on arithmetic. Method shown = partial credit.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Time budget — 30 min / Q</div><div class="card-sub">3h ÷ 6 Qs = 30 min · keep watch visible</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <table class="tbl"><tr><th>Question type</th><th>Target</th><th>Hard cap</th></tr>
+        <tr><td>2×2 diagonalize</td><td>15 min</td><td>20 min</td></tr>
+        <tr><td>3×3 diag / det</td><td>22 min</td><td>28 min</td></tr>
+        <tr><td>Markov steady</td><td>18 min</td><td>25 min</td></tr>
+        <tr><td>LP graphical</td><td>20 min</td><td>28 min</td></tr>
+        <tr><td>Simplex 1-iter</td><td>28 min</td><td>32 min</td></tr>
+        <tr><td>Transport VAM+MODI</td><td>28 min</td><td>32 min</td></tr>
+        <tr><td>Hungarian</td><td>18 min</td><td>25 min</td></tr></table>
+        <div class="warn"><b>If hard cap hit</b> — skeleton the answer (state method + setup), move on, return at the end.</div>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Show every step (partial credit)</div><div class="card-sub">Wrong answer + right method = 2/4 typical</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <ul><li>Name the theorem/recipe in <b>one line</b> before computing ("By cofactor expansion along col 1…", "By the IMT, since $A$ has $n$ pivots…").</li><li>Show each row operation as a label: <span class="fm">R2 → R2 - 2R1</span>.</li><li>Final <b>box your answer</b> and write a 1-line summary ("Therefore the system has a unique solution: $x = (\dots)$").</li></ul>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Easy-win sanity checks</div><div class="card-sub">30 seconds saves whole questions</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <ul><li><b>Eigenvalues:</b> $\sum\lambda = $ trace, $\prod\lambda = \det$.</li><li><b>Det of triangular:</b> product of diagonal.</li><li><b>Markov:</b> columns sum to 1 (check first!) · steady-state entries sum to 1.</li><li><b>Transport:</b> $\Sigma$ supply $=$ $\Sigma$ demand (balance first).</li><li><b>Simplex:</b> if final $c_j-z_j$ has any +ve → you stopped early.</li><li><b>$Ax=b$ via inverse:</b> $x = A^{-1}b$, not $bA^{-1}$.</li></ul>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Last 10 minutes</div><div class="card-sub">Don't keep computing</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <ul><li>Stop solving new things. Switch to verify mode.</li><li>Check arithmetic in det / inverse / pivot rows.</li><li>Check signs (especially cofactor signs and $A-\lambda I$).</li><li>Re-read your final boxed answers — does each match what was asked?</li><li>If you skipped one and have time, attempt skeleton (just setup + which method).</li></ul>
+      </div></div>
+
+      <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Mental state</div><div class="card-sub">Sabit Qadam — discipline beats panic</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+        <ul><li>If a question blanks you for 60 sec — <b>leave a half-page</b> and move on. Return.</li><li>Don't compare with the person next to you — pace is yours.</li><li>4-7-8 breathing if heart races: in 4s, hold 7s, out 8s × 3.</li><li>You've already built the app, the cheat sheet, and 12 walkthroughs. You have the tools. Use them.</li></ul>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- MORNING REFRESH -->
+  <section class="section" id="morning">
+    <div class="section-head">
+      <div class="section-h"><span class="ico"><i class="fa-solid fa-sun"></i></span> Morning Refresh Card</div>
+      <div class="section-sub">Write this on rough paper first thing in the exam hall</div>
+    </div>
+    <div class="card open"><div class="card-head" onclick="toggle(this)"><div class="card-titles"><div class="card-h">Copy this from memory before reading any question</div><div class="card-sub">Brain dump · clears your working memory</div></div><i class="fa-solid fa-chevron-down card-toggle"></i></div><div class="card-body">
+      <div class="formula" style="text-align:left;line-height:1.9;font-size:13px">
+RREF: pivot in every col → unique · pivot every row → onto · contradictory row → no sol<br>
+2×2 inv: (1/(ad-bc)) [[d,-b],[-c,a]]<br>
+IMT (key): invertible ⇔ n pivots ⇔ cols indep ⇔ Ax=b unique ⇔ det≠0<br>
+Det 2×2: ad-bc · Det 3×3 cofactor: pick row/col with most 0s · signs +−+<br>
+Row-op on det: replace=same · swap=×(−1) · scale=×k · triangular = ∏diag<br>
+Cramer: x_i = det A_i(b) / det A<br>
+Eigen: det(A−λI)=0 → λ · (A−λI)v=0 → v · trace=Σλ · det=∏λ<br>
+Diag: A = PDP⁻¹, need n indep eigenvectors · A^k = PD^kP⁻¹<br>
+Markov: cols sum to 1 · steady q: (P−I)q=0, Σq_i=1<br>
+LP graphical: corners only · enumerate · pick max/min<br>
+Simplex (max): enter = most +ve (c_j−z_j) · leave = min positive ratio · stop when all ≤ 0<br>
+Transport: balance (add dummy) · VAM init · MODI: u_i+v_j=c_ij occupied, d=c−(u+v) empty · d&lt;0 → reallocate<br>
+Hungarian: row min · col min · cover 0s with min lines · =n? optimal. else adjust uncovered/double<br>
+TIME: 30 min/Q · skip worst · show all steps · sanity-check signs</div>
+      <div class="note"><b>Use the back of the answer sheet</b> or a rough scrap. Don't waste main-sheet space.</div>
+    </div></div>
+  </section>
+
+  <div class="foot">
+    BMLA Final Cram Hub · v1.0 · Built <b>May 24 2026</b> · Hassan Sardar Shah · MTS 212 · IBA Karachi<br>
+    Companion to <a href="https://bmla-quest.vercel.app" target="_blank">bmla-quest.vercel.app</a> · Sabit Qadam · You've already done the work.
+  </div>
+</main>
+
+<script>
+// Toggle cards
+function toggle(headEl){
+  const card = headEl.closest('.card');
+  card.classList.toggle('open');
+}
+
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('section.section');
+const navLinks = document.querySelectorAll('.nav-link');
+function onScroll(){
+  let cur = '';
+  const y = window.scrollY + 180;
+  sections.forEach(s => { if (s.offsetTop <= y) cur = s.id; });
+  navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+// Smooth scroll
+navLinks.forEach(l => l.addEventListener('click', e => {
+  const href = l.getAttribute('href');
+  if (href && href.startsWith('#')){
+    e.preventDefault();
+    const t = document.querySelector(href);
+    if (t){
+      const top = t.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({top, behavior:'smooth'});
+    }
+  }
+}));
+
+// Countdown
+function updateCountdown(){
+  const target = new Date('2026-05-25T10:00:00+05:00').getTime();
+  const now = Date.now();
+  let diff = target - now;
+  const el = document.getElementById('cdown');
+  if (!el) return;
+  if (diff <= 0){ el.innerHTML = '🎯 <b>EXAM TIME — GO</b>'; return; }
+  const h = Math.floor(diff / 3.6e6);
+  const m = Math.floor((diff % 3.6e6) / 6e4);
+  el.innerHTML = `⏱ <b>${h}h ${m}m</b> to exam`;
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+// Open all on print
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+});
+</script>
+</body>
+</html>
