@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#a855f7">
 <title>StudyForge — Upload. Generate. Master.</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -31,22 +32,35 @@
   .toast { position:fixed; left:50%; bottom:1.2rem; transform:translateX(-50%); z-index:90; }
   .modal { position:fixed; inset:0; z-index:80; background:rgba(15,23,42,.45); display:none; align-items:center; justify-content:center; padding:1rem; }
   .modal.open { display:flex; }
+  .xp-bar-fill { transition:width .6s cubic-bezier(.4,0,.2,1); background:linear-gradient(90deg,#a855f7,#ec4899,#f59e0b); }
+  /* flashcard flip */
+  .flash { perspective:1200px; }
+  .flash-inner { transition:transform .55s; transform-style:preserve-3d; position:relative; }
+  .flash.flipped .flash-inner { transform:rotateY(180deg); }
+  .flash-face { backface-visibility:hidden; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:1.5rem; border-radius:1rem; }
+  .flash-back { transform:rotateY(180deg); }
+  .badge-locked { filter:grayscale(1); opacity:.32; }
+  @keyframes pop { 0%{transform:scale(.8);opacity:0} 100%{transform:scale(1);opacity:1} }
+  .animate-pop { animation:pop .3s ease-out; }
 </style>
 </head>
 <body class="text-slate-800">
 
 <header class="sticky top-0 z-40 backdrop-blur-lg bg-white/70 border-b border-purple-200">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3 justify-between">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
     <div class="flex items-center gap-3">
       <div class="text-3xl">🔥</div>
       <div>
         <h1 class="font-display font-bold text-2xl gradient-text leading-none">StudyForge</h1>
-        <p class="text-xs text-slate-500">Upload your books &amp; notes → AI quizzes &amp; papers</p>
+        <p class="text-xs text-slate-500">Upload your books &amp; notes → AI study sets</p>
       </div>
     </div>
     <div class="flex items-center gap-2 text-sm">
-      <a href="./" class="text-slate-500 hover:text-purple-600 px-2">← BMLA Quest</a>
-      <button onclick="openKeyModal()" class="btn bg-white border-2 border-purple-200 text-purple-700 px-3 py-1.5 rounded-full font-semibold hover:border-purple-400">🔑 AI key</button>
+      <div class="flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>⚡</span><span id="hdrXP">0 XP</span></div>
+      <div class="flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full font-semibold shadow"><span>🔥</span><span id="hdrStreak">0</span></div>
+      <div class="flex items-center gap-1.5 bg-white border-2 border-purple-300 text-purple-700 px-3 py-1.5 rounded-full font-semibold"><span>🏆</span><span id="hdrLevel">Novice</span></div>
+      <button onclick="openKeyModal()" class="btn bg-white border-2 border-purple-200 text-purple-700 px-3 py-1.5 rounded-full font-semibold hover:border-purple-400">🔑</button>
+      <a href="./" class="text-slate-400 hover:text-purple-600 px-1 text-xs">← BMLA</a>
     </div>
   </div>
 </header>
@@ -54,14 +68,14 @@
 <div class="max-w-6xl mx-auto px-4 pt-4">
   <div class="card p-3 flex items-center gap-3 text-sm bg-amber-50/70 border-amber-200">
     <span class="text-lg">🧪</span>
-    <p class="text-slate-600"><b>Demo mode — no login.</b> Your library &amp; quizzes are saved in this browser. Logins &amp; cross-device sync are coming next.</p>
+    <p class="text-slate-600"><b>Demo mode — no login.</b> Your library, study sets &amp; XP are saved in this browser. Logins &amp; sync are coming next.</p>
   </div>
 </div>
 
 <main class="max-w-6xl mx-auto px-4 py-6">
   <div class="grid lg:grid-cols-5 gap-5">
 
-    <!-- LEFT: upload + library -->
+    <!-- LEFT -->
     <div class="lg:col-span-2 space-y-5">
       <div class="card p-5">
         <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📤 Add study material</h3>
@@ -80,25 +94,45 @@
         <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📚 Your library</h3>
         <div id="docList" class="space-y-2 text-sm"></div>
       </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-display font-bold text-lg flex items-center gap-2">📊 Stats</h3>
+          <span class="text-xs text-slate-400">this browser</span>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mb-4 text-center">
+          <div class="bg-purple-50 rounded-xl py-2"><div id="stGens" class="font-display font-bold text-lg">0</div><div class="text-[10px] text-slate-500">sets</div></div>
+          <div class="bg-pink-50 rounded-xl py-2"><div id="stQuizzes" class="font-display font-bold text-lg">0</div><div class="text-[10px] text-slate-500">quizzes</div></div>
+          <div class="bg-amber-50 rounded-xl py-2"><div id="stCards" class="font-display font-bold text-lg">0</div><div class="text-[10px] text-slate-500">cards</div></div>
+          <div class="bg-blue-50 rounded-xl py-2"><div id="stXP" class="font-display font-bold text-lg">0</div><div class="text-[10px] text-slate-500">XP</div></div>
+        </div>
+        <div class="mb-1 flex items-center justify-between text-xs text-slate-500"><span>Level: <b id="stLevel" class="text-purple-700">Novice</b></span><span><span id="stXPcur">0</span>/<span id="stXPnext">100</span> to <span id="stNextLevel">Apprentice</span></span></div>
+        <div class="bg-slate-100 rounded-full h-2.5 overflow-hidden mb-4"><div id="xpBar" class="xp-bar-fill h-full rounded-full" style="width:0%"></div></div>
+        <p class="text-xs font-semibold text-slate-500 mb-2">XP · last 7 days</p>
+        <div class="h-24 mb-4"><canvas id="xpChart"></canvas></div>
+        <p class="text-xs font-semibold text-slate-500 mb-2">🎖️ Badges <span id="badgeCount" class="text-slate-400 font-normal"></span></p>
+        <div id="badgeGrid" class="grid grid-cols-3 gap-2"></div>
+      </div>
     </div>
 
-    <!-- RIGHT: generate + quizzes + player -->
+    <!-- RIGHT -->
     <div class="lg:col-span-3 space-y-5">
       <div id="genPanel" class="card p-5 hidden">
         <h3 class="font-display font-bold text-lg mb-1 flex items-center gap-2">⚙️ Generate from: <span id="genDocName" class="gradient-text"></span></h3>
-        <p class="text-xs text-slate-500 mb-3">AI builds questions grounded in this material.</p>
+        <p class="text-xs text-slate-500 mb-3">AI builds questions, papers &amp; flashcards grounded in this material.</p>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Type</label>
             <select id="genType" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
-              <option value="quiz">MCQ Quiz</option>
-              <option value="paper">Exam Paper</option>
+              <option value="quiz">❓ MCQ Quiz</option>
+              <option value="flashcards">🃏 Flashcards</option>
+              <option value="paper">📄 Exam Paper</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Count</label>
             <select id="genCount" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
-              <option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option>
+              <option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option><option>30</option>
             </select>
           </div>
           <div>
@@ -115,7 +149,7 @@
       </div>
 
       <div class="card p-5">
-        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">🧠 Your quizzes &amp; papers</h3>
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">🧠 Your study sets</h3>
         <div id="quizList" class="space-y-2 text-sm"></div>
       </div>
 
@@ -128,7 +162,7 @@
 <div id="keyModal" class="modal">
   <div class="card p-6 max-w-md w-full">
     <h3 class="font-display font-bold text-xl mb-1">🔑 AI key</h3>
-    <p class="text-sm text-slate-500 mb-4">Generation needs an AI key. If your project already has a server key it's used automatically — otherwise paste one here. It's stored <b>only in this browser</b>.</p>
+    <p class="text-sm text-slate-500 mb-4">Generation needs an AI key. If your project has a server key it's used automatically — otherwise paste one here. Stored <b>only in this browser</b>.</p>
     <label class="block text-xs font-semibold text-slate-600 mb-1">Provider</label>
     <select id="keyProvider" class="w-full mb-3 px-3 py-2 rounded-xl border-2 border-purple-100 text-sm">
       <option value="gemini">Google Gemini (free tier)</option>
@@ -164,21 +198,95 @@ const DB = {
   key(){ try{ return JSON.parse(localStorage.getItem("sf_aikey")||"null"); }catch(_){ return null; } },
   setKey(o){ localStorage.setItem("sf_aikey", JSON.stringify(o)); },
   clearKey(){ localStorage.removeItem("sf_aikey"); },
+  game(){ try{ return Object.assign(defaultGame(), JSON.parse(localStorage.getItem("sf_game")||"{}")); }catch(_){ return defaultGame(); } },
+  saveGame(g){ localStorage.setItem("sf_game", JSON.stringify(g)); },
 };
+function defaultGame(){ return { xp:0, streak:0, longest:0, lastDay:null, badges:[], stats:{gens:0,quizzes:0,cards:0,papers:0,flashsets:0}, hist:{} }; }
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
 // ---------- HELPERS ----------
 const $ = id => document.getElementById(id);
 const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function toast(msg){ const t=$("toast"); t.firstElementChild.textContent=msg; t.classList.remove("hidden"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.add("hidden"),3200); }
+const dayKey = (d=new Date()) => d.toISOString().slice(0,10);
 
-let pendingText = "";        // staged extracted text
-let selectedDoc = null;      // {id,title}
+let pendingText = "";
+let selectedDoc = null;
+
+// ---------- GAMIFICATION ----------
+const LEVELS = [ {xp:0,name:"Novice"}, {xp:100,name:"Apprentice"}, {xp:300,name:"Scholar"}, {xp:700,name:"Sage"}, {xp:1500,name:"Master"}, {xp:3000,name:"Grandmaster"} ];
+function levelInfo(xp){
+  let cur=LEVELS[0], next=null;
+  for(let i=0;i<LEVELS.length;i++){ if(xp>=LEVELS[i].xp){ cur=LEVELS[i]; next=LEVELS[i+1]||null; } }
+  const span = next ? next.xp-cur.xp : 1;
+  const into = xp-cur.xp;
+  return { name:cur.name, next:next?next.name:"Max", curBase:cur.xp, nextAt:next?next.xp:cur.xp, pct: next?Math.min(100,Math.round(into/span*100)):100, into, span };
+}
+const BADGES = [
+  {code:"first_gen",   emoji:"🌱", label:"First Forge",  test:g=>g.stats.gens>=1},
+  {code:"flash_starter",emoji:"🃏", label:"Card Maker",  test:g=>g.stats.flashsets>=1},
+  {code:"paper_maker", emoji:"📄", label:"Examiner",    test:g=>g.stats.papers>=1},
+  {code:"perfect_quiz",emoji:"💯", label:"Flawless",    test:g=>g._perfect},
+  {code:"ten_quizzes", emoji:"🎯", label:"Quiz Veteran",test:g=>g.stats.quizzes>=10},
+  {code:"cards_50",    emoji:"🧠", label:"Memory Bank", test:g=>g.stats.cards>=50},
+  {code:"streak_3",    emoji:"🔥", label:"On a Roll",   test:g=>g.longest>=3},
+  {code:"streak_7",    emoji:"⚡", label:"Unstoppable", test:g=>g.longest>=7},
+  {code:"xp_500",      emoji:"⭐", label:"Rising Star", test:g=>g.xp>=500},
+];
+function touchStreak(g){
+  const t=dayKey();
+  if(g.lastDay===t) return;
+  const y=dayKey(new Date(Date.now()-86400000));
+  g.streak = (g.lastDay===y) ? (g.streak+1) : 1;
+  g.lastDay=t; g.longest=Math.max(g.longest||0,g.streak);
+}
+function addXP(n, opts={}){
+  const g=DB.game();
+  g.xp += n; touchStreak(g);
+  g.hist[dayKey()] = (g.hist[dayKey()]||0) + n;
+  Object.assign(g.stats, opts.stats ? mergeStats(g.stats, opts.stats) : g.stats);
+  if(opts.perfect) g._perfect=true;
+  const before = g.badges.slice();
+  for(const b of BADGES){ if(!g.badges.includes(b.code) && b.test(g)){ g.badges.push(b.code); setTimeout(()=>toast(b.emoji+" Badge: "+b.label),300); } }
+  delete g._perfect;
+  DB.saveGame(g);
+  renderHeaderStats(); renderStats();
+  if(opts.xpToast!==false && n>0) toast("+"+n+" XP");
+}
+function mergeStats(a,b){ const o=Object.assign({},a); for(const k in b) o[k]=(o[k]||0)+b[k]; return o; }
+function bumpStat(stats){ const g=DB.game(); g.stats=mergeStats(g.stats,stats); DB.saveGame(g); renderStats(); }
+
+function renderHeaderStats(){
+  const g=DB.game(), li=levelInfo(g.xp);
+  $("hdrXP").textContent = g.xp.toLocaleString()+" XP";
+  $("hdrStreak").textContent = g.streak;
+  $("hdrLevel").textContent = li.name;
+}
+let xpChart=null;
+function renderStats(){
+  const g=DB.game(), li=levelInfo(g.xp);
+  $("stGens").textContent=g.stats.gens; $("stQuizzes").textContent=g.stats.quizzes;
+  $("stCards").textContent=g.stats.cards; $("stXP").textContent=g.xp.toLocaleString();
+  $("stLevel").textContent=li.name; $("stNextLevel").textContent=li.next;
+  $("stXPcur").textContent=li.into; $("stXPnext").textContent=li.span; $("xpBar").style.width=li.pct+"%";
+  $("badgeCount").textContent="("+g.badges.length+"/"+BADGES.length+")";
+  $("badgeGrid").innerHTML = BADGES.map(b=>{
+    const has=g.badges.includes(b.code);
+    return `<div class="text-center ${has?'':'badge-locked'}" title="${esc(b.label)}"><div class="text-2xl">${b.emoji}</div><div class="text-[10px] text-slate-500 leading-tight">${esc(b.label)}</div></div>`;
+  }).join("");
+  // 7-day XP chart
+  const labels=[], data=[];
+  for(let i=6;i>=0;i--){ const d=new Date(Date.now()-i*86400000); labels.push(d.toLocaleDateString(undefined,{weekday:'short'})); data.push(g.hist[dayKey(d)]||0); }
+  const ctx=$("xpChart");
+  if(xpChart) xpChart.destroy();
+  xpChart=new Chart(ctx,{ type:'bar', data:{ labels, datasets:[{ data, backgroundColor:'#c084fc', borderRadius:6 }] },
+    options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{font:{size:10}}}, y:{display:false,beginAtZero:true} }, maintainAspectRatio:false } });
+}
 
 // ---------- AI KEY MODAL ----------
 function openKeyModal(){ const k=DB.key(); if(k){ $("keyProvider").value=k.provider; $("keyInput").value=""; $("keyMsg").textContent="A "+k.provider+" key is saved in this browser."; } else { $("keyMsg").textContent=""; } $("keyModal").classList.add("open"); }
 function closeKeyModal(){ $("keyModal").classList.remove("open"); }
-function saveKey(){ const provider=$("keyProvider").value, key=$("keyInput").value.trim(); if(!key){ $("keyMsg").textContent="Paste a key first."; return; } DB.setKey({provider,key}); $("keyMsg").textContent="Saved ✅"; toast("AI key saved in this browser"); setTimeout(closeKeyModal,500); }
+function saveKey(){ const provider=$("keyProvider").value, key=$("keyInput").value.trim(); if(!key){ $("keyMsg").textContent="Paste a key first."; return; } DB.setKey({provider,key}); $("keyMsg").textContent="Saved ✅"; toast("AI key saved"); setTimeout(closeKeyModal,500); }
 function clearKey(){ DB.clearKey(); $("keyInput").value=""; $("keyMsg").textContent="Cleared."; toast("AI key cleared"); }
 
 // ---------- FILE / TEXT EXTRACTION ----------
@@ -213,7 +321,7 @@ function saveDoc(){
   const title=$("docTitle").value.trim();
   let text = pendingText;
   const preview=$("pasteBox").value.trim();
-  if(preview && !preview.includes("…(truncated in preview")) text = preview;   // user typed/edited directly
+  if(preview && !preview.includes("…(truncated in preview")) text = preview;
   if(!title){ toast("Add a title first."); return; }
   if((text||"").trim().length<40){ toast("Need a bit more text (40+ chars)."); return; }
   const docs=DB.docs();
@@ -253,60 +361,58 @@ async function generate(){
   if(!selectedDoc) return;
   const doc = DB.docs().find(x=>x.id===selectedDoc.id); if(!doc){ toast("Material not found."); return; }
   const type=$("genType").value, count=+$("genCount").value, difficulty=$("genDiff").value;
-  const msg=$("genMsg"); msg.className="text-sm text-slate-500"; msg.innerHTML='<span class="spin"></span> Generating '+count+' '+(type==="paper"?"paper questions":"quiz questions")+'… (~10–25s)';
+  const noun = type==="paper"?"paper questions":type==="flashcards"?"flashcards":"quiz questions";
+  const msg=$("genMsg"); msg.className="text-sm text-slate-500"; msg.innerHTML='<span class="spin"></span> Generating '+count+' '+noun+'… (~10–25s)';
   $("genBtn").disabled=true;
   try{
     const out = await callGenerate({ title:doc.title, text:doc.content, type, count, difficulty, qtypes:["mcq"] });
     const quizzes=DB.quizzes();
     quizzes.unshift({ id:uid(), doc_id:doc.id, title:out.title, type, difficulty, provider:out.provider, model:out.model, questions:out.questions, created_at:Date.now(), best:null });
     DB.saveQuizzes(quizzes);
-    msg.className="text-sm text-green-600"; msg.textContent='✅ Created "'+out.title+'" ('+out.questions.length+' Qs · '+out.provider+')';
+    msg.className="text-sm text-green-600"; msg.textContent='✅ Created "'+out.title+'" ('+out.questions.length+' · '+out.provider+')';
+    addXP(10, { stats:{ gens:1, papers:type==="paper"?1:0, flashsets:type==="flashcards"?1:0 } });
     renderQuizzes();
   }catch(e){
     if(String(e.message).includes("NO_PROVIDER")){
-      msg.className="text-sm text-amber-600"; msg.innerHTML='No AI key found on the server. Click <b>🔑 AI key</b> (top right) and paste a Gemini key, then Generate again.';
+      msg.className="text-sm text-amber-600"; msg.innerHTML='No AI key found. Click <b>🔑</b> (top right) and paste a Gemini key, then Generate again.';
       openKeyModal();
+    } else if(String(e.message).includes("QUOTA")){
+      msg.className="text-sm text-amber-600"; msg.textContent="⏳ Gemini free-tier rate limit hit. Wait ~60s and click Generate once.";
     } else { msg.className="text-sm text-red-500"; msg.innerHTML="⚠️ "+esc(e.message); }
   }finally{ $("genBtn").disabled=false; }
 }
 async function callGenerate(payload){
   const k=DB.key();
   if(k){ payload.apiKey=k.key; payload.provider=k.provider; }
-  const res = await fetch(FN_URL, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON, "Authorization":"Bearer "+SUPABASE_ANON },
-    body: JSON.stringify(payload),
-  });
+  const res = await fetch(FN_URL, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON, "Authorization":"Bearer "+SUPABASE_ANON }, body: JSON.stringify(payload) });
   const data = await res.json().catch(()=>({error:"Bad response from server"}));
   if(!res.ok || data.error) throw new Error(data.error || ("HTTP "+res.status));
   return data;
 }
 
-// ---------- QUIZ LIST ----------
+// ---------- STUDY SET LIST ----------
+function typeMeta(t){ return t==="paper"?{i:"📄",n:"Paper"}:t==="flashcards"?{i:"🃏",n:"Flashcards"}:{i:"❓",n:"Quiz"}; }
 function renderQuizzes(){
   const qs=DB.quizzes(), box=$("quizList");
   if(!qs.length){ box.innerHTML='<p class="text-slate-400">None yet — add material and generate one.</p>'; return; }
-  box.innerHTML = qs.map(q=>`
+  box.innerHTML = qs.map(q=>{ const m=typeMeta(q.type); return `
     <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-purple-100 bg-white">
       <div class="min-w-0">
         <div class="font-semibold truncate">${esc(q.title)}</div>
-        <div class="text-xs text-slate-400">${q.type==="paper"?"📄 Paper":"❓ Quiz"} · ${q.difficulty} · ${q.questions.length} Qs${q.provider?" · "+esc(q.provider):""}${q.best!=null?' · best '+q.best:''}</div>
+        <div class="text-xs text-slate-400">${m.i} ${m.n} · ${q.difficulty} · ${q.questions.length} ${q.type==="flashcards"?"cards":"Qs"}${q.provider?" · "+esc(q.provider):""}${q.best!=null?' · best '+q.best+'%':''}</div>
       </div>
       <div class="flex items-center gap-1 whitespace-nowrap">
-        <button onclick='openQuiz(${JSON.stringify(q.id)})' class="btn btn-primary text-xs px-3 py-1.5 rounded-lg font-semibold">Open ›</button>
+        <button onclick='openSet(${JSON.stringify(q.id)})' class="btn btn-primary text-xs px-3 py-1.5 rounded-lg font-semibold">Open ›</button>
         <button onclick='delQuiz(${JSON.stringify(q.id)})' title="Delete" class="text-slate-300 hover:text-red-500 px-1">✕</button>
       </div>
-    </div>`).join("");
+    </div>`; }).join("");
 }
-function delQuiz(id){ if(!confirm("Delete this quiz?"))return; DB.saveQuizzes(DB.quizzes().filter(x=>x.id!==id)); renderQuizzes(); $("playerCard").classList.add("hidden"); }
+function delQuiz(id){ if(!confirm("Delete this set?"))return; DB.saveQuizzes(DB.quizzes().filter(x=>x.id!==id)); renderQuizzes(); $("playerCard").classList.add("hidden"); }
+function openSet(id){ const q=DB.quizzes().find(x=>x.id===id); if(!q) return; if(q.type==="flashcards") openDeck(q); else openQuiz(q); }
 
-// ---------- PLAYER ----------
-let current = null; // {quiz, answers:{}, graded:false, score, max}
-function openQuiz(id){
-  const quiz=DB.quizzes().find(x=>x.id===id); if(!quiz) return;
-  current={ quiz, answers:{}, graded:false };
-  renderPlayer(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"});
-}
+// ---------- QUIZ / PAPER PLAYER ----------
+let current = null;
+function openQuiz(quiz){ current={ quiz, answers:{}, graded:false }; renderPlayer(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"}); }
 function renderPlayer(){
   const c=current, isPaper=c.quiz.type==="paper", card=$("playerCard");
   card.classList.remove("hidden");
@@ -319,35 +425,25 @@ function renderPlayer(){
     html += `<div class="mb-5 pb-4 border-b border-purple-50">
       <div class="flex gap-2 mb-2"><span class="font-bold text-purple-600">Q${i+1}.</span>
       <span class="font-medium">${esc(q.prompt)}</span>
-      ${q.marks?`<span class="ml-auto text-xs text-slate-400 whitespace-nowrap">${q.marks} mk${q.marks>1?"s":""}</span>`:""}</div>`;
+      ${q.marks&&isPaper?`<span class="ml-auto text-xs text-slate-400 whitespace-nowrap">${q.marks} mk${q.marks>1?"s":""}</span>`:""}</div>`;
     if(q.qtype==="mcq" || q.qtype==="truefalse"){
       (q.options||[]).forEach(opt=>{
         const chosen=c.answers[qid]===opt;
         let cls="opt border-2 border-purple-100 rounded-xl px-3 py-2 mb-1.5 "+(chosen?"chosen":"");
-        if(c.graded){
-          if(opt===q.answer) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 correct";
-          else if(chosen) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 wrong";
-          else cls="opt border-2 border-purple-100 rounded-xl px-3 py-2 mb-1.5 opacity-70";
-        }
+        if(c.graded){ if(opt===q.answer) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 correct"; else if(chosen) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 wrong"; else cls="opt border-2 border-purple-100 rounded-xl px-3 py-2 mb-1.5 opacity-70"; }
         html += `<div class="${cls}" ${c.graded?"":`onclick='pickMcq(${JSON.stringify(qid)},${JSON.stringify(opt)})'`}>${esc(opt)}</div>`;
       });
     } else {
       html += `<textarea ${c.graded?"readonly":""} oninput='setText(${JSON.stringify(qid)}, this.value)' rows="3" class="w-full px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Your answer…">${esc(c.answers[qid]||"")}</textarea>`;
     }
     if(c.graded && (q.answer||q.explanation)){
-      html += `<div class="mt-2 text-sm bg-purple-50 rounded-xl p-3">
-        ${q.answer?`<div><span class="font-semibold text-purple-700">Answer:</span> ${esc(q.answer)}</div>`:""}
-        ${q.explanation?`<div class="text-slate-600 mt-1">${esc(q.explanation)}</div>`:""}</div>`;
+      html += `<div class="mt-2 text-sm bg-purple-50 rounded-xl p-3">${q.answer?`<div><span class="font-semibold text-purple-700">Answer:</span> ${esc(q.answer)}</div>`:""}${q.explanation?`<div class="text-slate-600 mt-1">${esc(q.explanation)}</div>`:""}</div>`;
     }
     html += `</div>`;
   });
   const hasAuto=c.quiz.questions.some(q=>q.qtype==="mcq"||q.qtype==="truefalse");
-  if(!c.graded){
-    html += `<button onclick='submitQuiz()' class="btn btn-primary px-5 py-2.5 rounded-xl font-semibold">${hasAuto?"Submit &amp; grade":"Reveal answers"}</button>`;
-  } else {
-    if(hasAuto) html += `<div class="font-display text-2xl font-bold gradient-text mb-3">Score: ${c.score} / ${c.max}</div>`;
-    html += `<button onclick='retake()' class="btn btn-dark px-5 py-2.5 rounded-xl font-semibold">Retake</button>`;
-  }
+  if(!c.graded){ html += `<button onclick='submitQuiz()' class="btn btn-primary px-5 py-2.5 rounded-xl font-semibold">${hasAuto?"Submit &amp; grade":"Reveal answers"}</button>`; }
+  else { if(hasAuto) html += `<div class="font-display text-2xl font-bold gradient-text mb-3">Score: ${c.score} / ${c.max}</div>`; html += `<button onclick='retake()' class="btn btn-dark px-5 py-2.5 rounded-xl font-semibold">Retake</button>`; }
   card.innerHTML = html;
 }
 function pickMcq(qid,val){ current.answers[qid]=val; if(!current.graded) renderPlayer(); }
@@ -356,13 +452,68 @@ function submitQuiz(){
   const c=current; let score=0, max=0;
   c.quiz.questions.forEach((q,i)=>{ if(q.qtype==="mcq"||q.qtype==="truefalse"){ const m=q.marks||1; max+=m; if(c.answers["q"+i]===q.answer) score+=m; } });
   c.graded=true; c.score=score; c.max=max; renderPlayer();
-  if(max>0){ const arr=DB.quizzes(); const idx=arr.findIndex(x=>x.id===c.quiz.id); if(idx>=0){ const pct=Math.round(score/max*100); arr[idx].best = arr[idx].best==null?pct:Math.max(arr[idx].best,pct); DB.saveQuizzes(arr); renderQuizzes(); } }
+  if(max>0){
+    const arr=DB.quizzes(); const idx=arr.findIndex(x=>x.id===c.quiz.id);
+    const pct=Math.round(score/max*100);
+    if(idx>=0){ arr[idx].best = arr[idx].best==null?pct:Math.max(arr[idx].best,pct); DB.saveQuizzes(arr); }
+    addXP(score*5 + 5, { stats:{ quizzes:1 }, perfect: pct===100, xpToast:true });
+    renderQuizzes();
+    if(pct===100) setTimeout(()=>toast("💯 Perfect score!"),200);
+  } else { addXP(5, { stats:{ quizzes:1 } }); }
 }
 function retake(){ current.answers={}; current.graded=false; renderPlayer(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"}); }
 function closePlayer(){ $("playerCard").classList.add("hidden"); }
 
+// ---------- FLASHCARD DECK ----------
+let deck = null; // { quiz, queue:[idx...], pos, flipped, tally:{got,hard,again} }
+function openDeck(quiz){
+  deck={ quiz, queue: quiz.questions.map((_,i)=>i), pos:0, flipped:false, tally:{got:0,hard:0,again:0}, reviewed:0 };
+  renderDeck(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderDeck(){
+  const d=deck, card=$("playerCard"); card.classList.remove("hidden");
+  const total=d.quiz.questions.length;
+  if(d.pos>=d.queue.length){
+    card.innerHTML = `<div class="text-center py-6">
+      <div class="text-5xl mb-2">🎉</div>
+      <h3 class="font-display font-bold text-2xl mb-1">Deck cleared!</h3>
+      <p class="text-slate-500 mb-4">✅ Got it: ${d.tally.got} · 🤔 Hard: ${d.tally.hard} · 😵 Again: ${d.tally.again}</p>
+      <button onclick='openDeck(DB.quizzes().find(x=>x.id===${JSON.stringify(d.quiz.id)}))' class="btn btn-primary px-5 py-2.5 rounded-xl font-semibold mr-2">Study again</button>
+      <button onclick='closePlayer()' class="btn bg-slate-100 hover:bg-slate-200 px-5 py-2.5 rounded-xl font-semibold">Done</button>
+    </div>`;
+    return;
+  }
+  const q=d.quiz.questions[d.queue[d.pos]];
+  card.innerHTML = `
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <div><h3 class="font-display font-bold text-xl">${esc(d.quiz.title)}</h3>
+      <p class="text-xs text-slate-400">🃏 Flashcards · card ${d.pos+1} of ${d.queue.length}</p></div>
+      <button onclick='closePlayer()' class="text-slate-400 hover:text-slate-700 text-sm">✕ close</button>
+    </div>
+    <div class="flash ${d.flipped?'flipped':''}" onclick='flipCard()' style="height:220px; cursor:pointer;">
+      <div class="flash-inner" style="height:100%;">
+        <div class="flash-face card" style="border-color:rgba(168,85,247,.25);"><div><div class="text-[11px] uppercase tracking-wide text-purple-400 mb-2">Front · tap to flip</div><div class="font-display font-semibold text-xl">${esc(q.prompt)}</div></div></div>
+        <div class="flash-face flash-back" style="background:linear-gradient(135deg,#a855f7,#ec4899); color:#fff; border:none;"><div><div class="text-[11px] uppercase tracking-wide opacity-80 mb-2">Back</div><div class="font-medium text-lg">${esc(q.answer||'—')}</div>${q.explanation?`<div class="text-sm opacity-90 mt-2">${esc(q.explanation)}</div>`:""}</div></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2 mt-4">
+      <button onclick='rateCard("again")' class="btn bg-red-100 text-red-700 hover:bg-red-200 py-2.5 rounded-xl font-semibold text-sm">😵 Again</button>
+      <button onclick='rateCard("hard")' class="btn bg-amber-100 text-amber-700 hover:bg-amber-200 py-2.5 rounded-xl font-semibold text-sm">🤔 Hard</button>
+      <button onclick='rateCard("got")' class="btn bg-green-100 text-green-700 hover:bg-green-200 py-2.5 rounded-xl font-semibold text-sm">✅ Got it</button>
+    </div>
+    <p class="text-xs text-slate-400 mt-2 text-center">Flip the card, then rate how well you knew it.</p>`;
+}
+function flipCard(){ deck.flipped=!deck.flipped; renderDeck(); }
+function rateCard(grade){
+  const d=deck;
+  d.tally[grade]++; d.reviewed++;
+  if(grade==="again"){ d.queue.push(d.queue[d.pos]); }      // re-queue at end
+  addXP(grade==="got"?2:grade==="hard"?1:0, { stats:{ cards:1 }, xpToast:false });
+  d.pos++; d.flipped=false; renderDeck();
+}
+
 // ---------- BOOT ----------
-renderDocs(); renderQuizzes();
+renderHeaderStats(); renderStats(); renderDocs(); renderQuizzes();
 </script>
 </body>
 </html>
