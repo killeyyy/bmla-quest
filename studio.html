@@ -7,7 +7,6 @@
 <title>StudyForge — Upload. Generate. Master.</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   body { font-family:'Inter',system-ui,sans-serif; background:
@@ -30,6 +29,8 @@
   .spin { width:18px;height:18px;border:3px solid #f3e8ff;border-top-color:#a855f7;border-radius:50%;display:inline-block;animation:r .8s linear infinite;vertical-align:-3px;}
   @keyframes r { to { transform:rotate(360deg);} }
   .toast { position:fixed; left:50%; bottom:1.2rem; transform:translateX(-50%); z-index:90; }
+  .modal { position:fixed; inset:0; z-index:80; background:rgba(15,23,42,.45); display:none; align-items:center; justify-content:center; padding:1rem; }
+  .modal.open { display:flex; }
 </style>
 </head>
 <body class="text-slate-800">
@@ -45,155 +46,140 @@
     </div>
     <div class="flex items-center gap-2 text-sm">
       <a href="./" class="text-slate-500 hover:text-purple-600 px-2">← BMLA Quest</a>
-      <span id="userChip" class="hidden items-center gap-2 bg-white border-2 border-purple-300 text-purple-700 px-3 py-1.5 rounded-full font-semibold"></span>
-      <button id="logoutBtn" onclick="logout()" class="hidden btn text-xs text-slate-400 hover:text-red-500">log out</button>
+      <button onclick="openKeyModal()" class="btn bg-white border-2 border-purple-200 text-purple-700 px-3 py-1.5 rounded-full font-semibold hover:border-purple-400">🔑 AI key</button>
     </div>
   </div>
 </header>
 
+<div class="max-w-6xl mx-auto px-4 pt-4">
+  <div class="card p-3 flex items-center gap-3 text-sm bg-amber-50/70 border-amber-200">
+    <span class="text-lg">🧪</span>
+    <p class="text-slate-600"><b>Demo mode — no login.</b> Your library &amp; quizzes are saved in this browser. Logins &amp; cross-device sync are coming next.</p>
+  </div>
+</div>
+
 <main class="max-w-6xl mx-auto px-4 py-6">
+  <div class="grid lg:grid-cols-5 gap-5">
 
-  <!-- ===== AUTH VIEW ===== -->
-  <section id="authView" class="hidden max-w-md mx-auto">
-    <div class="card p-7 mt-6">
-      <h2 class="font-display font-bold text-2xl mb-1" id="authTitle">Welcome back</h2>
-      <p class="text-sm text-slate-500 mb-5" id="authSub">Log in to your study workspace.</p>
-      <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-      <input id="email" type="email" autocomplete="email" class="w-full mb-3 px-3 py-2.5 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none" placeholder="you@example.com">
-      <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
-      <input id="password" type="password" autocomplete="current-password" class="w-full mb-4 px-3 py-2.5 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none" placeholder="••••••••">
-      <button id="authBtn" onclick="doAuth()" class="btn btn-primary w-full py-2.5 rounded-xl font-semibold">Log in</button>
-      <p class="text-sm text-slate-500 mt-4 text-center">
-        <span id="authSwitchText">New here?</span>
-        <button onclick="toggleAuthMode()" id="authSwitchBtn" class="text-purple-600 font-semibold hover:underline">Create an account</button>
-      </p>
-      <p id="authMsg" class="text-sm mt-3 text-center"></p>
-    </div>
-    <p class="text-xs text-slate-400 text-center mt-4">Your uploads and quizzes are private to your account.</p>
-  </section>
-
-  <!-- ===== APP VIEW ===== -->
-  <section id="appView" class="hidden">
-    <div class="grid lg:grid-cols-5 gap-5">
-
-      <!-- LEFT: upload + library -->
-      <div class="lg:col-span-2 space-y-5">
-        <div class="card p-5">
-          <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📤 Add study material</h3>
-          <input id="docTitle" class="w-full mb-2 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Title (e.g. Linear Algebra Ch.5)">
-          <div class="flex gap-2 mb-2">
-            <label class="btn btn-dark flex-1 text-center py-2 rounded-xl text-sm font-semibold cursor-pointer">
-              📎 Choose PDF / text
-              <input id="fileInput" type="file" accept=".pdf,.txt,.md,text/plain" class="hidden" onchange="onFile(event)">
-            </label>
-          </div>
-          <p class="text-xs text-slate-400 mb-2 text-center">…or paste text below</p>
-          <textarea id="pasteBox" rows="4" class="w-full mb-2 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Paste notes, a chapter, definitions…"></textarea>
-          <div id="extractInfo" class="text-xs text-slate-500 mb-2"></div>
-          <button onclick="saveDoc()" id="saveDocBtn" class="btn btn-primary w-full py-2 rounded-xl font-semibold text-sm">Save material</button>
-        </div>
-
-        <div class="card p-5">
-          <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📚 Your library</h3>
-          <div id="docList" class="space-y-2 text-sm"><p class="text-slate-400">Loading…</p></div>
-        </div>
+    <!-- LEFT: upload + library -->
+    <div class="lg:col-span-2 space-y-5">
+      <div class="card p-5">
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📤 Add study material</h3>
+        <input id="docTitle" class="w-full mb-2 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Title (e.g. Linear Algebra Ch.5)">
+        <label class="btn btn-dark w-full text-center py-2 rounded-xl text-sm font-semibold cursor-pointer block mb-2">
+          📎 Choose PDF / text file
+          <input id="fileInput" type="file" accept=".pdf,.txt,.md,text/plain" class="hidden" onchange="onFile(event)">
+        </label>
+        <p class="text-xs text-slate-400 mb-2 text-center">…or paste text below</p>
+        <textarea id="pasteBox" rows="4" class="w-full mb-2 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Paste notes, a chapter, definitions…"></textarea>
+        <div id="extractInfo" class="text-xs text-slate-500 mb-2"></div>
+        <button onclick="saveDoc()" id="saveDocBtn" class="btn btn-primary w-full py-2 rounded-xl font-semibold text-sm">Save material</button>
       </div>
 
-      <!-- RIGHT: generate + quizzes + player -->
-      <div class="lg:col-span-3 space-y-5">
-
-        <div id="genPanel" class="card p-5 hidden">
-          <h3 class="font-display font-bold text-lg mb-1 flex items-center gap-2">⚙️ Generate from: <span id="genDocName" class="gradient-text"></span></h3>
-          <p class="text-xs text-slate-500 mb-3">AI builds questions grounded in this material.</p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Type</label>
-              <select id="genType" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
-                <option value="quiz">MCQ Quiz</option>
-                <option value="paper">Exam Paper</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Count</label>
-              <select id="genCount" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
-                <option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Difficulty</label>
-              <select id="genDiff" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
-                <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
-              </select>
-            </div>
-            <div class="flex items-end">
-              <button onclick="generate()" id="genBtn" class="btn btn-primary w-full py-2 rounded-xl font-semibold text-sm">✨ Generate</button>
-            </div>
-          </div>
-          <p id="genMsg" class="text-sm"></p>
-        </div>
-
-        <div class="card p-5">
-          <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">🧠 Your quizzes &amp; papers</h3>
-          <div id="quizList" class="space-y-2 text-sm"><p class="text-slate-400">None yet — add material and generate one.</p></div>
-        </div>
-
-        <div id="playerCard" class="card p-5 hidden"></div>
+      <div class="card p-5">
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">📚 Your library</h3>
+        <div id="docList" class="space-y-2 text-sm"></div>
       </div>
     </div>
-  </section>
+
+    <!-- RIGHT: generate + quizzes + player -->
+    <div class="lg:col-span-3 space-y-5">
+      <div id="genPanel" class="card p-5 hidden">
+        <h3 class="font-display font-bold text-lg mb-1 flex items-center gap-2">⚙️ Generate from: <span id="genDocName" class="gradient-text"></span></h3>
+        <p class="text-xs text-slate-500 mb-3">AI builds questions grounded in this material.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Type</label>
+            <select id="genType" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
+              <option value="quiz">MCQ Quiz</option>
+              <option value="paper">Exam Paper</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Count</label>
+            <select id="genCount" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
+              <option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Difficulty</label>
+            <select id="genDiff" class="w-full px-2 py-2 rounded-xl border-2 border-purple-100 text-sm">
+              <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button onclick="generate()" id="genBtn" class="btn btn-primary w-full py-2 rounded-xl font-semibold text-sm">✨ Generate</button>
+          </div>
+        </div>
+        <p id="genMsg" class="text-sm"></p>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">🧠 Your quizzes &amp; papers</h3>
+        <div id="quizList" class="space-y-2 text-sm"></div>
+      </div>
+
+      <div id="playerCard" class="card p-5 hidden"></div>
+    </div>
+  </div>
 </main>
+
+<!-- AI KEY MODAL -->
+<div id="keyModal" class="modal">
+  <div class="card p-6 max-w-md w-full">
+    <h3 class="font-display font-bold text-xl mb-1">🔑 AI key</h3>
+    <p class="text-sm text-slate-500 mb-4">Generation needs an AI key. If your project already has a server key it's used automatically — otherwise paste one here. It's stored <b>only in this browser</b>.</p>
+    <label class="block text-xs font-semibold text-slate-600 mb-1">Provider</label>
+    <select id="keyProvider" class="w-full mb-3 px-3 py-2 rounded-xl border-2 border-purple-100 text-sm">
+      <option value="gemini">Google Gemini (free tier)</option>
+      <option value="openai">OpenAI</option>
+      <option value="anthropic">Anthropic (Claude)</option>
+    </select>
+    <label class="block text-xs font-semibold text-slate-600 mb-1">API key</label>
+    <input id="keyInput" type="password" class="w-full mb-2 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Paste your key (e.g. AIza… for Gemini)">
+    <p class="text-xs text-slate-400 mb-4">Gemini key: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-purple-600 underline">aistudio.google.com/app/apikey</a></p>
+    <div class="flex gap-2">
+      <button onclick="saveKey()" class="btn btn-primary flex-1 py-2 rounded-xl font-semibold text-sm">Save key</button>
+      <button onclick="clearKey()" class="btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold text-sm">Clear</button>
+      <button onclick="closeKeyModal()" class="btn bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl font-semibold text-sm">Close</button>
+    </div>
+    <p id="keyMsg" class="text-xs mt-3 text-slate-500"></p>
+  </div>
+</div>
 
 <div id="toast" class="toast hidden"><div class="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm shadow-lg"></div></div>
 
 <script>
 // ---------- CONFIG ----------
-const SUPABASE_URL = "https://vhqegknohwovdnrqworw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_9B3iH7kgxbWrzuXYOGnJ2A_xvzAhuZO";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const FN_URL = "https://vhqegknohwovdnrqworw.supabase.co/functions/v1/generate-demo";
+const SUPABASE_ANON = "sb_publishable_9B3iH7kgxbWrzuXYOGnJ2A_xvzAhuZO";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-let authMode = "login";       // 'login' | 'signup'
-let pendingText = "";          // extracted/pasted text staged for save
-let selectedDoc = null;        // {id,title}
-let session = null;
+// ---------- LOCAL STORE ----------
+const DB = {
+  docs(){ try{ return JSON.parse(localStorage.getItem("sf_docs")||"[]"); }catch(_){ return []; } },
+  quizzes(){ try{ return JSON.parse(localStorage.getItem("sf_quizzes")||"[]"); }catch(_){ return []; } },
+  saveDocs(a){ localStorage.setItem("sf_docs", JSON.stringify(a)); },
+  saveQuizzes(a){ localStorage.setItem("sf_quizzes", JSON.stringify(a)); },
+  key(){ try{ return JSON.parse(localStorage.getItem("sf_aikey")||"null"); }catch(_){ return null; } },
+  setKey(o){ localStorage.setItem("sf_aikey", JSON.stringify(o)); },
+  clearKey(){ localStorage.removeItem("sf_aikey"); },
+};
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
 // ---------- HELPERS ----------
 const $ = id => document.getElementById(id);
 const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function toast(msg){ const t=$("toast"); t.firstElementChild.textContent=msg; t.classList.remove("hidden"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.add("hidden"),3200); }
 
-// ---------- AUTH ----------
-function toggleAuthMode(){
-  authMode = authMode==="login" ? "signup" : "login";
-  const signup = authMode==="signup";
-  $("authTitle").textContent = signup ? "Create your account" : "Welcome back";
-  $("authSub").textContent   = signup ? "Start uploading and generating in seconds." : "Log in to your study workspace.";
-  $("authBtn").textContent   = signup ? "Sign up" : "Log in";
-  $("authSwitchText").textContent = signup ? "Already have an account?" : "New here?";
-  $("authSwitchBtn").textContent  = signup ? "Log in" : "Create an account";
-  $("password").autocomplete = signup ? "new-password" : "current-password";
-  $("authMsg").textContent = "";
-}
-async function doAuth(){
-  const email=$("email").value.trim(), password=$("password").value;
-  const msg=$("authMsg"); msg.className="text-sm mt-3 text-center text-slate-500";
-  if(!email || password.length<6){ msg.className="text-sm mt-3 text-center text-red-500"; msg.textContent="Enter an email and a password (6+ chars)."; return; }
-  $("authBtn").disabled=true; msg.innerHTML='<span class="spin"></span> Working…';
-  try{
-    if(authMode==="signup"){
-      const { data, error } = await sb.auth.signUp({ email, password });
-      if(error) throw error;
-      if(!data.session){ msg.className="text-sm mt-3 text-center text-amber-600"; msg.textContent="Account created. If email confirmation is on, check your inbox, then log in."; authMode="signup"; toggleAuthMode(); }
-      // if session exists, onAuthStateChange handles the rest
-    } else {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if(error) throw error;
-    }
-  }catch(e){
-    msg.className="text-sm mt-3 text-center text-red-500"; msg.textContent = e.message || "Authentication failed.";
-  }finally{ $("authBtn").disabled=false; }
-}
-async function logout(){ await sb.auth.signOut(); location.reload(); }
+let pendingText = "";        // staged extracted text
+let selectedDoc = null;      // {id,title}
+
+// ---------- AI KEY MODAL ----------
+function openKeyModal(){ const k=DB.key(); if(k){ $("keyProvider").value=k.provider; $("keyInput").value=""; $("keyMsg").textContent="A "+k.provider+" key is saved in this browser."; } else { $("keyMsg").textContent=""; } $("keyModal").classList.add("open"); }
+function closeKeyModal(){ $("keyModal").classList.remove("open"); }
+function saveKey(){ const provider=$("keyProvider").value, key=$("keyInput").value.trim(); if(!key){ $("keyMsg").textContent="Paste a key first."; return; } DB.setKey({provider,key}); $("keyMsg").textContent="Saved ✅"; toast("AI key saved in this browser"); setTimeout(closeKeyModal,500); }
+function clearKey(){ DB.clearKey(); $("keyInput").value=""; $("keyMsg").textContent="Cleared."; toast("AI key cleared"); }
 
 // ---------- FILE / TEXT EXTRACTION ----------
 async function onFile(ev){
@@ -201,16 +187,11 @@ async function onFile(ev){
   if(!$("docTitle").value.trim()) $("docTitle").value = file.name.replace(/\.[^.]+$/,"");
   $("extractInfo").innerHTML = '<span class="spin"></span> Reading '+esc(file.name)+'…';
   try{
-    if(file.type==="application/pdf" || file.name.toLowerCase().endsWith(".pdf")){
-      pendingText = await extractPdf(file);
-    } else {
-      pendingText = await file.text();
-    }
-    $("pasteBox").value = pendingText.slice(0, 20000) + (pendingText.length>20000 ? "\n…(truncated in preview)" : "");
+    if(file.type==="application/pdf" || file.name.toLowerCase().endsWith(".pdf")) pendingText = await extractPdf(file);
+    else pendingText = await file.text();
+    $("pasteBox").value = pendingText.slice(0, 20000) + (pendingText.length>20000 ? "\n…(truncated in preview — full text is saved)" : "");
     $("extractInfo").innerHTML = "✅ Extracted <b>"+pendingText.length.toLocaleString()+"</b> characters.";
-  }catch(e){
-    $("extractInfo").innerHTML = '<span class="text-red-500">Could not read that file: '+esc(e.message)+'</span>';
-  }
+  }catch(e){ $("extractInfo").innerHTML = '<span class="text-red-500">Could not read that file: '+esc(e.message)+'</span>'; }
 }
 async function extractPdf(file){
   const buf = await file.arrayBuffer();
@@ -228,85 +209,88 @@ async function extractPdf(file){
 }
 
 // ---------- DOCUMENTS ----------
-async function saveDoc(){
+function saveDoc(){
   const title=$("docTitle").value.trim();
-  let text = pendingText || $("pasteBox").value.trim();
-  if($("pasteBox").value.trim() && !$("pasteBox").value.includes("…(truncated in preview)")) text = $("pasteBox").value.trim();
+  let text = pendingText;
+  const preview=$("pasteBox").value.trim();
+  if(preview && !preview.includes("…(truncated in preview")) text = preview;   // user typed/edited directly
   if(!title){ toast("Add a title first."); return; }
-  if(text.trim().length<40){ toast("Need a bit more text (40+ chars)."); return; }
-  const kind = text.length>8000 ? "book" : "notes";
-  $("saveDocBtn").disabled=true; $("saveDocBtn").innerHTML='<span class="spin"></span> Saving…';
-  const { error } = await sb.from("documents").insert({ title, kind, content:text.slice(0,500000), char_count:text.length });
-  $("saveDocBtn").disabled=false; $("saveDocBtn").textContent="Save material";
-  if(error){ toast("Save failed: "+error.message); return; }
+  if((text||"").trim().length<40){ toast("Need a bit more text (40+ chars)."); return; }
+  const docs=DB.docs();
+  docs.unshift({ id:uid(), title, kind:text.length>8000?"book":"notes", content:text.slice(0,500000), char_count:text.length, created_at:Date.now() });
+  DB.saveDocs(docs);
   pendingText=""; $("docTitle").value=""; $("pasteBox").value=""; $("extractInfo").textContent=""; $("fileInput").value="";
-  toast("Saved ✅"); loadDocs();
+  toast("Saved ✅"); renderDocs();
 }
-async function loadDocs(){
-  const { data, error } = await sb.from("documents").select("id,title,kind,char_count,created_at").order("created_at",{ascending:false});
-  const box=$("docList");
-  if(error){ box.innerHTML='<p class="text-red-500">'+esc(error.message)+'</p>'; return; }
-  if(!data.length){ box.innerHTML='<p class="text-slate-400">No material yet. Upload a PDF or paste notes above.</p>'; return; }
-  box.innerHTML = data.map(d=>`
+function renderDocs(){
+  const docs=DB.docs(), box=$("docList");
+  if(!docs.length){ box.innerHTML='<p class="text-slate-400">No material yet. Upload a PDF or paste notes above.</p>'; return; }
+  box.innerHTML = docs.map(d=>`
     <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-purple-100 bg-white">
-      <button onclick='selectDoc(${JSON.stringify(d.id)}, ${JSON.stringify(d.title)})' class="text-left flex-1 min-w-0">
+      <button onclick='selectDoc(${JSON.stringify(d.id)})' class="text-left flex-1 min-w-0">
         <div class="font-semibold truncate">${esc(d.title)}</div>
         <div class="text-xs text-slate-400">${d.kind} · ${(d.char_count||0).toLocaleString()} chars</div>
       </button>
-      <button onclick='selectDoc(${JSON.stringify(d.id)}, ${JSON.stringify(d.title)})' class="btn btn-primary text-xs px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap">Generate ›</button>
+      <button onclick='selectDoc(${JSON.stringify(d.id)})' class="btn btn-primary text-xs px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap">Generate ›</button>
       <button onclick='delDoc(${JSON.stringify(d.id)})' title="Delete" class="text-slate-300 hover:text-red-500 px-1">✕</button>
     </div>`).join("");
 }
-function selectDoc(id,title){
-  selectedDoc={id,title};
-  $("genPanel").classList.remove("hidden");
-  $("genDocName").textContent=title;
-  $("genMsg").textContent="";
+function selectDoc(id){
+  const d=DB.docs().find(x=>x.id===id); if(!d) return;
+  selectedDoc={id:d.id,title:d.title};
+  $("genPanel").classList.remove("hidden"); $("genDocName").textContent=d.title; $("genMsg").textContent="";
   $("genPanel").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
-async function delDoc(id){
-  if(!confirm("Delete this material and its quizzes?")) return;
-  await sb.from("documents").delete().eq("id",id);
+function delDoc(id){
+  if(!confirm("Delete this material?")) return;
+  DB.saveDocs(DB.docs().filter(x=>x.id!==id));
   if(selectedDoc && selectedDoc.id===id){ selectedDoc=null; $("genPanel").classList.add("hidden"); }
-  loadDocs(); loadQuizzes();
+  renderDocs();
 }
 
 // ---------- GENERATE ----------
 async function generate(){
   if(!selectedDoc) return;
-  const type=$("genType").value, count=$("genCount").value, difficulty=$("genDiff").value;
-  const msg=$("genMsg"); msg.className="text-sm text-slate-500"; msg.innerHTML='<span class="spin"></span> Generating '+count+' '+(type==="paper"?"paper questions":"quiz questions")+'… (can take ~20s)';
+  const doc = DB.docs().find(x=>x.id===selectedDoc.id); if(!doc){ toast("Material not found."); return; }
+  const type=$("genType").value, count=+$("genCount").value, difficulty=$("genDiff").value;
+  const msg=$("genMsg"); msg.className="text-sm text-slate-500"; msg.innerHTML='<span class="spin"></span> Generating '+count+' '+(type==="paper"?"paper questions":"quiz questions")+'… (~10–25s)';
   $("genBtn").disabled=true;
   try{
-    const { data, error } = await sb.functions.invoke("generate", { body:{ document_id:selectedDoc.id, type, count:+count, difficulty, qtypes:["mcq"] }});
-    if(error){
-      // Try to read structured error body
-      let detail = error.message || "Generation failed";
-      try{ const ctx = await error.context?.json?.(); if(ctx?.error) detail = ctx.error; }catch(_){}
-      throw new Error(detail);
-    }
-    if(data && data.error) throw new Error(data.error);
-    msg.className="text-sm text-green-600"; msg.textContent="✅ Created \""+data.title+"\" ("+data.count+" Qs · "+data.provider+"/"+data.model+")";
-    loadQuizzes();
+    const out = await callGenerate({ title:doc.title, text:doc.content, type, count, difficulty, qtypes:["mcq"] });
+    const quizzes=DB.quizzes();
+    quizzes.unshift({ id:uid(), doc_id:doc.id, title:out.title, type, difficulty, provider:out.provider, model:out.model, questions:out.questions, created_at:Date.now(), best:null });
+    DB.saveQuizzes(quizzes);
+    msg.className="text-sm text-green-600"; msg.textContent='✅ Created "'+out.title+'" ('+out.questions.length+' Qs · '+out.provider+')';
+    renderQuizzes();
   }catch(e){
-    msg.className="text-sm text-red-500";
-    msg.innerHTML = String(e.message).includes("NO_PROVIDER")
-      ? "No AI key configured yet. Add an ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY secret to the <b>generate</b> Edge Function in Supabase, then retry."
-      : "⚠️ "+esc(e.message);
+    if(String(e.message).includes("NO_PROVIDER")){
+      msg.className="text-sm text-amber-600"; msg.innerHTML='No AI key found on the server. Click <b>🔑 AI key</b> (top right) and paste a Gemini key, then Generate again.';
+      openKeyModal();
+    } else { msg.className="text-sm text-red-500"; msg.innerHTML="⚠️ "+esc(e.message); }
   }finally{ $("genBtn").disabled=false; }
+}
+async function callGenerate(payload){
+  const k=DB.key();
+  if(k){ payload.apiKey=k.key; payload.provider=k.provider; }
+  const res = await fetch(FN_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON, "Authorization":"Bearer "+SUPABASE_ANON },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(()=>({error:"Bad response from server"}));
+  if(!res.ok || data.error) throw new Error(data.error || ("HTTP "+res.status));
+  return data;
 }
 
 // ---------- QUIZ LIST ----------
-async function loadQuizzes(){
-  const { data, error } = await sb.from("quizzes").select("id,title,type,difficulty,provider,created_at").order("created_at",{ascending:false});
-  const box=$("quizList");
-  if(error){ box.innerHTML='<p class="text-red-500">'+esc(error.message)+'</p>'; return; }
-  if(!data.length){ box.innerHTML='<p class="text-slate-400">None yet — add material and generate one.</p>'; return; }
-  box.innerHTML = data.map(q=>`
+function renderQuizzes(){
+  const qs=DB.quizzes(), box=$("quizList");
+  if(!qs.length){ box.innerHTML='<p class="text-slate-400">None yet — add material and generate one.</p>'; return; }
+  box.innerHTML = qs.map(q=>`
     <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-purple-100 bg-white">
       <div class="min-w-0">
         <div class="font-semibold truncate">${esc(q.title)}</div>
-        <div class="text-xs text-slate-400">${q.type==="paper"?"📄 Paper":"❓ Quiz"} · ${q.difficulty}${q.provider?" · "+esc(q.provider):""}</div>
+        <div class="text-xs text-slate-400">${q.type==="paper"?"📄 Paper":"❓ Quiz"} · ${q.difficulty} · ${q.questions.length} Qs${q.provider?" · "+esc(q.provider):""}${q.best!=null?' · best '+q.best:''}</div>
       </div>
       <div class="flex items-center gap-1 whitespace-nowrap">
         <button onclick='openQuiz(${JSON.stringify(q.id)})' class="btn btn-primary text-xs px-3 py-1.5 rounded-lg font-semibold">Open ›</button>
@@ -314,45 +298,41 @@ async function loadQuizzes(){
       </div>
     </div>`).join("");
 }
-async function delQuiz(id){ if(!confirm("Delete this quiz?"))return; await sb.from("quizzes").delete().eq("id",id); loadQuizzes(); $("playerCard").classList.add("hidden"); }
+function delQuiz(id){ if(!confirm("Delete this quiz?"))return; DB.saveQuizzes(DB.quizzes().filter(x=>x.id!==id)); renderQuizzes(); $("playerCard").classList.add("hidden"); }
 
 // ---------- PLAYER ----------
-let current = null; // {quiz, questions, answers:{}, graded:false}
-async function openQuiz(id){
-  const { data:quiz } = await sb.from("quizzes").select("*").eq("id",id).single();
-  const { data:qs } = await sb.from("questions").select("*").eq("quiz_id",id).order("idx",{ascending:true});
-  current = { quiz, questions:qs||[], answers:{}, graded:false };
-  renderPlayer();
-  $("playerCard").scrollIntoView({behavior:"smooth",block:"start"});
+let current = null; // {quiz, answers:{}, graded:false, score, max}
+function openQuiz(id){
+  const quiz=DB.quizzes().find(x=>x.id===id); if(!quiz) return;
+  current={ quiz, answers:{}, graded:false };
+  renderPlayer(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"});
 }
 function renderPlayer(){
-  const c=current; const isPaper = c.quiz.type==="paper";
-  const card=$("playerCard"); card.classList.remove("hidden");
+  const c=current, isPaper=c.quiz.type==="paper", card=$("playerCard");
+  card.classList.remove("hidden");
   let html = `<div class="flex items-center justify-between gap-2 mb-4">
       <div><h3 class="font-display font-bold text-xl">${esc(c.quiz.title)}</h3>
-      <p class="text-xs text-slate-400">${isPaper?"Exam paper":"Quiz"} · ${c.questions.length} questions · ${c.quiz.difficulty}</p></div>
-      <button onclick='closePlayer()' class="text-slate-400 hover:text-slate-700 text-sm">✕ close</button>
-    </div>`;
-
-  c.questions.forEach((q,i)=>{
+      <p class="text-xs text-slate-400">${isPaper?"Exam paper":"Quiz"} · ${c.quiz.questions.length} questions · ${c.quiz.difficulty}</p></div>
+      <button onclick='closePlayer()' class="text-slate-400 hover:text-slate-700 text-sm">✕ close</button></div>`;
+  c.quiz.questions.forEach((q,i)=>{
+    const qid="q"+i;
     html += `<div class="mb-5 pb-4 border-b border-purple-50">
       <div class="flex gap-2 mb-2"><span class="font-bold text-purple-600">Q${i+1}.</span>
       <span class="font-medium">${esc(q.prompt)}</span>
       ${q.marks?`<span class="ml-auto text-xs text-slate-400 whitespace-nowrap">${q.marks} mk${q.marks>1?"s":""}</span>`:""}</div>`;
-
     if(q.qtype==="mcq" || q.qtype==="truefalse"){
       (q.options||[]).forEach(opt=>{
-        const chosen = c.answers[q.id]===opt;
+        const chosen=c.answers[qid]===opt;
         let cls="opt border-2 border-purple-100 rounded-xl px-3 py-2 mb-1.5 "+(chosen?"chosen":"");
         if(c.graded){
           if(opt===q.answer) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 correct";
           else if(chosen) cls="opt border-2 rounded-xl px-3 py-2 mb-1.5 wrong";
           else cls="opt border-2 border-purple-100 rounded-xl px-3 py-2 mb-1.5 opacity-70";
         }
-        html += `<div class="${cls}" ${c.graded?"":`onclick='pickMcq(${JSON.stringify(q.id)},${JSON.stringify(opt)})'`}>${esc(opt)}</div>`;
+        html += `<div class="${cls}" ${c.graded?"":`onclick='pickMcq(${JSON.stringify(qid)},${JSON.stringify(opt)})'`}>${esc(opt)}</div>`;
       });
     } else {
-      html += `<textarea ${c.graded?"readonly":""} oninput='setText(${JSON.stringify(q.id)}, this.value)' rows="3" class="w-full px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Your answer…">${esc(c.answers[q.id]||"")}</textarea>`;
+      html += `<textarea ${c.graded?"readonly":""} oninput='setText(${JSON.stringify(qid)}, this.value)' rows="3" class="w-full px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Your answer…">${esc(c.answers[qid]||"")}</textarea>`;
     }
     if(c.graded && (q.answer||q.explanation)){
       html += `<div class="mt-2 text-sm bg-purple-50 rounded-xl p-3">
@@ -361,8 +341,7 @@ function renderPlayer(){
     }
     html += `</div>`;
   });
-
-  const hasAuto = c.questions.some(q=>q.qtype==="mcq"||q.qtype==="truefalse");
+  const hasAuto=c.quiz.questions.some(q=>q.qtype==="mcq"||q.qtype==="truefalse");
   if(!c.graded){
     html += `<button onclick='submitQuiz()' class="btn btn-primary px-5 py-2.5 rounded-xl font-semibold">${hasAuto?"Submit &amp; grade":"Reveal answers"}</button>`;
   } else {
@@ -373,32 +352,17 @@ function renderPlayer(){
 }
 function pickMcq(qid,val){ current.answers[qid]=val; if(!current.graded) renderPlayer(); }
 function setText(qid,val){ current.answers[qid]=val; }
-async function submitQuiz(){
+function submitQuiz(){
   const c=current; let score=0, max=0;
-  c.questions.forEach(q=>{
-    if(q.qtype==="mcq"||q.qtype==="truefalse"){ const m=q.marks||1; max+=m; if(c.answers[q.id]===q.answer) score+=m; }
-  });
-  c.graded=true; c.score=score; c.max=max;
-  renderPlayer();
-  if(max>0){ await sb.from("attempts").insert({ quiz_id:c.quiz.id, score, max_score:max, answers:c.answers }); }
+  c.quiz.questions.forEach((q,i)=>{ if(q.qtype==="mcq"||q.qtype==="truefalse"){ const m=q.marks||1; max+=m; if(c.answers["q"+i]===q.answer) score+=m; } });
+  c.graded=true; c.score=score; c.max=max; renderPlayer();
+  if(max>0){ const arr=DB.quizzes(); const idx=arr.findIndex(x=>x.id===c.quiz.id); if(idx>=0){ const pct=Math.round(score/max*100); arr[idx].best = arr[idx].best==null?pct:Math.max(arr[idx].best,pct); DB.saveQuizzes(arr); renderQuizzes(); } }
 }
 function retake(){ current.answers={}; current.graded=false; renderPlayer(); $("playerCard").scrollIntoView({behavior:"smooth",block:"start"}); }
 function closePlayer(){ $("playerCard").classList.add("hidden"); }
 
 // ---------- BOOT ----------
-function showApp(){
-  $("authView").classList.add("hidden");
-  $("appView").classList.remove("hidden");
-  const email = session.user.email;
-  const chip=$("userChip"); chip.classList.remove("hidden"); chip.classList.add("inline-flex");
-  chip.innerHTML = "👤 "+esc(email.split("@")[0]);
-  $("logoutBtn").classList.remove("hidden");
-  loadDocs(); loadQuizzes();
-}
-function showAuth(){ $("appView").classList.add("hidden"); $("authView").classList.remove("hidden"); }
-
-sb.auth.onAuthStateChange((_e, s)=>{ session=s; if(s) showApp(); else showAuth(); });
-(async ()=>{ const { data } = await sb.auth.getSession(); session=data.session; if(session) showApp(); else showAuth(); })();
+renderDocs(); renderQuizzes();
 </script>
 </body>
 </html>
