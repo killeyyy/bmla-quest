@@ -148,6 +148,20 @@
         <p id="genMsg" class="text-sm"></p>
       </div>
 
+      <div id="askPanel" class="card p-5 hidden">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-display font-bold text-lg flex items-center gap-2">💬 Ask: <span id="askDocName" class="gradient-text"></span></h3>
+          <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-red-500">clear</button>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">Answers come <b>only</b> from this note — grounded, with a supporting quote.</p>
+        <div id="chatThread" class="space-y-2 mb-3 max-h-96 overflow-y-auto"></div>
+        <div id="askSuggest" class="flex flex-wrap gap-1.5 mb-2"></div>
+        <div class="flex gap-2">
+          <input id="chatInput" onkeydown="if(event.key==='Enter')sendQuestion()" class="flex-1 px-3 py-2 rounded-xl border-2 border-purple-100 focus:border-purple-400 outline-none text-sm" placeholder="Ask something about this note…">
+          <button onclick="sendQuestion()" id="askBtn" class="btn btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Ask</button>
+        </div>
+      </div>
+
       <div class="card p-5">
         <h3 class="font-display font-bold text-lg mb-3 flex items-center gap-2">🧠 Your study sets</h3>
         <div id="quizList" class="space-y-2 text-sm"></div>
@@ -186,6 +200,7 @@
 <script>
 // ---------- CONFIG ----------
 const FN_URL = "https://vhqegknohwovdnrqworw.supabase.co/functions/v1/generate-demo";
+const ASK_URL = "https://vhqegknohwovdnrqworw.supabase.co/functions/v1/ask";
 const SUPABASE_ANON = "sb_publishable_9B3iH7kgxbWrzuXYOGnJ2A_xvzAhuZO";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
@@ -347,6 +362,7 @@ function selectDoc(id){
   const d=DB.docs().find(x=>x.id===id); if(!d) return;
   selectedDoc={id:d.id,title:d.title};
   $("genPanel").classList.remove("hidden"); $("genDocName").textContent=d.title; $("genMsg").textContent="";
+  $("askPanel").classList.remove("hidden"); $("askDocName").textContent=d.title; renderChat(); renderSuggest();
   $("genPanel").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function delDoc(id){
@@ -389,6 +405,61 @@ async function callGenerate(payload){
   if(!res.ok || data.error) throw new Error(data.error || ("HTTP "+res.status));
   return data;
 }
+
+// ---------- ASK YOUR NOTES (grounded chat) ----------
+function getChats(){ try{ return JSON.parse(localStorage.getItem("sf_chats")||"{}"); }catch(_){ return {}; } }
+function saveChats(o){ localStorage.setItem("sf_chats", JSON.stringify(o)); }
+function docThread(id){ return getChats()[id] || []; }
+function setThread(id, arr){ const all=getChats(); all[id]=arr; saveChats(all); }
+const SUGGESTIONS = ["Summarise this in 3 points","What are the key terms?","Explain the hardest concept simply","Give me an example"];
+function renderSuggest(){
+  $("askSuggest").innerHTML = SUGGESTIONS.map(s=>`<button onclick='askSuggest(${JSON.stringify(s)})' class="text-xs border border-purple-200 bg-white text-purple-700 hover:bg-purple-50 px-2.5 py-1 rounded-full">${esc(s)}</button>`).join("");
+}
+function askSuggest(s){ $("chatInput").value=s; sendQuestion(); }
+function renderChat(){
+  if(!selectedDoc) return;
+  const thread=docThread(selectedDoc.id), box=$("chatThread");
+  if(!thread.length){ box.innerHTML='<p class="text-slate-400 text-sm">Ask anything about this note — or tap a suggestion below.</p>'; return; }
+  box.innerHTML = thread.map(m=>{
+    if(m.role==="user") return `<div class="flex justify-end"><div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-2 rounded-2xl rounded-br-sm max-w-[85%] text-sm">${esc(m.content)}</div></div>`;
+    if(m.role==="loading") return `<div class="flex justify-start"><div class="bg-slate-100 px-3 py-2 rounded-2xl rounded-bl-sm text-sm"><span class="spin"></span> thinking…</div></div>`;
+    return `<div class="flex justify-start"><div class="bg-slate-50 border border-purple-100 px-3 py-2 rounded-2xl rounded-bl-sm max-w-[90%] text-sm">
+      <div class="whitespace-pre-wrap">${esc(m.content)}</div>
+      ${m.source?`<div class="mt-2 text-xs text-slate-500 border-l-2 border-purple-300 pl-2 italic">${esc(m.source)}</div>`:""}
+    </div></div>`;
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+}
+async function sendQuestion(){
+  if(!selectedDoc) return;
+  const input=$("chatInput"); const q=input.value.trim(); if(!q) return;
+  const doc=DB.docs().find(x=>x.id===selectedDoc.id); if(!doc){ toast("Note not found."); return; }
+  input.value="";
+  const thread=docThread(selectedDoc.id);
+  thread.push({role:"user", content:q});
+  thread.push({role:"loading"});
+  setThread(selectedDoc.id, thread); renderChat();
+  $("askBtn").disabled=true;
+  try{
+    const payload={ text:doc.content, question:q, history: thread.filter(m=>m.role==="user"||m.role==="ai").slice(-6).map(m=>({role:m.role==="ai"?"assistant":"user", content:m.content})) };
+    const k=DB.key(); if(k){ payload.apiKey=k.key; payload.provider=k.provider; }
+    const res=await fetch(ASK_URL,{ method:"POST", headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON, "Authorization":"Bearer "+SUPABASE_ANON }, body:JSON.stringify(payload) });
+    const data=await res.json().catch(()=>({error:"Bad response"}));
+    if(!res.ok || data.error) throw new Error(data.error||("HTTP "+res.status));
+    const t2=docThread(selectedDoc.id).filter(m=>m.role!=="loading");
+    t2.push({role:"ai", content:data.answer||"(no answer)", source:data.source||null});
+    setThread(selectedDoc.id, t2); renderChat();
+    addXP(2, { xpToast:false });
+  }catch(e){
+    const t2=docThread(selectedDoc.id).filter(m=>m.role!=="loading");
+    let m = String(e.message);
+    if(m.includes("NO_PROVIDER")){ m="No AI key found — tap 🔑 (top right) to add a Gemini key."; openKeyModal(); }
+    else if(m.includes("QUOTA")){ m="Gemini free-tier rate limit hit. Wait ~60s and try again."; }
+    t2.push({role:"ai", content:"⚠️ "+m, source:null});
+    setThread(selectedDoc.id, t2); renderChat();
+  }finally{ $("askBtn").disabled=false; }
+}
+function clearChat(){ if(!selectedDoc) return; if(!confirm("Clear this conversation?")) return; setThread(selectedDoc.id, []); renderChat(); }
 
 // ---------- STUDY SET LIST ----------
 function typeMeta(t){ return t==="paper"?{i:"📄",n:"Paper"}:t==="flashcards"?{i:"🃏",n:"Flashcards"}:{i:"❓",n:"Quiz"}; }
